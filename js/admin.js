@@ -59,14 +59,8 @@
 
 
 $(document).ready(function() {
-	var availableChecks = new OCA.WorkflowEngine.AvailableChecksCollection();
-	availableChecks.fetch();
-	availableChecks.once('sync', function(){
-		new OCA.FilesAccessControl.OperationsView({
-			el: '#workflowengine .rules',
-			collection: new OCA.FilesAccessControl.OperationsCollection()
-		});
+	new OCA.FilesAccessControl.OperationsView({
+		el: '#workflowengine .rules',
+		collection: new OCA.FilesAccessControl.OperationsCollection()
 	});
-	OCA.WorkflowEngine.availableChecks = availableChecks;
-
 });
