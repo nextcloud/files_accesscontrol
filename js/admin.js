@@ -60,7 +60,7 @@
 
 $(document).ready(function() {
 	new OCA.FilesAccessControl.OperationsView({
-		el: '#workflowengine .rules',
+		el: '#files_accesscontrol .rules',
 		collection: new OCA.FilesAccessControl.OperationsCollection()
 	});
 });

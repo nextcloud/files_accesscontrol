@@ -58,7 +58,8 @@ class AdminController extends Controller {
 		$this->eventDispatcher->dispatch('OCP\WorkflowEngine::loadAdditionalSettingScripts');
 		\OCP\Util::addScript($this->appName, 'admin');
 		return new TemplateResponse('workflowengine', 'admin', [
-			'heading' => $this->l10n->t('Files Access Control')
+			'appid' => $this->appName,
+			'heading' => $this->l10n->t('Files Access Control'),
 		], 'blank');
 	}
 }
