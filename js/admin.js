@@ -45,6 +45,20 @@
 		});
 
 	/**
+	 * @class OCA.FilesAccessControl.OperationView
+	 *
+	 * this creates the view for a single operation
+	 */
+	OCA.FilesAccessControl.OperationView =
+		OCA.WorkflowEngine.OperationView.extend({
+			model: OCA.FilesAccessControl.Operation,
+			render: function() {
+				var $el = OCA.WorkflowEngine.OperationView.prototype.render.apply(this);
+				$el.find('input.operation-operation').addClass('hidden');
+			}
+		});
+
+	/**
 	 * @class OCA.FilesAccessControl.OperationsView
 	 *
 	 * this creates the view for configured operations
@@ -52,7 +66,18 @@
 	OCA.FilesAccessControl.OperationsView =
 		OCA.WorkflowEngine.OperationsView.extend({
 			initialize: function() {
-				this._initialize('OCA\\FilesAccessControl\\Operation');
+				OCA.WorkflowEngine.OperationsView.prototype.initialize.apply(this, [
+					'OCA\\FilesAccessControl\\Operation'
+				]);
+			},
+			renderOperation: function(operation) {
+				var subView = new OCA.FilesAccessControl.OperationView({
+						model: operation
+					});
+
+				OCA.WorkflowEngine.OperationsView.prototype.renderOperation.apply(this, [
+					subView
+				]);
 			}
 		});
 })();
