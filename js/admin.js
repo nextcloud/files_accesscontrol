@@ -59,8 +59,12 @@
 
 
 $(document).ready(function() {
-	new OCA.FilesAccessControl.OperationsView({
-		el: '#files_accesscontrol .rules',
-		collection: new OCA.FilesAccessControl.OperationsCollection()
+	OC.SystemTags.collection.fetch({
+		success: function() {
+			new OCA.FilesAccessControl.OperationsView({
+				el: '#files_accesscontrol .rules',
+				collection: new OCA.FilesAccessControl.OperationsCollection()
+			});
+		}
 	});
 });
