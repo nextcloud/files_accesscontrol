@@ -42,6 +42,12 @@ class Operation {
 	 * @throws ForbiddenException
 	 */
 	public function checkFileAccess(StorageWrapper $storage, $path) {
+		if ($this->isCreatingSkeletonFiles()) {
+			// Allow creating skeletons, otherwise the first login fails, see
+			// https://github.com/nextcloud/files_accesscontrol/issues/5
+			return;
+		}
+
 		$this->manager->setFileInfo($storage, $path);
 		$match = $this->manager->getMatchingOperations('OCA\FilesAccessControl\Operation');
 
@@ -49,5 +55,23 @@ class Operation {
 			// All Checks of one operation matched: prevent access
 			throw new ForbiddenException('Access denied', true);
 		}
+	}
+
+	/**
+	 * Check if we are in the LoginController and if so, ignore the firewall
+	 * @return bool
+	 */
+	protected function isCreatingSkeletonFiles() {
+		$exception = new \Exception();
+		$trace = $exception->getTrace();
+
+		foreach ($trace as $step) {
+			if ($step['class'] === 'OC\Core\Controller\LoginController' &&
+				$step['function'] === 'tryLogin') {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
