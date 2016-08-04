@@ -19,35 +19,29 @@
  *
  */
 
-// TODO should be in the generic app
 namespace OCA\FilesAccessControl;
 
 use OC\Files\Storage\Wrapper\Wrapper;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class StorageWrapper extends Wrapper {
 	const SLOT_BEFORE = 'before';
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
+	/** @var Operation */
+	protected $operation;
 
 	/**
 	 * @param array $parameters
 	 */
 	public function __construct($parameters) {
 		parent::__construct($parameters);
-		$this->dispatcher = $parameters['dispatcher'];
+		$this->operation = $parameters['operation'];
 	}
 
 	/**
-	 * @param array $data
+	 * @param string $path
 	 */
-	protected function emitEvent(array $data) {
-		$this->dispatcher->dispatch(
-			'OCA\FilesAccessControl\StorageWrapper\Event',
-			new GenericEvent($this, $data)
-		);
+	protected function checkFileAccess($path) {
+		$this->operation->checkFileAccess($this, $path);
 	}
 
 	/*
@@ -61,11 +55,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function mkdir($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->mkdir($path);
 	}
 
@@ -76,11 +66,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function rmdir($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->rmdir($path);
 	}
 
@@ -153,11 +139,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isCreatable($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->isCreatable($path);
 	}
 
@@ -168,11 +150,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isReadable($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->isReadable($path);
 	}
 
@@ -183,11 +161,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isUpdatable($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->isUpdatable($path);
 	}
 
@@ -198,11 +172,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isDeletable($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->isDeletable($path);
 	}
 
@@ -254,11 +224,7 @@ class StorageWrapper extends Wrapper {
 	 * @return string
 	 */
 	public function file_get_contents($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->file_get_contents($path);
 	}
 
@@ -270,11 +236,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function file_put_contents($path, $data) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->file_put_contents($path, $data);
 	}
 
@@ -285,11 +247,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function unlink($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->unlink($path);
 	}
 
@@ -301,12 +259,8 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function rename($path1, $path2) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path1' => $path1,
-			'path2' => $path2,
-		]);
+		$this->checkFileAccess($path1);
+		$this->checkFileAccess($path2);
 		return $this->storage->rename($path1, $path2);
 	}
 
@@ -318,12 +272,8 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function copy($path1, $path2) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path1' => $path1,
-			'path2' => $path2,
-		]);
+		$this->checkFileAccess($path1);
+		$this->checkFileAccess($path2);
 		return $this->storage->copy($path1, $path2);
 	}
 
@@ -335,11 +285,7 @@ class StorageWrapper extends Wrapper {
 	 * @return resource
 	 */
 	public function fopen($path, $mode) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->fopen($path, $mode);
 	}
 
@@ -395,12 +341,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function touch($path, $mtime = null) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->touch($path, $mtime);
 	}
 
@@ -561,11 +502,7 @@ class StorageWrapper extends Wrapper {
 	 * @return array
 	 */
 	public function getDirectDownload($path) {
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $path,
-		]);
+		$this->checkFileAccess($path);
 		return $this->storage->getDirectDownload($path);
 	}
 
@@ -608,11 +545,7 @@ class StorageWrapper extends Wrapper {
 			return $this->copy($sourceInternalPath, $targetInternalPath);
 		}
 
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $targetInternalPath,
-		]);
+		$this->checkFileAccess($targetInternalPath);
 		return $this->storage->copyFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 
@@ -627,11 +560,7 @@ class StorageWrapper extends Wrapper {
 			return $this->rename($sourceInternalPath, $targetInternalPath);
 		}
 
-		$this->emitEvent([
-			'slot' => self::SLOT_BEFORE,
-			'method' => __FUNCTION__,
-			'path' => $targetInternalPath,
-		]);
+		$this->checkFileAccess($targetInternalPath);
 		return $this->storage->moveFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 

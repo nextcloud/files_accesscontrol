@@ -24,9 +24,8 @@ namespace OCA\FilesAccessControl;
 
 use OCP\Files\ForbiddenException;
 use OCP\WorkflowEngine\IManager;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
-class AccessControl {
+class Operation {
 
 	/**
 	 * AccessControl constructor.
@@ -38,33 +37,11 @@ class AccessControl {
 	}
 
 	/**
-	 * @param GenericEvent $event
-	 */
-	public function listen(GenericEvent $event) {
-		if ($event->getArgument('slot') !== StorageWrapper::SLOT_BEFORE) {
-			return;
-		}
-
-		/** @var StorageWrapper $storage */
-		$storage = $event->getSubject();
-
-		if ($event->hasArgument('path')) {
-			$this->checkFileAccess($storage, $event->getArgument('path'));
-		}
-		if ($event->hasArgument('path1')) {
-			$this->checkFileAccess($storage, $event->getArgument('path1'));
-		}
-		if ($event->hasArgument('path2')) {
-			$this->checkFileAccess($storage, $event->getArgument('path2'));
-		}
-	}
-
-	/**
 	 * @param StorageWrapper $storage
 	 * @param string $path
 	 * @throws ForbiddenException
 	 */
-	protected function checkFileAccess(StorageWrapper $storage, $path) {
+	public function checkFileAccess(StorageWrapper $storage, $path) {
 		$this->manager->setFileInfo($storage, $path);
 		$match = $this->manager->getMatchingOperations('OCA\FilesAccessControl\Operation');
 
