@@ -42,9 +42,10 @@ class Operation {
 	 * @throws ForbiddenException
 	 */
 	public function checkFileAccess(StorageWrapper $storage, $path) {
-		if ($this->isCreatingSkeletonFiles()) {
-			// Allow creating skeletons, otherwise the first login fails, see
+		if (!$this->isUserFileOrThumbnail($storage, $path) || $this->isCreatingSkeletonFiles()) {
+			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
+			// https://github.com/nextcloud/files_accesscontrol/issues/12
 			return;
 		}
 
@@ -55,6 +56,24 @@ class Operation {
 			// All Checks of one operation matched: prevent access
 			throw new ForbiddenException('Access denied', true);
 		}
+	}
+
+	/**
+	 * @param StorageWrapper $storage
+	 * @param string $path
+	 * @return bool
+	 */
+	protected function isUserFileOrThumbnail(StorageWrapper $storage, $path) {
+		$fullPath = $storage->mountPoint . $path;
+
+		if (substr_count($fullPath, '/') < 3) {
+			return false;
+		}
+
+		// '', admin, 'files', 'path/to/file.txt'
+		$segment = explode('/', $fullPath, 4);
+
+		return isset($segment[2]) && in_array($segment[2], ['files', 'thumbnails']);
 	}
 
 	/**
