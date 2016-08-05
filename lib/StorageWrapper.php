@@ -24,10 +24,12 @@ namespace OCA\FilesAccessControl;
 use OC\Files\Storage\Wrapper\Wrapper;
 
 class StorageWrapper extends Wrapper {
-	const SLOT_BEFORE = 'before';
 
 	/** @var Operation */
 	protected $operation;
+
+	/** @var string */
+	public $mountPoint;
 
 	/**
 	 * @param array $parameters
@@ -35,6 +37,7 @@ class StorageWrapper extends Wrapper {
 	public function __construct($parameters) {
 		parent::__construct($parameters);
 		$this->operation = $parameters['operation'];
+		$this->mountPoint = $parameters['mountPoint'];
 	}
 
 	/**
