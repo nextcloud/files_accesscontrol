@@ -47,9 +47,9 @@ script:
   - cd ../
 
   # Run Javascript unit tests
-  - cd tests/js
-  - sh -c "if [ '$JSTESTS' = '1' ]; then npm install --deps; node_modules/karma/bin/karma start karma.config.js --single-run; fi"
-  - cd ../
+  # - cd tests/js
+  # - sh -c "if [ '$JSTESTS' = '1' ]; then npm install --deps; node_modules/karma/bin/karma start karma.config.js --single-run; fi"
+  # - cd ../
 
 matrix:
   include:
@@ -63,8 +63,8 @@ matrix:
       env: DB=mysql;CODECHECK=1
     - php: 5.4
       env: DB=mysql;CODECHECK=2
-    - php: 5.4
-      env: DB=mysql;JSTESTS=1
+    # - php: 5.4
+    #   env: DB=mysql;JSTESTS=1
   allow_failures:
     - env: DB=mysql;CODECHECK=2
     - env: DB=oracle # TODO: temporary until it is fixed
