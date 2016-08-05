@@ -61,7 +61,7 @@ class AdminControllerTest extends TestCase {
 			->method('dispatch')
 			->with('OCP\WorkflowEngine::loadAdditionalSettingScripts');
 
-		$this->l->expects($this->once())
+		$this->l->expects($this->exactly(2))
 			->method('t')
 			->willReturnArgument(1);
 
