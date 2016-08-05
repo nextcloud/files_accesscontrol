@@ -29,4 +29,7 @@ if(!class_exists('PHPUnit_Framework_TestCase')) {
 	require_once('PHPUnit/Autoload.php');
 }
 
+// Fix for "Autoload path not allowed: .../files_accesscontrol/tests/..."
+\OC_App::loadApp('files_accesscontrol');
+
 OC_Hook::clear();
