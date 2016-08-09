@@ -25,7 +25,6 @@ use OC\Files\Filesystem;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\Storage\IStorage;
 use OCP\Util;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Application extends \OCP\AppFramework\App {
 
@@ -40,17 +39,6 @@ class Application extends \OCP\AppFramework\App {
 		Util::connectHook('OC_Filesystem', 'preSetup', $this, 'addStorageWrapper');
 
 		\OCP\App::registerAdmin('files_accesscontrol', 'settings/admin');
-
-		$container = $this->getContainer();
-		$container->getServer()->getEventDispatcher()->addListener(
-			'OCA\FilesAccessControl\StorageWrapper\Event',
-			function(GenericEvent $event) use ($container) {
-				/** @var \OCA\FilesAccessControl\AccessControl $accessControl */
-				$accessControl = $container->query('OCA\FilesAccessControl\AccessControl');
-				$accessControl->listen($event);
-			},
-			-10
-		);
 	}
 
 	/**
@@ -69,11 +57,12 @@ class Application extends \OCP\AppFramework\App {
 	 */
 	public function addStorageWrapperCallback($mountPoint, IStorage $storage) {
 		if (!\OC::$CLI && !$storage->instanceOfStorage('OC\Files\Storage\Shared')) {
-			$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
+			/** @var \OCA\FilesAccessControl\Operation $operation */
+			$operation = $this->getContainer()->query('OCA\FilesAccessControl\Operation');
 			return new StorageWrapper([
 				'storage' => $storage,
 				'mountPoint' => $mountPoint,
-				'dispatcher' => $dispatcher,
+				'operation' => $operation,
 			]);
 		}
 
