@@ -1,6 +1,7 @@
 OC.L10N.register(
     "files_accesscontrol",
     {
-    "Files Access Control" : "Akses Kontrol Berkas"
+    "File access control" : "Akses kontrol berkas",
+    "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Setiap kelompok aturan terdiri dari satu atau lebih aturan. Permintaan cocok dengan kelompok jika semua aturan terevaluasi benar. Apabila permintaan cocok dengan setidaknya satu dari semua grup yang terdefinisi, permintaan di tolak dan konten berkas tidak bisa di baca atau ditulis."
 },
 "nplurals=1; plural=0;");
