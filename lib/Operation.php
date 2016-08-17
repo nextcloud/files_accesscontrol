@@ -85,8 +85,8 @@ class Operation {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if ($step['class'] === 'OC\Core\Controller\LoginController' &&
-				$step['function'] === 'tryLogin') {
+			if (isset($step['class']) && $step['class'] === 'OC\Core\Controller\LoginController' &&
+				isset($step['function']) && $step['function'] === 'tryLogin') {
 				return true;
 			}
 		}
