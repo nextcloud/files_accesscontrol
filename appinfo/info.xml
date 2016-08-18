@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <info>
 	<id>files_accesscontrol</id>
-	<name>Files access control</name>
+	<name>File access control</name>
 	<description>An app for Nextcloud to control the access to files based on some conditions</description>
 	<licence>AGPL</licence>
 	<author>Morris Jobke</author>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 	<namespace>FilesAccessControl</namespace>
 
 	<category>other</category>
@@ -22,6 +22,7 @@
 	</dependencies>
 
 	<settings>
+		<admin-section>OCA\FilesAccessControl\Settings\Section</admin-section>
 		<admin>OCA\FilesAccessControl\Settings\Admin</admin>
 	</settings>
 </info>
