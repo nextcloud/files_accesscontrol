@@ -67,7 +67,7 @@ class Admin implements ISettings {
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection() {
-		return 'additional';
+		return 'files_accesscontrol';
 	}
 
 	/**
