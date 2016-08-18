@@ -1,6 +1,8 @@
 <?php
 /**
- * @copyright Copyright (c) 2016 Morris Jobke <hey@morrisjobke.de>
+ * @copyright Copyright (c) 2016 Arthur Schiwon <blizzz@arthur-schiwon.de>
+ *
+ * @author Arthur Schiwon <blizzz@arthur-schiwon.de>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -19,48 +21,64 @@
  *
  */
 
-namespace OCA\FilesAccessControl\Controller;
+namespace OCA\FilesAccessControl\Settings;
 
-use OCP\AppFramework\Controller;
+use OCA\FilesAccessControl\AppInfo\Application;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IL10N;
-use OCP\IRequest;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use OCP\Settings\ISettings;
+use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AdminController extends Controller {
+class Admin implements ISettings {
 
-	/** @var EventDispatcher */
-	protected $eventDispatcher;
 	/** @var IL10N */
-	protected $l10n;
+	private $l10n;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param EventDispatcherInterface $eventDispatcher
-	 * @param IL10N $l10n
-	 */
-	public function __construct($appName,
-								IRequest $request,
-								EventDispatcherInterface $eventDispatcher,
-								IL10N $l10n) {
-		parent::__construct($appName, $request);
+	/** @var Application */
+	private $app;
 
-		$this->eventDispatcher = $eventDispatcher;
+	/** @var EventDispatcherInterface */
+	private $eventDispatcher;
+
+	public function __construct(IL10N $l10n, Application $app, EventDispatcherInterface $eventDispatcher) {
 		$this->l10n = $l10n;
+		$this->app = $app;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
-	public function index() {
+	public function getForm() {
+		$appName = $this->app->getContainer()->getAppName();
 		$this->eventDispatcher->dispatch('OCP\WorkflowEngine::loadAdditionalSettingScripts');
-		\OCP\Util::addScript($this->appName, 'admin');
-		return new TemplateResponse('workflowengine', 'admin', [
-			'appid' => $this->appName,
+		Util::addScript($appName, 'admin');
+		$parameters = [
+			'appid' => $appName,
 			'heading' => $this->l10n->t('File access control'),
 			'description' => $this->l10n->t('Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written.'),
-		], 'blank');
+		];
+
+		return new TemplateResponse('workflowengine', 'admin', $parameters, 'blank');
 	}
+
+	/**
+	 * @return string the section ID, e.g. 'sharing'
+	 */
+	public function getSection() {
+		return 'files_accesscontrol';
+	}
+
+	/**
+	 * @return int whether the form should be rather on the top or bottom of
+	 * the admin section. The forms are arranged in ascending order of the
+	 * priority values. It is required to return a value between 0 and 100.
+	 *
+	 * E.g.: 70
+	 */
+	public function getPriority() {
+		return 70;
+	}
+
 }
