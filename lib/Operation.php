@@ -23,17 +23,24 @@ namespace OCA\FilesAccessControl;
 
 
 use OCP\Files\ForbiddenException;
+use OCP\IL10N;
 use OCP\WorkflowEngine\IManager;
+use OCP\WorkflowEngine\IOperation;
 
-class Operation {
+class Operation implements IOperation{
+	/** @var IManager */
+	protected $manager;
+
+	/** @var IL10N */
+	protected $l;
 
 	/**
-	 * AccessControl constructor.
-	 *
 	 * @param IManager $manager
+	 * @param IL10N $l
 	 */
-	public function __construct(IManager $manager) {
+	public function __construct(IManager $manager, IL10N $l) {
 		$this->manager = $manager;
+		$this->l = $l;
 	}
 
 	/**
@@ -92,5 +99,17 @@ class Operation {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @param string $name
+	 * @param array[] $checks
+	 * @param string $operation
+	 * @throws \UnexpectedValueException
+	 */
+	public function validateOperation($name, array $checks, $operation) {
+		if (empty($checks)) {
+			throw new \UnexpectedValueException($this->l->t('No rule given'));
+		}
 	}
 }
