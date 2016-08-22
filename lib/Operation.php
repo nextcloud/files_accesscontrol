@@ -49,14 +49,15 @@ class Operation implements IOperation{
 	 * @throws ForbiddenException
 	 */
 	public function checkFileAccess(StorageWrapper $storage, $path) {
-		if (!$this->isUserFileOrThumbnail($storage, $path) || $this->isCreatingSkeletonFiles()) {
+		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles()) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
 			// https://github.com/nextcloud/files_accesscontrol/issues/12
 			return;
 		}
 
-		$this->manager->setFileInfo($storage, $path);
+		$filePath = $this->translatePath($storage, $path);
+		$this->manager->setFileInfo($storage, $filePath);
 		$match = $this->manager->getMatchingOperations('OCA\FilesAccessControl\Operation');
 
 		if (!empty($match)) {
@@ -70,7 +71,7 @@ class Operation implements IOperation{
 	 * @param string $path
 	 * @return bool
 	 */
-	protected function isUserFileOrThumbnail(StorageWrapper $storage, $path) {
+	protected function isBlockablePath(StorageWrapper $storage, $path) {
 		$fullPath = $storage->mountPoint . $path;
 
 		if (substr_count($fullPath, '/') < 3) {
@@ -80,7 +81,41 @@ class Operation implements IOperation{
 		// '', admin, 'files', 'path/to/file.txt'
 		$segment = explode('/', $fullPath, 4);
 
-		return isset($segment[2]) && in_array($segment[2], ['files', 'thumbnails']);
+		return isset($segment[2]) && in_array($segment[2], [
+			'files',
+			'thumbnails',
+			'files_versions',
+		]);
+	}
+
+	/**
+	 * For thumbnails and versions we want to check the tags of the original file
+	 *
+	 * @param StorageWrapper $storage
+	 * @param string $path
+	 * @return bool
+	 */
+	protected function translatePath(StorageWrapper $storage, $path) {
+		if (substr_count($path, '/') < 1) {
+			return $path;
+		}
+
+		// 'files', 'path/to/file.txt'
+		list($folder, $innerPath) = explode('/', $path, 2);
+
+		if ($folder === 'files_versions') {
+			$innerPath = substr($innerPath, 0, strrpos($innerPath, '.v'));
+			return 'files/' . $innerPath;
+		} else if ($folder === 'thumbnails') {
+			list($fileId,) = explode('/', $innerPath, 2);
+			$innerPath = $storage->getCache()->getPathById($fileId);
+
+			if ($innerPath !== null) {
+				return 'files/' . $innerPath;
+			}
+		}
+
+		return $path;
 	}
 
 	/**
