@@ -142,7 +142,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isCreatable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isCreatable($path);
 	}
 
@@ -153,7 +157,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isReadable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isReadable($path);
 	}
 
@@ -164,7 +172,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isUpdatable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isUpdatable($path);
 	}
 
@@ -175,7 +187,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isDeletable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isDeletable($path);
 	}
 
