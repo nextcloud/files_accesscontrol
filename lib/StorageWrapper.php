@@ -388,21 +388,22 @@ class StorageWrapper extends Wrapper {
 //	public function hasUpdated($path, $time) {
 //		return $this->storage->hasUpdated($path, $time);
 //	}
-//
-//	/**
-//	 * get a cache instance for the storage
-//	 *
-//	 * @param string $path
-//	 * @param \OC\Files\Storage\Storage (optional) the storage to pass to the cache
-//	 * @return \OC\Files\Cache\Cache
-//	 */
-//	public function getCache($path = '', $storage = null) {
-//		if (!$storage) {
-//			$storage = $this;
-//		}
-//		return $this->storage->getCache($path, $storage);
-//	}
-//
+
+	/**
+	 * get a cache instance for the storage
+	 *
+	 * @param string $path
+	 * @param \OC\Files\Storage\Storage (optional) the storage to pass to the cache
+	 * @return \OC\Files\Cache\Cache
+	 */
+	public function getCache($path = '', $storage = null) {
+		if (!$storage) {
+			$storage = $this;
+		}
+		$cache = $this->storage->getCache($path, $storage);
+		return new CacheWrapper($cache, $storage, $this->operation);
+	}
+
 //	/**
 //	 * get a scanner instance for the storage
 //	 *
