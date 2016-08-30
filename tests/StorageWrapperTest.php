@@ -79,7 +79,7 @@ class StorageWrapperTest extends TestCase {
 	}
 
 	public function dataSinglePath() {
-		$methods = ['mkdir', 'rmdir', 'isCreatable', 'isReadable', 'isUpdatable', 'isDeletable', 'file_get_contents', 'unlink', 'getDirectDownload'];
+		$methods = ['mkdir', 'rmdir', 'file_get_contents', 'unlink', 'getDirectDownload'];
 
 		$tests = [];
 		foreach ($methods as $method) {
@@ -131,5 +131,54 @@ class StorageWrapperTest extends TestCase {
 				$this->assertSame($expected, $e);
 			}
 		}
+	}
+
+	public function dataSinglePathOverWritten() {
+		$methods = ['isCreatable', 'isReadable', 'isUpdatable', 'isDeletable'];
+
+		$tests = [];
+		foreach ($methods as $method) {
+			$tests[] = [$method, 'path1', true, null, true];
+			$tests[] = [$method, 'path2', false, null, false];
+			$tests[] = [$method, 'path3', true, new ForbiddenException('Access denied', false), false];
+			$tests[] = [$method, 'path4', false, new ForbiddenException('Access denied', false), false];
+		}
+		return $tests;
+	}
+
+	/**
+	 * @dataProvider dataSinglePathOverWritten
+	 * @param string $method
+	 * @param string $path
+	 * @param bool $return
+	 * @param null|\Exception $checkAccess
+	 * @param bool $expected
+	 */
+	public function testSinglePathOverWritten($method, $path, $return, $checkAccess, $expected) {
+		$storage = $this->getInstance(['checkFileAccess']);
+
+
+		if ($checkAccess === null) {
+			$storage->expects($this->once())
+				->method('checkFileAccess')
+				->with($path);
+
+			$this->storage->expects($this->once())
+				->method($method)
+				->with($path)
+				->willReturn($return);
+		} else {
+			$storage->expects($this->once())
+				->method('checkFileAccess')
+				->with($path)
+				->willThrowException($checkAccess);
+
+			$this->storage->expects($this->never())
+				->method($method)
+				->with($path)
+				->willReturn($return);
+		}
+
+		$this->assertSame($expected, $this->invokePrivate($storage, $method, [$path]));
 	}
 }

@@ -142,7 +142,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isCreatable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isCreatable($path);
 	}
 
@@ -153,7 +157,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isReadable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isReadable($path);
 	}
 
@@ -164,7 +172,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isUpdatable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isUpdatable($path);
 	}
 
@@ -175,7 +187,11 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function isDeletable($path) {
-		$this->checkFileAccess($path);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\OCP\Files\ForbiddenException $e) {
+			return false;
+		}
 		return $this->storage->isDeletable($path);
 	}
 
@@ -372,21 +388,22 @@ class StorageWrapper extends Wrapper {
 //	public function hasUpdated($path, $time) {
 //		return $this->storage->hasUpdated($path, $time);
 //	}
-//
-//	/**
-//	 * get a cache instance for the storage
-//	 *
-//	 * @param string $path
-//	 * @param \OC\Files\Storage\Storage (optional) the storage to pass to the cache
-//	 * @return \OC\Files\Cache\Cache
-//	 */
-//	public function getCache($path = '', $storage = null) {
-//		if (!$storage) {
-//			$storage = $this;
-//		}
-//		return $this->storage->getCache($path, $storage);
-//	}
-//
+
+	/**
+	 * get a cache instance for the storage
+	 *
+	 * @param string $path
+	 * @param \OC\Files\Storage\Storage (optional) the storage to pass to the cache
+	 * @return \OC\Files\Cache\Cache
+	 */
+	public function getCache($path = '', $storage = null) {
+		if (!$storage) {
+			$storage = $this;
+		}
+		$cache = $this->storage->getCache($path, $storage);
+		return new CacheWrapper($cache, $storage, $this->operation);
+	}
+
 //	/**
 //	 * get a scanner instance for the storage
 //	 *
