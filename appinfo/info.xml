@@ -21,6 +21,10 @@
 		<owncloud min-version="9.1" max-version="9.1" />
 	</dependencies>
 
+	<documentation>
+		<admin>admin-files-access-control</admin>
+	</documentation>
+
 	<settings>
 		<admin-section>OCA\FilesAccessControl\Settings\Section</admin-section>
 		<admin>OCA\FilesAccessControl\Settings\Admin</admin>

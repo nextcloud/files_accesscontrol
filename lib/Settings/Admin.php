@@ -56,6 +56,7 @@ class Admin implements ISettings {
 		Util::addScript($appName, 'admin');
 		$parameters = [
 			'appid' => $appName,
+			'docs' => 'admin-files-access-control',
 			'heading' => $this->l10n->t('File access control'),
 			'description' => $this->l10n->t('Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written.'),
 		];
