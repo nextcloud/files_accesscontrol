@@ -34,6 +34,9 @@ class Operation implements IOperation{
 	/** @var IL10N */
 	protected $l;
 
+	/** @var int */
+	protected $nestingLevel = 0;
+
 	/**
 	 * @param IManager $manager
 	 * @param IL10N $l
@@ -49,16 +52,20 @@ class Operation implements IOperation{
 	 * @throws ForbiddenException
 	 */
 	public function checkFileAccess(StorageWrapper $storage, $path) {
-		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles()) {
+		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
 			// https://github.com/nextcloud/files_accesscontrol/issues/12
 			return;
 		}
 
+		$this->nestingLevel++;
+
 		$filePath = $this->translatePath($storage, $path);
 		$this->manager->setFileInfo($storage, $filePath);
 		$match = $this->manager->getMatchingOperations('OCA\FilesAccessControl\Operation');
+
+		$this->nestingLevel--;
 
 		if (!empty($match)) {
 			// All Checks of one operation matched: prevent access
