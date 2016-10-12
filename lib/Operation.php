@@ -23,6 +23,7 @@ namespace OCA\FilesAccessControl;
 
 
 use OCP\Files\ForbiddenException;
+use OCP\Files\Storage\IStorage;
 use OCP\IL10N;
 use OCP\WorkflowEngine\IManager;
 use OCP\WorkflowEngine\IOperation;
@@ -44,11 +45,11 @@ class Operation implements IOperation{
 	}
 
 	/**
-	 * @param StorageWrapper $storage
+	 * @param IStorage $storage
 	 * @param string $path
 	 * @throws ForbiddenException
 	 */
-	public function checkFileAccess(StorageWrapper $storage, $path) {
+	public function checkFileAccess(IStorage $storage, $path) {
 		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles()) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
@@ -67,12 +68,17 @@ class Operation implements IOperation{
 	}
 
 	/**
-	 * @param StorageWrapper $storage
+	 * @param IStorage $storage
 	 * @param string $path
 	 * @return bool
 	 */
-	protected function isBlockablePath(StorageWrapper $storage, $path) {
-		$fullPath = $storage->mountPoint . $path;
+	protected function isBlockablePath(IStorage $storage, $path) {
+		if (property_exists($storage, 'mountPoint')) {
+			/** @var StorageWrapper $storage */
+			$fullPath = $storage->mountPoint . $path;
+		} else {
+			$fullPath = $path;
+		}
 
 		if (substr_count($fullPath, '/') < 3) {
 			return false;
@@ -91,11 +97,11 @@ class Operation implements IOperation{
 	/**
 	 * For thumbnails and versions we want to check the tags of the original file
 	 *
-	 * @param StorageWrapper $storage
+	 * @param IStorage $storage
 	 * @param string $path
 	 * @return bool
 	 */
-	protected function translatePath(StorageWrapper $storage, $path) {
+	protected function translatePath(IStorage $storage, $path) {
 		if (substr_count($path, '/') < 1) {
 			return $path;
 		}
