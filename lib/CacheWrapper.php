@@ -25,6 +25,7 @@ use OC\Files\Cache\Wrapper\CacheWrapper as Wrapper;
 use OCP\Constants;
 use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Storage\IStorage;
 
 class CacheWrapper extends Wrapper  {
 	/** @var Operation */
@@ -36,10 +37,10 @@ class CacheWrapper extends Wrapper  {
 
 	/**
 	 * @param ICache $cache
-	 * @param StorageWrapper $storage
+	 * @param IStorage $storage
 	 * @param Operation $operation
 	 */
-	public function __construct(ICache $cache, StorageWrapper $storage, Operation $operation) {
+	public function __construct(ICache $cache, IStorage $storage, Operation $operation) {
 		parent::__construct($cache);
 		$this->storage = $storage;
 		$this->operation = $operation;
