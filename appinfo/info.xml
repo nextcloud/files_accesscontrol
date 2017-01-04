@@ -26,7 +26,6 @@
 	</documentation>
 
 	<settings>
-		<admin-section>OCA\FilesAccessControl\Settings\Section</admin-section>
 		<admin>OCA\FilesAccessControl\Settings\Admin</admin>
 	</settings>
 </info>
