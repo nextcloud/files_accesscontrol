@@ -1,0 +1,6 @@
+{ "translations": {
+    "No rule given" : "Ingen regel angiven",
+    "File access control" : "Åtkomstkontroll av filer",
+    "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Varje regelgrupp består av en eller flera regler. En begäran matchar en grupp om alla regler utvärderas till sant. Om en begäran matchar minst en av de definierade grupperna blockeras begäran och filen kan då inte läsas eller skrivas."
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
