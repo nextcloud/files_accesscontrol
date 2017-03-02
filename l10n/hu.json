@@ -1,0 +1,6 @@
+{ "translations": {
+    "No rule given" : "Nincs szabály megadva",
+    "File access control" : "Fájl jogosultság kezelés",
+    "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Minden szabály csoport egy vagy több szabályból áll. Egy kérés akkor egyezik a csoporttal ha minden szabály kiértékelése igaz. Ha egy kérés legalább egy definiált csoporttal egyezik, a kérés blokkolva lesz és a fájl tartalma nem lesz írható vagy olvasható."
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
