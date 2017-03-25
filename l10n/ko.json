@@ -1,0 +1,5 @@
+{ "translations": {
+    "No rule given" : "지정된 규칙 없음",
+    "File access control" : "파일 접근 제어"
+},"pluralForm" :"nplurals=1; plural=0;"
+}
