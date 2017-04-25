@@ -2,16 +2,19 @@
 <info>
 	<id>files_accesscontrol</id>
 	<name>File access control</name>
-	<description>An app for Nextcloud to control the access to files based on some conditions</description>
+	<summary>Control access to files based on conditions</summary>
+	<description>Nextcloud's File Access Control app enables administrators to create and manage a set of rule groups. Each of the rule groups consists of one or more rules. If all rules of a group hold true, the group matches the request and access is being denied. The rules criteria range from IP address, to user groups, collaborative tags and some more.</description>
 	<licence>AGPL</licence>
 	<author>Morris Jobke</author>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<namespace>FilesAccessControl</namespace>
 
 	<category>other</category>
 	<website>https://github.com/nextcloud/files_accesscontrol</website>
 	<bugs>https://github.com/nextcloud/files_accesscontrol/issues</bugs>
 	<repository type="git">https://github.com/nextcloud/files_accesscontrol.git</repository>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/files_accesscontrol/master/screenshots/1.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/files_accesscontrol/master/screenshots/2.png</screenshot>
 
 	<types>
 		<filesystem/>
