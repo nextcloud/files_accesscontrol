@@ -22,7 +22,7 @@
 	</dependencies>
 
 	<documentation>
-		<admin>admin-files-access-control</admin>
+		<admin>https://docs.nextcloud.com/server/12/admin_manual/configuration_files/files_access_control.html</admin>
 	</documentation>
 
 	<settings>
