@@ -30,49 +30,43 @@ use OCP\AppFramework\IAppContainer;
 use OCP\IL10N;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Test\TestCase;
+use OCP\AppFramework\Http\TemplateResponse;
 
 class AdminTest extends TestCase {
-	/** @var  IL10N */
+	/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject */
 	protected $l;
 
-	/** @var  Application */
+	/** @var Application|\PHPUnit_Framework_MockObject_MockObject */
 	protected $app;
 
-	/** @var  EventDispatcherInterface */
+	/** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
 	protected $dispatcher;
 
-	/** @var  Admin */
+	/** @var Admin */
 	protected $admin;
 
-	/** @var  IAppContainer */
+	/** @var IAppContainer|\PHPUnit_Framework_MockObject_MockObject */
 	protected $container;
 
 	protected function setUp() {
 		parent::setUp();
 
-		$this->l = $this->getMockBuilder('OCP\IL10N')
-			->getMock();
-
-		$this->app = $this->getMockBuilder('OCA\FilesAccessControl\AppInfo\Application')
-			->disableOriginalConstructor()
-			->getMock();
-
-		$this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-			->getMock();
-
-		$this->container = $this->getMockBuilder('OCP\AppFramework\IAppContainer')->getMock();
+		$this->l = $this->createMock(IL10N::class);
+		$this->app = $this->createMock(Application::class);
+		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+		$this->container = $this->createMock(IAppContainer::class);
 
 		$this->admin = new Admin($this->l, $this->app, $this->dispatcher);
 	}
 
 	public function testGetForm() {
 		$this->dispatcher->expects($this->once())
-		   ->method('dispatch')
-		   ->with('OCP\WorkflowEngine::loadAdditionalSettingScripts');
+			->method('dispatch')
+			->with('OCP\WorkflowEngine::loadAdditionalSettingScripts');
 
-		$this->l->expects($this->exactly(2))
-		   ->method('t')
-		   ->willReturnArgument(1);
+		$this->l->expects($this->exactly(3))
+			->method('t')
+			->willReturnArgument(1);
 
 		$this->container->expects($this->once())
 			->method('getAppName')
@@ -83,6 +77,6 @@ class AdminTest extends TestCase {
 			->willReturn($this->container);
 
 		$result = $this->admin->getForm();
-		$this->assertInstanceOf('OCP\AppFramework\Http\TemplateResponse', $result);
+		$this->assertInstanceOf(TemplateResponse::class, $result);
 	}
 }
