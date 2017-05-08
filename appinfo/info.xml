@@ -6,7 +6,7 @@
 	<description>Nextcloud's File Access Control app enables administrators to create and manage a set of rule groups. Each of the rule groups consists of one or more rules. If all rules of a group hold true, the group matches the request and access is being denied. The rules criteria range from IP address, to user groups, collaborative tags and some more.</description>
 	<licence>AGPL</licence>
 	<author>Morris Jobke</author>
-	<version>1.2.2</version>
+	<version>1.2.3</version>
 	<namespace>FilesAccessControl</namespace>
 
 	<category>files</category>
