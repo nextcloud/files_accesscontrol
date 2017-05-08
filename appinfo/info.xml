@@ -9,7 +9,7 @@
 	<version>1.2.2</version>
 	<namespace>FilesAccessControl</namespace>
 
-	<category>other</category>
+	<category>files</category>
 	<website>https://github.com/nextcloud/files_accesscontrol</website>
 	<bugs>https://github.com/nextcloud/files_accesscontrol/issues</bugs>
 	<repository type="git">https://github.com/nextcloud/files_accesscontrol.git</repository>
