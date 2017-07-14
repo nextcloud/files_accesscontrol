@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "No rule given" : "Nincs szabály megadva",
     "File access control" : "Fájl jogosultság kezelés",
+    "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Korlátozza a fájlokhoz való hozzáférést olyan tényezők alapján, mint a fájltípus, a felhasználói csoporttagságok, az idő és így tovább.",
     "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Minden szabály csoport egy vagy több szabályból áll. Egy kérés akkor egyezik a csoporttal ha minden szabály kiértékelése igaz. Ha egy kérés legalább egy definiált csoporttal egyezik, a kérés blokkolva lesz és a fájl tartalma nem lesz írható vagy olvasható."
 },
 "nplurals=2; plural=(n != 1);");
