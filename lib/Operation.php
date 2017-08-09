@@ -81,8 +81,19 @@ class Operation implements IOperation{
 	 */
 	protected function isBlockablePath(IStorage $storage, $path) {
 		if (property_exists($storage, 'mountPoint')) {
-			/** @var StorageWrapper $storage */
-			$fullPath = $storage->mountPoint . $path;
+			$hasMountPoint = $storage instanceof StorageWrapper;
+			if (!$hasMountPoint) {
+				$ref = new \ReflectionClass($storage);
+				$prop = $ref->getProperty('mountPoint');
+				$hasMountPoint = $prop->isPublic();
+			}
+
+			if ($hasMountPoint) {
+				/** @var StorageWrapper $storage */
+				$fullPath = $storage->mountPoint . $path;
+			} else {
+				$fullPath = $path;
+			}
 		} else {
 			$fullPath = $path;
 		}
