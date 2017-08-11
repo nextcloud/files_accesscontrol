@@ -25,7 +25,7 @@
 	</dependencies>
 
 	<documentation>
-		<admin>https://docs.nextcloud.com/server/12/admin_manual/configuration_files/files_access_control.html</admin>
+		<admin>https://docs.nextcloud.com/server/12/go.php?to=admin-files-access-control</admin>
 	</documentation>
 
 	<settings>
