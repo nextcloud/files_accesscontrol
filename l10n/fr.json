@@ -1,7 +1,7 @@
 { "translations": {
     "No rule given" : "Aucune règle donnée",
     "File access control" : "Contrôle d'accès aux fichiers",
-    "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Limiter l'accès aux fichiers basés sur des éléments comme le type de fichier, les membres de groupe d'utilisaeur, l'heure et plus encore.",
+    "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Limiter l'accès aux fichiers basés sur des éléments comme le type de fichier, les membres de groupe utilisateur, l'heure et plus encore.",
     "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Chaque groupe de règles est constitué d'une ou plusieurs règles. Une requête correspond à un groupe si toutes les règles évaluées sont vraies. Si une requête correspond à au moins un groupe définit, la requête est bloquée et le contenu du fichier ne peut pas être lu ou écrit."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
