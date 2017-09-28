@@ -2,6 +2,8 @@ OC.L10N.register(
     "files_accesscontrol",
     {
     "No rule given" : "No s'han proporcionat regles",
-    "File access control" : "Control d'accés a l'arxiu"
+    "File access control" : "Control d'accés a l'arxiu",
+    "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Restringeix l'accés als fitxers basats en factors com el tipus de fitxer, la pertinença al grup d'usuaris, el temps i més.",
+    "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Cada grup de regles consisteix en una o més regles. Una sol·licitud coincideix amb un grup si totes les normes s'avaluen a true. Si una sol·licitud coincideix amb almenys un dels grups definits, la sol·licitud està bloquejada i el contingut del fitxer no es pot llegir ni escriure."
 },
 "nplurals=2; plural=(n != 1);");
