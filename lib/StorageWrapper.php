@@ -214,9 +214,14 @@ class StorageWrapper extends Wrapper {
 //	 * @param string $path
 //	 * @return int
 //	 */
-//	public function getPermissions($path) {
-//		return $this->storage->getPermissions($path);
-//	}
+	public function getPermissions($path) {
+		try {
+			$this->checkFileAccess($path);
+		} catch (ForbiddenException $e) {
+			return 0;
+		}
+		return $this->storage->getPermissions($path);
+	}
 //
 //	/**
 //	 * see http://php.net/manual/en/function.file_exists.php
