@@ -22,6 +22,7 @@
 namespace OCA\FilesAccessControl;
 
 use OC\Files\Storage\Wrapper\Wrapper;
+use OCP\Constants;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Storage\IStorage;
 
@@ -32,6 +33,8 @@ class StorageWrapper extends Wrapper {
 
 	/** @var string */
 	public $mountPoint;
+	/** @var int */
+	protected $mask;
 
 	/**
 	 * @param array $parameters
@@ -40,6 +43,12 @@ class StorageWrapper extends Wrapper {
 		parent::__construct($parameters);
 		$this->operation = $parameters['operation'];
 		$this->mountPoint = $parameters['mountPoint'];
+
+		$this->mask = Constants::PERMISSION_ALL;
+		$this->mask &= ~Constants::PERMISSION_READ;
+		$this->mask &= ~Constants::PERMISSION_CREATE;
+		$this->mask &= ~Constants::PERMISSION_UPDATE;
+		$this->mask &= ~Constants::PERMISSION_DELETE;
 	}
 
 	/**
@@ -214,9 +223,14 @@ class StorageWrapper extends Wrapper {
 //	 * @param string $path
 //	 * @return int
 //	 */
-//	public function getPermissions($path) {
-//		return $this->storage->getPermissions($path);
-//	}
+	public function getPermissions($path) {
+		try {
+			$this->checkFileAccess($path);
+		} catch (ForbiddenException $e) {
+			return $this->mask;
+		}
+		return $this->storage->getPermissions($path);
+	}
 //
 //	/**
 //	 * see http://php.net/manual/en/function.file_exists.php
