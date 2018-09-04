@@ -66,7 +66,9 @@ class AdminTest extends TestCase {
 
 		$this->l->expects($this->exactly(3))
 			->method('t')
-			->willReturnArgument(1);
+			->will($this->returnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			}));
 
 		$this->container->expects($this->once())
 			->method('getAppName')
