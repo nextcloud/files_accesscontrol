@@ -30,6 +30,7 @@ use OCP\IURLGenerator;
 use OCP\WorkflowEngine\IComplexOperation;
 use OCP\WorkflowEngine\IManager;
 use OCP\WorkflowEngine\IOperation;
+use OCP\WorkflowEngine\IRuleMatcher;
 use OCP\WorkflowEngine\ISpecificOperation;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -72,8 +73,9 @@ class Operation implements IOperation, IComplexOperation, ISpecificOperation {
 		$this->nestingLevel++;
 
 		$filePath = $this->translatePath($storage, $path);
-		$this->manager->setFileInfo($storage, $filePath);
-		$match = $this->manager->getMatchingOperations('OCA\FilesAccessControl\Operation');
+		$ruleMatcher = $this->manager->getRuleMatcher();
+		$ruleMatcher->setFileInfo($storage, $filePath);
+		$match = $ruleMatcher->getMatchingOperations(self::class);
 
 		$this->nestingLevel--;
 
@@ -259,18 +261,7 @@ class Operation implements IOperation, IComplexOperation, ISpecificOperation {
 		return $this->l->t('File is accessed');
 	}
 
-	/**
-	 * Is being called by the workflow engine when an event was triggered that
-	 * is configured for this operation. An evaluation whether the event
-	 * qualifies for this operation to run has still to be done by the
-	 * implementor.
-	 *
-	 * If the implementor is an IComplexOpe    ration, this method will not be
-	 * called automatically. It can be used or left as no-op by the implementor.
-	 *
-	 * @since 18.0.0
-	 */
-	public function onEvent(string $eventName, GenericEvent $event): void {
-		// TODO: Implement onEvent() method.
+	public function onEvent(string $eventName, GenericEvent $event, IRuleMatcher $ruleMatcher): void {
+		// Noop
 	}
 }
