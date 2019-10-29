@@ -29,12 +29,11 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\WorkflowEngine\IComplexOperation;
 use OCP\WorkflowEngine\IManager;
-use OCP\WorkflowEngine\IOperation;
 use OCP\WorkflowEngine\IRuleMatcher;
 use OCP\WorkflowEngine\ISpecificOperation;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class Operation implements IOperation, IComplexOperation, ISpecificOperation {
+class Operation implements IComplexOperation, ISpecificOperation {
 	/** @var IManager */
 	protected $manager;
 
