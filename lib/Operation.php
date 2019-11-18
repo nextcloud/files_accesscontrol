@@ -23,6 +23,7 @@ namespace OCA\FilesAccessControl;
 
 
 use OCA\WorkflowEngine\Entity\File;
+use OCP\EventDispatcher\Event;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Storage\IStorage;
 use OCP\IL10N;
@@ -31,7 +32,6 @@ use OCP\WorkflowEngine\IComplexOperation;
 use OCP\WorkflowEngine\IManager;
 use OCP\WorkflowEngine\IRuleMatcher;
 use OCP\WorkflowEngine\ISpecificOperation;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Operation implements IComplexOperation, ISpecificOperation {
 	/** @var IManager */
@@ -260,7 +260,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		return $this->l->t('File is accessed');
 	}
 
-	public function onEvent(string $eventName, GenericEvent $event, IRuleMatcher $ruleMatcher): void {
+	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
 		// Noop
 	}
 }
