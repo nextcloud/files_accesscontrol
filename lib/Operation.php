@@ -22,18 +22,26 @@
 namespace OCA\FilesAccessControl;
 
 
+use OCA\WorkflowEngine\Entity\File;
+use OCP\EventDispatcher\Event;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Storage\IStorage;
 use OCP\IL10N;
+use OCP\IURLGenerator;
+use OCP\WorkflowEngine\IComplexOperation;
 use OCP\WorkflowEngine\IManager;
-use OCP\WorkflowEngine\IOperation;
+use OCP\WorkflowEngine\IRuleMatcher;
+use OCP\WorkflowEngine\ISpecificOperation;
 
-class Operation implements IOperation{
+class Operation implements IComplexOperation, ISpecificOperation {
 	/** @var IManager */
 	protected $manager;
 
 	/** @var IL10N */
 	protected $l;
+
+	/** @var IURLGenerator */
+	protected $urlGenerator;
 
 	/** @var int */
 	protected $nestingLevel = 0;
@@ -42,9 +50,10 @@ class Operation implements IOperation{
 	 * @param IManager $manager
 	 * @param IL10N $l
 	 */
-	public function __construct(IManager $manager, IL10N $l) {
+	public function __construct(IManager $manager, IL10N $l, IURLGenerator $urlGenerator) {
 		$this->manager = $manager;
 		$this->l = $l;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	/**
@@ -63,8 +72,9 @@ class Operation implements IOperation{
 		$this->nestingLevel++;
 
 		$filePath = $this->translatePath($storage, $path);
-		$this->manager->setFileInfo($storage, $filePath);
-		$match = $this->manager->getMatchingOperations('OCA\FilesAccessControl\Operation');
+		$ruleMatcher = $this->manager->getRuleMatcher();
+		$ruleMatcher->setFileInfo($storage, $filePath);
+		$match = $ruleMatcher->getMatchingOperations(self::class);
 
 		$this->nestingLevel--;
 
@@ -166,9 +176,91 @@ class Operation implements IOperation{
 	 * @param string $operation
 	 * @throws \UnexpectedValueException
 	 */
-	public function validateOperation($name, array $checks, $operation) {
+	public function validateOperation(string $name, array $checks, string $operation): void {
 		if (empty($checks)) {
 			throw new \UnexpectedValueException($this->l->t('No rule given'));
 		}
+	}
+
+	/**
+	 * returns a translated name to be presented in the web interface
+	 *
+	 * Example: "Automated tagging" (en), "Aŭtomata etikedado" (eo)
+	 *
+	 * @since 18.0.0
+	 */
+	public function getDisplayName(): string {
+		return $this->l->t('Block access to a file');
+	}
+
+	/**
+	 * returns a translated, descriptive text to be presented in the web interface.
+	 *
+	 * It should be short and precise.
+	 *
+	 * Example: "Tag based automatic deletion of files after a given time." (en)
+	 *
+	 * @since 18.0.0
+	 */
+	public function getDescription(): string {
+		return '';
+	}
+
+	/**
+	 * returns the URL to the icon of the operator for display in the web interface.
+	 *
+	 * Usually, the implementation would utilize the `imagePath()` method of the
+	 * `\OCP\IURLGenerator` instance and simply return its result.
+	 *
+	 * Example implementation: return $this->urlGenerator->imagePath('myApp', 'cat.svg');
+	 *
+	 * @since 18.0.0
+	 */
+	public function getIcon(): string {
+		return $this->urlGenerator->imagePath('files_accesscontrol', 'app.svg');
+	}
+
+	/**
+	 * returns whether the operation can be used in the requested scope.
+	 *
+	 * Scope IDs are defined as constants in OCP\WorkflowEngine\IManager. At
+	 * time of writing these are SCOPE_ADMIN and SCOPE_USER.
+	 *
+	 * For possibly unknown future scopes the recommended behaviour is: if
+	 * user scope is permitted, the default behaviour should return `true`,
+	 * otherwise `false`.
+	 *
+	 * @since 18.0.0
+	 */
+	public function isAvailableForScope(int $scope): bool {
+		return $scope === IManager::SCOPE_ADMIN;
+	}
+
+	/**
+	 * returns the id of the entity the operator is designed for
+	 *
+	 * Example: 'WorkflowEngine_Entity_File'
+	 *
+	 * @since 18.0.0
+	 */
+	public function getEntityId(): string {
+		return File::class;
+	}
+
+	/**
+	 * As IComplexOperation chooses the triggering events itself, a hint has
+	 * to be shown to the user so make clear when this operation is becoming
+	 * active. This method returns such a translated string.
+	 *
+	 * Example: "When a file is accessed" (en)
+	 *
+	 * @since 18.0.0
+	 */
+	public function getTriggerHint(): string {
+		return $this->l->t('File is accessed');
+	}
+
+	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
+		// Noop
 	}
 }
