@@ -190,7 +190,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @since 18.0.0
 	 */
 	public function getDisplayName(): string {
-		return $this->l->t('Files access control');
+		return $this->l->t('Block access to a file');
 	}
 
 	/**
@@ -203,7 +203,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @since 18.0.0
 	 */
 	public function getDescription(): string {
-		return $this->l->t('Block access to a file');
+		return '';
 	}
 
 	/**
