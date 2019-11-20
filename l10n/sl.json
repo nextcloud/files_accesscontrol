@@ -1,6 +1,7 @@
 { "translations": {
     "No rule given" : "Ni podanega še nobenega pravila.",
     "File access control" : "Nadzor dostopa",
-    "Control access to files based on conditions" : "Nadzor dostopa do datotek na osnovi določenih pogojev"
+    "Control access to files based on conditions" : "Nadzor dostopa do datotek na osnovi določenih pogojev",
+    "Each rule group consists of one or more rules. A request matches a group if all rules evaluate to true. If a request matches at least one of the defined groups, the request is blocked and the file content can not be read or written." : "Vsako skupno pravil sestavlja eno ali več pravil. Zahteva je skladna s skupino, če se vsa pravila potrdijo kot skladna. Če je zahteva skladna z vsaj eno izmed določenih skupin, je ta blokirana in vsebine datoteke ni mogoče ne prebrati ne prepisati."
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }
