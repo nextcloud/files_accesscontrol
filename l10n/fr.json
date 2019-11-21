@@ -1,5 +1,7 @@
 { "translations": {
     "No rule given" : "Aucune règle donnée",
+    "Block access to a file" : "Bloquer l'accès à un fichier",
+    "File is accessed" : "Le fichier est consulté",
     "File access control" : "Contrôle d'accès aux fichiers",
     "Control access to files based on conditions" : "Le contrôle des fichiers est basé sur des conditions",
     "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Limiter l'accès aux fichiers basés sur des éléments comme le type de fichier, les membres de groupe utilisateur, l'heure et plus encore.",

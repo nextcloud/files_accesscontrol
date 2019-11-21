@@ -1,5 +1,7 @@
 { "translations": {
     "No rule given" : "Ingen regel angiven",
+    "Block access to a file" : "Blockera åtkomst till en fil",
+    "File is accessed" : "Filen öppnas",
     "File access control" : "Inställning för filåtkomst",
     "Control access to files based on conditions" : "Kontrollera åtkomst till filer baserat på villkor",
     "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Begränsa åtkomst till filer baserat på faktorer så som filtyp, grupp, tid och annat.",
