@@ -1,5 +1,7 @@
 { "translations": {
     "No rule given" : "没有定义规则",
+    "Block access to a file" : "阻止对文件的访问",
+    "File is accessed" : "文件被访问",
     "File access control" : "文件访问控制",
     "Control access to files based on conditions" : "根据条件控制对文件的访问",
     "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "根据文件类型，用户组成员资格，时间等因素限制对文件的访问。",
