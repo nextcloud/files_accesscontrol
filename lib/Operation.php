@@ -59,9 +59,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	/**
 	 * @param IStorage $storage
 	 * @param string $path
+	 * @param bool $isDir
 	 * @throws ForbiddenException
 	 */
-	public function checkFileAccess(IStorage $storage, $path) {
+	public function checkFileAccess(IStorage $storage, string $path, bool $isDir = false): void {
 		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
@@ -73,7 +74,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 		$filePath = $this->translatePath($storage, $path);
 		$ruleMatcher = $this->manager->getRuleMatcher();
-		$ruleMatcher->setFileInfo($storage, $filePath);
+		$ruleMatcher->setFileInfo($storage, $filePath, $isDir);
 		$match = $ruleMatcher->getMatchingOperations(self::class);
 
 		$this->nestingLevel--;

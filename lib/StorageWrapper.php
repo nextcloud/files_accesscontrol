@@ -53,9 +53,10 @@ class StorageWrapper extends Wrapper {
 
 	/**
 	 * @param string $path
+	 * @param bool $isDir
 	 */
-	protected function checkFileAccess($path) {
-		$this->operation->checkFileAccess($this, $path);
+	protected function checkFileAccess(string $path, bool $isDir = false): void {
+		$this->operation->checkFileAccess($this, $path, $isDir);
 	}
 
 	/*
@@ -69,7 +70,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function mkdir($path) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, true);
 		return $this->storage->mkdir($path);
 	}
 
@@ -80,7 +81,7 @@ class StorageWrapper extends Wrapper {
 	 * @return bool
 	 */
 	public function rmdir($path) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, true);
 		return $this->storage->rmdir($path);
 	}
 
