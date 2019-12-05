@@ -24,6 +24,8 @@ namespace OCA\FilesAccessControl\Tests;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
 use Test\TestCase;
+use OCP\Files\Storage\IStorage;
+use OCA\FilesAccessControl\Operation;
 
 class StorageWrapperTest extends TestCase {
 
@@ -36,16 +38,13 @@ class StorageWrapperTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->storage = $this->getMockBuilder('OCP\Files\Storage\IStorage')
-			->getMock();
+		$this->storage = $this->createMock(IStorage::class);
 
-		$this->operation = $this->getMockBuilder('OCA\FilesAccessControl\Operation')
-			->disableOriginalConstructor()
-			->getMock();
+		$this->operation = $this->createMock(Operation::class);
 	}
 
 	protected function getInstance(array $methods = []) {
-		return $this->getMockBuilder('OCA\FilesAccessControl\StorageWrapper')
+		return $this->getMockBuilder(StorageWrapper::class)
 			->setConstructorArgs([
 				[
 					'storage' => $this->storage,
