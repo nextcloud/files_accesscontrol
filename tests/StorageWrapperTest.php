@@ -33,7 +33,7 @@ class StorageWrapperTest extends TestCase {
 	/** @var \OCA\FilesAccessControl\Operation|\PHPUnit_Framework_MockObject_MockObject */
 	protected $operation;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->storage = $this->getMockBuilder('OCP\Files\Storage\IStorage')
