@@ -75,7 +75,8 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$filePath = $this->translatePath($storage, $path);
 		$ruleMatcher = $this->manager->getRuleMatcher();
 		$ruleMatcher->setFileInfo($storage, $filePath, $isDir);
-		$match = $ruleMatcher->getMatchingOperations(self::class);
+		$ruleMatcher->setOperation($this);
+		$match = $ruleMatcher->getFlows();
 
 		$this->nestingLevel--;
 
