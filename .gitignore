@@ -53,3 +53,6 @@ nbproject
 # Tests - auto-generated files
 /tests/coverage*
 /tests/clover.xml
+
+# Packaging
+build/
