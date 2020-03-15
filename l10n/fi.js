@@ -2,6 +2,8 @@ OC.L10N.register(
     "files_accesscontrol",
     {
     "No rule given" : "Sääntö puuttuu",
+    "Block access to a file" : "Estä pääsy tiedostoon",
+    "File is accessed" : "Tiedostoa käytetään",
     "File access control" : "Tiedostoihin pääsyn hallinta",
     "Control access to files based on conditions" : "Hallitse pääsyä tiedostoihin ehtoihin pohjautuen",
     "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Rajoita tiedostoihin pääsyä tiettyjen tekijöiden kuten tiedostotyypin, käyttäjäryhmä jäsenyyden, ajan yms. perusteella.",
