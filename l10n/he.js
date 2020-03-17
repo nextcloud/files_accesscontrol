@@ -2,6 +2,8 @@ OC.L10N.register(
     "files_accesscontrol",
     {
     "No rule given" : "לא צוין כל",
+    "Block access to a file" : "חסימת גישה לקובץ",
+    "File is accessed" : "מתבצעת גישה לקובץ",
     "File access control" : "בקרת גישה לקבצים",
     "Control access to files based on conditions" : "שליטה על הגישה לקבצים שלך לפי תנאים מסוימים",
     "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "הגבלת גישה לקבצים על בסיס מקדמים כגון סוג קובץ, חברות בקבוצת משתמשים, זמן ועוד.",
