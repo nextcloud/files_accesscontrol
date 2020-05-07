@@ -10,7 +10,7 @@ services:
 
 env:
   global:
-    - CORE_BRANCH=master
+    - CORE_BRANCH=stable19
     - APP_NAME=files_accesscontrol
   matrix:
     - DB=sqlite
