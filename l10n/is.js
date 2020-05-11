@@ -2,6 +2,8 @@ OC.L10N.register(
     "files_accesscontrol",
     {
     "No rule given" : "Engin regla gefin",
+    "Block access to a file" : "Loka á aðgang að skrá",
+    "File is accessed" : "Aðgangur er að skrá",
     "File access control" : "Aðgangsstýring skráa",
     "Control access to files based on conditions" : "Stýrðu aðgangi að skrám með skilyrðum",
     "Restrict access to files based on factors such as filetype, user group memberships, time and more." : "Takmarkaðu aðgang að skrám samkvæmt skilyrðum á borð við skráagerð, veru í hópi, tíma og fleiru.",
