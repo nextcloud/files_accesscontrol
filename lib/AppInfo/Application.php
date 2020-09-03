@@ -21,33 +21,24 @@
 
 namespace OCA\FilesAccessControl\AppInfo;
 
+use OC;
 use OC\Files\Filesystem;
+use OCA\Files_Sharing\SharedStorage;
+use OCA\FilesAccessControl\Listener\FlowRegisterOperationListener;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
-use OCA\WorkflowEngine\Manager;
+use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Files\Storage\IStorage;
 use OCP\Util;
-use OCP\WorkflowEngine\IManager;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
-class Application extends \OCP\AppFramework\App {
+class Application extends App implements IBootstrap {
 
 	public function __construct() {
 		parent::__construct('files_accesscontrol');
-	}
-
-	/**
-	 * Register all hooks and listeners
-	 */
-	public function registerHooksAndListeners() {
-		$container = $this->getContainer();
-		Util::connectHook('OC_Filesystem', 'preSetup', $this, 'addStorageWrapper');
-		$container->getServer()->getEventDispatcher()->addListener(IManager::EVENT_NAME_REG_OPERATION, function (GenericEvent $event) use ($container){
-			$operation = $container->query(Operation::class);
-			$event->getSubject()->registerOperation($operation);
-			Util::addScript('files_accesscontrol', 'admin');
-		});
-
 	}
 
 	/**
@@ -65,9 +56,9 @@ class Application extends \OCP\AppFramework\App {
 	 * @return StorageWrapper|IStorage
 	 */
 	public function addStorageWrapperCallback($mountPoint, IStorage $storage) {
-		if (!\OC::$CLI && !$storage->instanceOfStorage('OCA\Files_Sharing\SharedStorage')) {
-			/** @var \OCA\FilesAccessControl\Operation $operation */
-			$operation = $this->getContainer()->query('OCA\FilesAccessControl\Operation');
+		if (!OC::$CLI && !$storage->instanceOfStorage(SharedStorage::class)) {
+			/** @var Operation $operation */
+			$operation = $this->getContainer()->query(Operation::class);
 			return new StorageWrapper([
 				'storage' => $storage,
 				'mountPoint' => $mountPoint,
@@ -76,5 +67,13 @@ class Application extends \OCP\AppFramework\App {
 		}
 
 		return $storage;
+	}
+
+	public function register(IRegistrationContext $context): void {
+		Util::connectHook('OC_Filesystem', 'preSetup', $this, 'addStorageWrapper');
+		$context->registerEventListener(RegisterOperationsEvent::class, FlowRegisterOperationListener::class);
+	}
+
+	public function boot(IBootContext $context): void {
 	}
 }
