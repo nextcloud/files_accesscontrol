@@ -23,7 +23,7 @@ Learn more about File Access Control on [https://nextcloud.com/workflow](https:/
 	</types>
 
 	<documentation>
-		<admin>https://docs.nextcloud.com/server/19/go.php?to=admin-files-access-control</admin>
+		<admin>https://docs.nextcloud.com/server/20/go.php?to=admin-files-access-control</admin>
 	</documentation>
 
 	<category>files</category>
