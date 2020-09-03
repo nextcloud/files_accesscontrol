@@ -82,7 +82,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 		if (!empty($match)) {
 			// All Checks of one operation matched: prevent access
-			throw new ForbiddenException('Access denied', true);
+			throw new ForbiddenException('Access denied', false);
 		}
 	}
 
