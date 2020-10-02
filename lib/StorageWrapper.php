@@ -25,8 +25,9 @@ use OC\Files\Storage\Wrapper\Wrapper;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Storage\IStorage;
+use OCP\Files\Storage\IWriteStreamStorage;
 
-class StorageWrapper extends Wrapper {
+class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 
 	/** @var Operation */
 	protected $operation;
@@ -642,4 +643,18 @@ class StorageWrapper extends Wrapper {
 //			$this->storage->changeLock($path, $type, $provider);
 //		}
 //	}
+
+	public function writeStream(string $path, $stream, int $size = null): int {
+		// Required for object storage since  part file is not in the storage so we cannot check it before moving it to the storage
+		// As an alternative we might be able to check on the cache update/insert/delete though the Cache wrapper
+		$result = $this->storage->writeStream($path, $stream, $size);
+		try {
+			$this->checkFileAccess($path);
+		} catch (\Exception $e) {
+			$this->storage->unlink($path);
+			throw $e;
+		}
+		return $result;
+
+	}
 }
