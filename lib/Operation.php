@@ -102,7 +102,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 			if ($hasMountPoint) {
 				/** @var StorageWrapper $storage */
-				$fullPath = $storage->mountPoint . $path;
+				$fullPath = $storage->mountPoint . ltrim($path, '/');
 			} else {
 				$fullPath = $path;
 			}
