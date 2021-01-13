@@ -24,7 +24,10 @@ clean:
 appstore: clean
 	mkdir -p $(sign_dir)
 	rsync -a \
+	--exclude=/: \
 	--exclude=/build \
+	--exclude=/composer.json \
+	--exclude=/composer.lock \
 	--exclude=/docs \
 	--exclude=/translationfiles \
 	--exclude=/.tx \
@@ -41,6 +44,8 @@ appstore: clean
 	--exclude=/.scrutinizer.yml \
 	--exclude=/.travis.yml \
 	--exclude=/.drone.yml \
+	--exclude=/.php_cs.cache \
+	--exclude=/.php_cs.dist \
 	--exclude=/Makefile \
 	$(project_dir)/ $(sign_dir)/$(app_name)
 	tar -czf $(build_dir)/$(app_name)-$(version).tar.gz \
