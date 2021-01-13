@@ -36,7 +36,6 @@ use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
 class Application extends App implements IBootstrap {
-
 	public function __construct() {
 		parent::__construct('files_accesscontrol');
 	}
@@ -58,7 +57,7 @@ class Application extends App implements IBootstrap {
 	public function addStorageWrapperCallback($mountPoint, IStorage $storage) {
 		if (!OC::$CLI && !$storage->instanceOfStorage(SharedStorage::class)) {
 			/** @var Operation $operation */
-			$operation = $this->getContainer()->query(Operation::class);
+			$operation = $this->getContainer()->get(Operation::class);
 			return new StorageWrapper([
 				'storage' => $storage,
 				'mountPoint' => $mountPoint,
