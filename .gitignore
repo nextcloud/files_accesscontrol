@@ -53,6 +53,11 @@ nbproject
 # Tests - auto-generated files
 /tests/coverage*
 /tests/clover.xml
+.php_cs.cache
 
 # Packaging
 build/
+
+# Composer
+/vendor/
+
