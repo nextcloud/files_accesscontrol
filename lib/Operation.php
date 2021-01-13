@@ -21,7 +21,7 @@
 
 namespace OCA\FilesAccessControl;
 
-
+use Exception;
 use OCA\WorkflowEngine\Entity\File;
 use OCP\EventDispatcher\Event;
 use OCP\Files\ForbiddenException;
@@ -32,6 +32,8 @@ use OCP\WorkflowEngine\IComplexOperation;
 use OCP\WorkflowEngine\IManager;
 use OCP\WorkflowEngine\IRuleMatcher;
 use OCP\WorkflowEngine\ISpecificOperation;
+use ReflectionClass;
+use UnexpectedValueException;
 
 class Operation implements IComplexOperation, ISpecificOperation {
 	/** @var IManager */
@@ -86,16 +88,11 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		}
 	}
 
-	/**
-	 * @param IStorage $storage
-	 * @param string $path
-	 * @return bool
-	 */
-	protected function isBlockablePath(IStorage $storage, $path) {
+	protected function isBlockablePath(IStorage $storage, string $path): bool {
 		if (property_exists($storage, 'mountPoint')) {
 			$hasMountPoint = $storage instanceof StorageWrapper;
 			if (!$hasMountPoint) {
-				$ref = new \ReflectionClass($storage);
+				$ref = new ReflectionClass($storage);
 				$prop = $ref->getProperty('mountPoint');
 				$hasMountPoint = $prop->isPublic();
 			}
@@ -126,24 +123,20 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 	/**
 	 * For thumbnails and versions we want to check the tags of the original file
-	 *
-	 * @param IStorage $storage
-	 * @param string $path
-	 * @return bool
 	 */
-	protected function translatePath(IStorage $storage, $path) {
+	protected function translatePath(IStorage $storage, string $path): string {
 		if (substr_count($path, '/') < 1) {
 			return $path;
 		}
 
 		// 'files', 'path/to/file.txt'
-		list($folder, $innerPath) = explode('/', $path, 2);
+		[$folder, $innerPath] = explode('/', $path, 2);
 
 		if ($folder === 'files_versions') {
 			$innerPath = substr($innerPath, 0, strrpos($innerPath, '.v'));
 			return 'files/' . $innerPath;
-		} else if ($folder === 'thumbnails') {
-			list($fileId,) = explode('/', $innerPath, 2);
+		} elseif ($folder === 'thumbnails') {
+			[$fileId,] = explode('/', $innerPath, 2);
 			$innerPath = $storage->getCache()->getPathById($fileId);
 
 			if ($innerPath !== null) {
@@ -156,10 +149,9 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 	/**
 	 * Check if we are in the LoginController and if so, ignore the firewall
-	 * @return bool
 	 */
-	protected function isCreatingSkeletonFiles() {
-		$exception = new \Exception();
+	protected function isCreatingSkeletonFiles(): bool {
+		$exception = new Exception();
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
@@ -176,11 +168,11 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @param string $name
 	 * @param array[] $checks
 	 * @param string $operation
-	 * @throws \UnexpectedValueException
+	 * @throws UnexpectedValueException
 	 */
 	public function validateOperation(string $name, array $checks, string $operation): void {
 		if (empty($checks)) {
-			throw new \UnexpectedValueException($this->l->t('No rule given'));
+			throw new UnexpectedValueException($this->l->t('No rule given'));
 		}
 	}
 
