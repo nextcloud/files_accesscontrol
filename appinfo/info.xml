@@ -13,7 +13,7 @@ An example would be to deny access to MS Excel/XLSX files owned by the "Human Re
 
 Learn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow)</description>
 
-	<version>1.12.0</version>
+	<version>1.13.0</version>
 	<licence>agpl</licence>
 	<author>Morris Jobke</author>
 	<namespace>FilesAccessControl</namespace>
@@ -33,6 +33,6 @@ Learn more about File Access Control on [https://nextcloud.com/workflow](https:/
 	<repository type="git">https://github.com/nextcloud/files_accesscontrol.git</repository>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/files_accesscontrol/master/screenshots/flow.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="22" max-version="22" />
+		<nextcloud min-version="23" max-version="23" />
 	</dependencies>
 </info>
