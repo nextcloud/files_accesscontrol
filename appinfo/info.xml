@@ -15,6 +15,8 @@ Learn more about File Access Control on [https://nextcloud.com/workflow](https:/
 
 	<version>1.13.0</version>
 	<licence>agpl</licence>
+	<author>Arthur Schiwon</author>
+	<author>Joas Schilling</author>
 	<author>Morris Jobke</author>
 	<namespace>FilesAccessControl</namespace>
 
@@ -23,7 +25,7 @@ Learn more about File Access Control on [https://nextcloud.com/workflow](https:/
 	</types>
 
 	<documentation>
-		<admin>https://docs.nextcloud.com/server/19/go.php?to=admin-files-access-control</admin>
+		<admin>https://docs.nextcloud.com/server/stable/go.php?to=admin-files-access-control</admin>
 	</documentation>
 
 	<category>files</category>
