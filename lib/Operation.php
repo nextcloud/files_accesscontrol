@@ -114,6 +114,11 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		// '', admin, 'files', 'path/to/file.txt'
 		$segment = explode('/', $fullPath, 4);
 
+		if (isset($segment[2]) && $segment[1] === '__groupfolders' && $segment[2] === 'trash') {
+			// Special case, a file was deleted inside a groupfolder
+			return true;
+		}
+
 		return isset($segment[2]) && in_array($segment[2], [
 			'files',
 			'thumbnails',
