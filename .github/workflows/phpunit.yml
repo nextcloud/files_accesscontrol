@@ -48,7 +48,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite
-          tools: phpunit:8.5.13
+          tools: phpunit
           coverage: none
 
       - name: Set up Nextcloud
@@ -110,7 +110,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, mysql, pdo_mysql
-          tools: phpunit:8.5.13
+          tools: phpunit
           coverage: none
 
       - name: Set up Nextcloud
@@ -174,7 +174,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, pgsql, pdo_pgsql
-          tools: phpunit:8.5.13
+          tools: phpunit
           coverage: none
 
       - name: Set up Nextcloud
@@ -233,7 +233,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, iconv, fileinfo, intl, oci8
-          tools: phpunit:8.5.13
+          tools: phpunit
           coverage: none
 
       - name: Set up Nextcloud
