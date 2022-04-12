@@ -53,7 +53,8 @@ nbproject
 # Tests - auto-generated files
 /tests/coverage*
 /tests/clover.xml
-.php_cs.cache
+/tests/.phpunit.result.cache
+.php-cs-fixer.cache
 
 # Packaging
 build/
