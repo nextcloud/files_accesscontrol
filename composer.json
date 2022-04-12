@@ -5,6 +5,13 @@
 			"OCA\\Talk\\": "lib/"
 		}
 	},
+	"config": {
+		"optimize-autoloader": true,
+		"classmap-authoritative": true,
+		"platform": {
+			"php": "7.4"
+		}
+	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
