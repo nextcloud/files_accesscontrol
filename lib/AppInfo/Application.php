@@ -55,7 +55,7 @@ class Application extends App implements IBootstrap {
 	 * @return StorageWrapper|IStorage
 	 */
 	public function addStorageWrapperCallback($mountPoint, IStorage $storage) {
-		if (!OC::$CLI && !$storage->instanceOfStorage(SharedStorage::class)) {
+		if (!OC::$CLI && !$storage->instanceOfStorage(SharedStorage::class) && $mountPoint !== '/') {
 			/** @var Operation $operation */
 			$operation = $this->getContainer()->get(Operation::class);
 			return new StorageWrapper([
