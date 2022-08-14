@@ -4,30 +4,29 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "380d98c365ea6d7090f68c9396adbb24",
+    "content-hash": "d52cc7bbfbb8be2c238a3939cdcaf9ef",
     "packages": [],
     "packages-dev": [
         {
             "name": "christophwurst/nextcloud",
-            "version": "dev-master",
+            "version": "dev-stable24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "cacd9d6f65ac83adbd4f5a9b58ac480010109dc2"
+                "reference": "13c86ee94db9b60be2facd5494736bcb6405e405"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/cacd9d6f65ac83adbd4f5a9b58ac480010109dc2",
-                "reference": "cacd9d6f65ac83adbd4f5a9b58ac480010109dc2",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/13c86ee94db9b60be2facd5494736bcb6405e405",
+                "reference": "13c86ee94db9b60be2facd5494736bcb6405e405",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ~8.0 || ~8.1",
-                "psr/container": "^1.0",
+                "psr/container": "^1.1.1",
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^1.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -47,9 +46,9 @@
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
             "support": {
                 "issues": "https://github.com/ChristophWurst/nextcloud_composer/issues",
-                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/master"
+                "source": "https://github.com/ChristophWurst/nextcloud_composer/tree/stable24"
             },
-            "time": "2022-04-12T01:47:50+00:00"
+            "time": "2022-06-02T14:12:23+00:00"
         },
         {
             "name": "composer/pcre",
@@ -4215,5 +4214,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
