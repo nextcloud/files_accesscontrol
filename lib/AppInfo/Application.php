@@ -23,7 +23,6 @@ namespace OCA\FilesAccessControl\AppInfo;
 
 use OC;
 use OC\Files\Filesystem;
-use OCA\Files_Sharing\SharedStorage;
 use OCA\FilesAccessControl\Listener\FlowRegisterOperationListener;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
