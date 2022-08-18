@@ -1,27 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 1.2.5 - 2017-09-22
-
+## 1.13.1
 ### Fixed
-- Make sure the mountPoint property is public before using it [#79](https://github.com/nextcloud/files_accesscontrol/pull/79)
+* [Don't apply access control wrapper on the root mount (files_accesscontrol#245)](https://github.com/nextcloud/files_accesscontrol/pull/245)
+* [Don't exclude shared storage from wrapper (files_accesscontrol#251)](https://github.com/nextcloud/files_accesscontrol/pull/251)
 
-## 1.2.4 - 2017-05-22
 
-### Fixed
-- Chinese language file parse error [#63](https://github.com/nextcloud/files_accesscontrol/pull/63)
+## 1.13.0
+### Changed
+* Nextcloud 23 compatibility
 
-## 1.2.3 - 2017-05-08
-
-### Fixed
-- Move to "Files" category in the app store
-
-## 1.2.2 - 2017-04-26
-
-### Added
-- Add support for changelog
-
-## 1.2.1 - 2017-05-22
-
-### Added
-- Added sample screenshots
