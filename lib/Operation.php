@@ -36,22 +36,11 @@ use ReflectionClass;
 use UnexpectedValueException;
 
 class Operation implements IComplexOperation, ISpecificOperation {
-	/** @var IManager */
-	protected $manager;
+	protected IManager $manager;
+	protected IL10N $l;
+	protected IURLGenerator $urlGenerator;
+	protected int $nestingLevel = 0;
 
-	/** @var IL10N */
-	protected $l;
-
-	/** @var IURLGenerator */
-	protected $urlGenerator;
-
-	/** @var int */
-	protected $nestingLevel = 0;
-
-	/**
-	 * @param IManager $manager
-	 * @param IL10N $l
-	 */
 	public function __construct(IManager $manager, IL10N $l, IURLGenerator $urlGenerator) {
 		$this->manager = $manager;
 		$this->l = $l;
@@ -59,9 +48,6 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	}
 
 	/**
-	 * @param IStorage $storage
-	 * @param string $path
-	 * @param bool $isDir
 	 * @throws ForbiddenException
 	 */
 	public function checkFileAccess(IStorage $storage, string $path, bool $isDir = false): void {

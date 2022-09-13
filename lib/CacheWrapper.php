@@ -28,12 +28,9 @@ use OCP\Files\ForbiddenException;
 use OCP\Files\Storage\IStorage;
 
 class CacheWrapper extends Wrapper {
-	/** @var Operation */
-	protected $operation;
-	/** @var StorageWrapper */
-	protected $storage;
-	/** @var int */
-	protected $mask;
+	protected Operation $operation;
+	protected IStorage $storage;
+	protected int $mask;
 
 	/**
 	 * @param ICache $cache
