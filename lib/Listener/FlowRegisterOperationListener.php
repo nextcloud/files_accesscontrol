@@ -26,18 +26,16 @@ declare(strict_types=1);
 namespace OCA\FilesAccessControl\Listener;
 
 use OCA\FilesAccessControl\Operation;
-use OCP\AppFramework\IAppContainer;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
+use Psr\Container\ContainerInterface;
 
 class FlowRegisterOperationListener implements IEventListener {
+	private ContainerInterface $c;
 
-	/** @var IAppContainer */
-	private $c;
-
-	public function __construct(IAppContainer $c) {
+	public function __construct(ContainerInterface $c) {
 		$this->c = $c;
 	}
 
