@@ -55,7 +55,7 @@ class CacheWrapper extends Wrapper {
 	public const PERMISSION_DELETE = 8;
 
 	protected function formatCacheEntry($entry) {
-		if (isset($entry['path']) && isset($entry['permissions'])) {
+		if (isset($entry['path']) && isset($entry['permissions']) && $this->storage->getWrapperStorage() !== null) {
 			try {
 				$this->operation->checkFileAccess($this->storage, $entry['path'], $entry['mimetype'] === 'httpd/unix-directory');
 			} catch (ForbiddenException $e) {
