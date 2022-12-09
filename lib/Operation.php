@@ -25,6 +25,10 @@ use Exception;
 use OCA\WorkflowEngine\Entity\File;
 use OCP\EventDispatcher\Event;
 use OCP\Files\ForbiddenException;
+use OCP\Files\IRootFolder;
+use OCP\Files\Mount\IMountManager;
+use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorage;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -40,11 +44,17 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	protected IL10N $l;
 	protected IURLGenerator $urlGenerator;
 	protected int $nestingLevel = 0;
+	private File $fileEntity;
+	private IMountManager $mountManager;
+	private IRootFolder $rootFolder;
 
-	public function __construct(IManager $manager, IL10N $l, IURLGenerator $urlGenerator) {
+	public function __construct(IManager $manager, IL10N $l, IURLGenerator $urlGenerator, File $fileEntity, IMountManager $mountManager, IRootFolder $rootFolder) {
 		$this->manager = $manager;
 		$this->l = $l;
 		$this->urlGenerator = $urlGenerator;
+		$this->fileEntity = $fileEntity;
+		$this->mountManager = $mountManager;
+		$this->rootFolder = $rootFolder;
 	}
 
 	/**
@@ -63,6 +73,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$filePath = $this->translatePath($storage, $path);
 		$ruleMatcher = $this->manager->getRuleMatcher();
 		$ruleMatcher->setFileInfo($storage, $filePath, $isDir);
+		$node = $this->getNode($storage, $path);
+		if ($node !== null) {
+			$ruleMatcher->setEntitySubject($this->fileEntity, $node);
+		}
 		$ruleMatcher->setOperation($this);
 		$match = $ruleMatcher->getFlows();
 
@@ -247,5 +261,15 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
 		// Noop
+	}
+
+	private function getNode(IStorage $storage, string $path): ?Node {
+		$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
+		$fullPath = $mountPoint->getMountPoint() . $path;
+		try {
+			return $this->rootFolder->get($fullPath);
+		} catch (NotFoundException $e) {
+			return null;
+		}
 	}
 }
