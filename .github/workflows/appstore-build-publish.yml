@@ -10,7 +10,7 @@ on:
     types: [published]
 
 env:
-  PHP_VERSION: 7.4
+  PHP_VERSION: 8.1
 
 jobs:
   build_and_publish:
@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Check actor permission
-        uses: skjnldsv/check-actor-permission@v2
+        uses: skjnldsv/check-actor-permission@v2.1
         with:
           require: write
 
@@ -73,7 +73,7 @@ jobs:
 
       - name: Check composer.json
         id: check_composer
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v2
         with:
           files: "${{ env.APP_NAME }}/composer.json"
 
@@ -93,7 +93,7 @@ jobs:
 
       - name: Check Krankerl config
         id: krankerl
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v2
         with:
           files: ${{ env.APP_NAME }}/krankerl.toml
 
