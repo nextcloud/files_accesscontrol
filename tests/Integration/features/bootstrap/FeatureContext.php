@@ -29,6 +29,8 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ResponseInterface;
 
@@ -63,6 +65,29 @@ class FeatureContext implements Context {
 	 */
 	public function cleanUpBetweenTests() {
 		// TODO: Remove all created tags and workflows?
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" creates (global|user) flow with (\d+)$/
+	 */
+	public function createFlow(string $user, string $scope, int $statusCode, TableNode $tableNode) {
+		$this->setCurrentUser($user);
+
+		$formData = $tableNode->getRowsHash();
+
+		$checks = [];
+		foreach ($formData as $key => $value) {
+			if (strpos($key, 'checks-') === 0) {
+				$checks[] = json_decode($value, true);
+				unset($formData[$key]);
+			}
+		}
+
+		$formData['checks'] = $checks;
+		$formData['events'] = [];
+
+		$this->sendingToWith('POST', '/apps/workflowengine/api/v1/workflows/' . $scope, $formData);
+		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch');
 	}
 
 	/**
@@ -149,10 +174,10 @@ class FeatureContext implements Context {
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
 	 * @param string $verb
 	 * @param string $url
-	 * @param TableNode|null $body
+	 * @param array|null $body
 	 * @param array $headers
 	 */
-	public function sendingToWith(string $verb, string $url, ?TableNode $body = null, array $headers = []): void {
+	public function sendingToWith(string $verb, string $url, ?array $body = null, array $headers = []): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$client = new Client();
 		$options = [];
@@ -163,18 +188,20 @@ class FeatureContext implements Context {
 			$options['auth'] = [$this->currentUser, '123456'];
 		}
 
-		if ($body instanceof TableNode) {
-			$fd = $body->getRowsHash();
-			$options['form_params'] = $fd;
+		if (is_array($body)) {
+			$options[RequestOptions::JSON] = $body;
 		}
 
 		$options['headers'] = array_merge($headers, [
 			'OCS-APIREQUEST' => 'true',
+			'Accept' => 'application/json',
 		]);
 
 		try {
-			$this->response = $client->request($verb, $fullUrl, $options);
+			$this->response = $client->{$verb}($fullUrl, $options);
 		} catch (ClientException $ex) {
+			$this->response = $ex->getResponse();
+		} catch (ServerException $ex) {
 			$this->response = $ex->getResponse();
 		}
 	}
