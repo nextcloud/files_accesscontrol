@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
@@ -21,18 +23,19 @@
 
 namespace OCA\FilesAccessControl\Tests\Unit;
 
+use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
-use Test\TestCase;
 use OCP\Files\Storage\IStorage;
-use OCA\FilesAccessControl\Operation;
+use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
 class StorageWrapperTest extends TestCase {
 
-	/** @var \OCP\Files\Storage\IStorage|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IStorage|MockObject */
 	protected $storage;
 
-	/** @var \OCA\FilesAccessControl\Operation|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Operation|MockObject */
 	protected $operation;
 
 	protected function setUp(): void {
@@ -56,7 +59,7 @@ class StorageWrapperTest extends TestCase {
 			->getMock();
 	}
 
-	public function dataCheckFileAccess() {
+	public function dataCheckFileAccess(): array {
 		return [
 			['path1'],
 			['path2'],
@@ -67,23 +70,23 @@ class StorageWrapperTest extends TestCase {
 	 * @dataProvider dataCheckFileAccess
 	 * @param string $path
 	 */
-	public function testCheckFileAccess($path) {
+	public function testCheckFileAccess(string $path): void {
 		$storage = $this->getInstance();
 
 		$this->operation->expects($this->once())
 			->method('checkFileAccess')
 			->with($storage, $path);
 
-		$this->invokePrivate($storage, 'checkFileAccess', [$path]);
+		self::invokePrivate($storage, 'checkFileAccess', [$path]);
 	}
 
-	public function dataSinglePath() {
+	public function dataSinglePath(): array {
 		$methods = ['mkdir', 'rmdir', 'file_get_contents', 'unlink', 'getDirectDownload'];
 
 		$tests = [];
 		foreach ($methods as $method) {
-			$tests[] = [$method, 'path1', true, true];
-			$tests[] = [$method, 'path2', false, true];
+			$tests[] = [$method, 'path1', true, null];
+			$tests[] = [$method, 'path2', false, null];
 			$tests[] = [$method, 'path3', true, new ForbiddenException('Access denied', false)];
 			$tests[] = [$method, 'path4', false, new ForbiddenException('Access denied', false)];
 		}
@@ -95,13 +98,13 @@ class StorageWrapperTest extends TestCase {
 	 * @param string $method
 	 * @param string $path
 	 * @param bool $return
-	 * @param bool|\Exception $expected
+	 * @param null|\Exception $expected
 	 */
-	public function testSinglePath($method, $path, $return, $expected) {
+	public function testSinglePath(string $method, string $path, bool $return, ?\Exception $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
 
 
-		if (is_bool($expected)) {
+		if (is_null($expected)) {
 			$storage->expects($this->once())
 				->method('checkFileAccess')
 				->with($path);
@@ -111,7 +114,7 @@ class StorageWrapperTest extends TestCase {
 				->with($path)
 				->willReturn($return);
 
-			$this->assertSame($return, $this->invokePrivate($storage, $method, [$path]));
+			$this->assertSame($return, self::invokePrivate($storage, $method, [$path]));
 		} else {
 			$storage->expects($this->once())
 				->method('checkFileAccess')
@@ -124,7 +127,7 @@ class StorageWrapperTest extends TestCase {
 				->willReturn($return);
 
 			try {
-				$this->invokePrivate($storage, $method, [$path]);
+				self::invokePrivate($storage, $method, [$path]);
 				$this->fail('Should throw an exception before this');
 			} catch (\Exception $e) {
 				$this->assertSame($expected, $e);
@@ -132,7 +135,7 @@ class StorageWrapperTest extends TestCase {
 		}
 	}
 
-	public function dataSinglePathOverWritten() {
+	public function dataSinglePathOverWritten(): array {
 		$methods = ['isCreatable', 'isReadable', 'isUpdatable', 'isDeletable'];
 
 		$tests = [];
@@ -153,7 +156,7 @@ class StorageWrapperTest extends TestCase {
 	 * @param null|\Exception $checkAccess
 	 * @param bool $expected
 	 */
-	public function testSinglePathOverWritten($method, $path, $return, $checkAccess, $expected) {
+	public function testSinglePathOverWritten(string $method, string $path, bool $return, ?\Exception $checkAccess, bool $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
 
 
@@ -178,6 +181,6 @@ class StorageWrapperTest extends TestCase {
 				->willReturn($return);
 		}
 
-		$this->assertSame($expected, $this->invokePrivate($storage, $method, [$path]));
+		$this->assertSame($expected, self::invokePrivate($storage, $method, [$path]));
 	}
 }
