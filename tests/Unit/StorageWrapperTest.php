@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\FilesAccessControl\Tests;
+namespace OCA\FilesAccessControl\Tests\Unit;
 
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
