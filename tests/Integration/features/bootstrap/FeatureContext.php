@@ -23,6 +23,7 @@ declare(strict_types=1);
  *
  */
 require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/WebDav.php';
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
@@ -38,6 +39,11 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context {
+
+	use WebDav;
+
+	protected $regularUser = '123456';
+	protected $adminUser = ['admin', 'admin'];
 
 	/** @var string */
 	protected $currentUser;
@@ -64,7 +70,19 @@ class FeatureContext implements Context {
 	 * @AfterScenario
 	 */
 	public function cleanUpBetweenTests() {
-		// TODO: Remove all created tags and workflows?
+		// TODO: Remove all created tags?
+		$this->setCurrentUser('admin');
+		$this->sendingTo('DELETE', '/apps/files_accesscontrol_testing');
+		$this->assertStatusCode($this->response, 200);
+
+		try {
+			$this->userDeletesFile('test1', 'folder', '/subdir');
+		} catch (\Exception $e) {
+		}
+		try {
+			$this->userDeletesFile('test1', 'file', '/foobar.txt');
+		} catch (\Exception $e) {
+		}
 	}
 
 	/**
@@ -88,6 +106,31 @@ class FeatureContext implements Context {
 
 		$this->sendingToWith('POST', '/apps/workflowengine/api/v1/workflows/' . $scope, $formData);
 		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch');
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" shares file "([^"]*)" with user "([^"]*)"$/
+	 */
+	public function userSharesFile(string $sharer, string $file, string $sharee): void {
+		$this->setCurrentUser($sharer);
+		$this->sendingToWith('POST', '/apps/files_sharing/api/v1/shares', [
+			'path' => $file,
+			'permissions' => 19,
+			'shareType' => 0,
+			'shareWith' => $sharee,
+		]);
+	}
+
+	// ChecksumsContext
+	/**
+	 * @Then The webdav response should have a status code :statusCode
+	 * @param int $statusCode
+	 * @throws \Exception
+	 */
+	public function theWebdavResponseShouldHaveAStatusCode($statusCode) {
+		if ((int)$statusCode !== $this->response->getStatusCode()) {
+			throw new \Exception("Expected $statusCode, got ".$this->response->getStatusCode());
+		}
 	}
 
 	/**
