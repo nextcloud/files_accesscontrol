@@ -1,0 +1,111 @@
+name: Integration tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - stable*
+
+env:
+  APP_NAME: files_accesscontrol
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['8.1']
+        databases: ['sqlite', 'mysql', 'pgsql']
+        server-versions: ['stable25']
+        primary-storage: ['local', 'minio']
+
+    name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}-${{ matrix.primary-storage}}
+
+    services:
+      minio:
+        env:
+          MINIO_ACCESS_KEY: minio
+          MINIO_SECRET_KEY: minio123
+        image: bitnami/minio:2021.12.29
+        ports:
+          - "9000:9000"
+      postgres:
+        image: postgres:14
+        ports:
+          - 4445:5432/tcp
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: rootpassword
+          POSTGRES_DB: nextcloud
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 2s --health-retries 5
+      mysql:
+        image: mariadb:10.5
+        ports:
+          - 4444:3306/tcp
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+        options: --health-cmd="mysqladmin ping" --health-interval 5s --health-timeout 2s --health-retries 5
+
+    steps:
+      - name: Checkout server
+        uses: actions/checkout@v3
+        with:
+          repository: nextcloud/server
+          ref: ${{ matrix.server-versions }}
+
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+          cd build/integration && composer require --dev phpunit/phpunit:~9
+
+      - name: Checkout app
+        uses: actions/checkout@v3
+        with:
+          path: apps/${{ env.APP_NAME }}
+
+      - name: Set up php ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@2.24.0
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite, mysql, pdo_mysql, pgsql, pdo_pgsql, apcu
+          ini-values:
+            apc.enable_cli=on
+          coverage: none
+
+      - name: Set up dependencies
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer i --no-dev
+
+      - name: Set up Nextcloud for S3 primary storage
+        if: matrix.primary-storage == 'minio'
+        run: |
+          echo '<?php $CONFIG=["${{ matrix.key }}" => ["class" => "OC\Files\ObjectStore\S3", "arguments" => ["bucket" => "nextcloud", "autocreate" => true, "key" => "minio", "secret" => "minio123", "hostname" => "localhost", "port" => 9000, "use_ssl" => false, "use_path_style" => true, "uploadPartSize" => 52428800]]];' > config/config.php
+
+      - name: Set up Nextcloud
+        run: |
+          if [ "${{ matrix.databases }}" = "mysql" ]; then
+            export DB_PORT=4444
+          elif [ "${{ matrix.databases }}" = "pgsql" ]; then
+            export DB_PORT=4445
+          fi
+          mkdir data
+          ./occ maintenance:install --verbose --database=${{ matrix.databases }} --database-name=nextcloud --database-host=127.0.0.1 --database-port=$DB_PORT --database-user=root --database-pass=rootpassword --admin-user admin --admin-pass admin
+          ./occ config:system:set hashing_default_password --value=true --type=boolean
+          ./occ config:system:set memcache.local --value="\\OC\\Memcache\\APCu"
+          ./occ config:system:set memcache.distributed --value="\\OC\\Memcache\\APCu"
+          cat config/config.php
+          ./occ user:list
+          ./occ app:enable --force ${{ env.APP_NAME }}
+          ./occ config:system:set query_log_file --value '/home/runner/work/${{ env.APP_NAME }}/${{ env.APP_NAME }}/query.log'
+          php -S localhost:8080 &
+
+      - name: Run behat
+        working-directory: apps/${{ env.APP_NAME }}/tests/Integration
+        run: ./run.sh
