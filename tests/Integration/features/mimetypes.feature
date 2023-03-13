@@ -1,0 +1,67 @@
+
+  Feature: Mimetype blocking
+  Background:
+    Given user "test1" exists
+    Given as user "test1"
+    And using new dav path
+
+   Scenario: Can properly block path detected mimetypes for application/javscript
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "application/javascript"} |
+    Given User "test1" uploads file "data/code.js" to "/code.js"
+    And The webdav response should have a status code "403"
+    And Downloading file "/code.js" as "test1"
+    And The webdav response should have a status code "404"
+
+   # https://github.com/nextcloud/server/pull/23096
+   Scenario: Can properly block path detected mimetypes for text/plain
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "text/plain"} |
+    Given User "test1" uploads file "data/code.js" to "/code.js"
+    And The webdav response should have a status code "201"
+    And Downloading file "/code.js" as "test1"
+    And The webdav response should have a status code "200"
+    Given User "test1" uploads file "data/code.js" to "/code.txt"
+    And The webdav response should have a status code "403"
+    And Downloading file "/code.txt" as "test1"
+    And The webdav response should have a status code "404"
+
+  Scenario: Can properly block path detected mimetypes for application/octet-stream
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "application/octet-stream"} |
+    Given User "test1" uploads file "data/hello" to "/hello"
+    And The webdav response should have a status code "403"
+    And Downloading file "/hello" as "test1"
+    And The webdav response should have a status code "404"
+    Given User "test1" uploads file "data/nc.exe" to "/nc"
+    And The webdav response should have a status code "403"
+    And Downloading file "/nc" as "test1"
+    And The webdav response should have a status code "404"
+
+  Scenario: Can properly block path detected mimetypes for application/x-ms-dos-executable by extension
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "application/x-ms-dos-executable"} |
+    Given User "test1" uploads file "data/nc.exe" to "/nc.exe"
+    And The webdav response should have a status code "403"
+    And Downloading file "/nc.exe" as "test1"
+    And The webdav response should have a status code "404"

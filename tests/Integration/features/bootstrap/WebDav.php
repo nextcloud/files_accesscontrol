@@ -1009,4 +1009,17 @@ trait WebDav {
 		$currentFileID = $this->getFileIdForPath($user, $path);
 		Assert::assertEquals($currentFileID, $this->storedFileID);
 	}
+
+	/**
+	 * This function is needed to use a vertical fashion in the gherkin tables.
+	 *
+	 * @param array $arrayOfArrays
+	 * @return array
+	 */
+	public function simplifyArray($arrayOfArrays) {
+		$a = array_map(function ($subArray) {
+			return $subArray[0];
+		}, $arrayOfArrays);
+		return $a;
+	}
 }
