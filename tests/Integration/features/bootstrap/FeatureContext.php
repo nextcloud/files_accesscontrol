@@ -39,7 +39,6 @@ use Psr\Http\Message\ResponseInterface;
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context {
-
 	use WebDav;
 
 	protected $regularUser = '123456';
