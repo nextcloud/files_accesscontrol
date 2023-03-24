@@ -14,6 +14,7 @@ Feature: Author
     | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
     And User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
     Then The webdav response should have a status code "403"
+    Then User "test1" sees no files in the trashbin
 
   Scenario: Downloading file is blocked
     Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
@@ -30,6 +31,7 @@ Feature: Author
     Then The webdav response should have a status code "404"
     When Downloading file "/foobar.txt" with range "1-4"
     Then The webdav response should have a status code "404"
+    Then User "test1" sees no files in the trashbin
 
   Scenario: Updating file is blocked
     Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"

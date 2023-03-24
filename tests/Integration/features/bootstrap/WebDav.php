@@ -508,7 +508,6 @@ trait WebDav {
 			$this->response = $this->makeDavRequest($user, "SEARCH", '', [
 				'Content-Type' => 'text/xml'
 			], $body, '');
-			var_dump((string)$this->response->getBody());
 		} catch (\GuzzleHttp\Exception\ServerException $e) {
 			// 5xx responses cause a server exception
 			$this->response = $e->getResponse();
@@ -945,6 +944,25 @@ trait WebDav {
 			$this->userDeletesFile($user, "element", $element);
 		}
 	}
+
+	/**
+	 * @Then /^User "([^"]*)" sees no files in the trashbin$/
+	 * @param string $user
+	 */
+	public function userSeesNoFilesInTheTrashbin($user) {
+		$client = $this->getSabreClient($user);
+		$properties = [
+			'{DAV:}getetag'
+		];
+
+		$response = $client->propfind($this->makeSabrePath($user, 'trash', 'trashbin'), $properties, 1);
+
+		// Remove the root entry to only have the directory listing
+		unset($response['/remote.php/dav/trashbin/' . $user . '/trash/']);
+
+		Assert::assertEquals(0, count($response));
+	}
+
 
 
 	/**
