@@ -508,7 +508,6 @@ trait WebDav {
 			$this->response = $this->makeDavRequest($user, "SEARCH", '', [
 				'Content-Type' => 'text/xml'
 			], $body, '');
-			var_dump((string)$this->response->getBody());
 		} catch (\GuzzleHttp\Exception\ServerException $e) {
 			// 5xx responses cause a server exception
 			$this->response = $e->getResponse();
