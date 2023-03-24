@@ -7,7 +7,7 @@
 		 timeoutForLargeTests="900"
 		>
 	<testsuite name='Files Access Control Tests'>
-		<directory suffix='Test.php'>.</directory>
+		<directory suffix='Test.php'>Unit</directory>
 	</testsuite>
 	<!-- filters for code coverage -->
 	<filter>

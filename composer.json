@@ -16,7 +16,8 @@
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
-		"test:unit": "vendor/bin/phpunit -c tests/phpunit.xml"
+		"test:unit": "vendor/bin/phpunit -c tests/phpunit.xml",
+		"test:integration": "cd tests/Integration && ./run.sh"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^9.5",
