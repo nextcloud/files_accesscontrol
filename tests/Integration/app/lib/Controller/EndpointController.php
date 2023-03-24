@@ -31,7 +31,6 @@ use OCP\IDBConnection;
 use OCP\IRequest;
 
 class EndpointController extends OCSController {
-
 	public function __construct(
 		string $appName,
 		IRequest $request,
