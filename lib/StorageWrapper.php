@@ -315,9 +315,17 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function writeStream(string $path, $stream, int $size = null): int {
+		if (!$this->isPartFile($path)) {
+			$this->checkFileAccess($path);
+		}
+
+		$result = $this->storage->writeStream($path, $stream, $size);
+		if (!$this->isPartFile($path)) {
+			return $result;
+		}
+
 		// Required for object storage since  part file is not in the storage so we cannot check it before moving it to the storage
 		// As an alternative we might be able to check on the cache update/insert/delete though the Cache wrapper
-		$result = $this->storage->writeStream($path, $stream, $size);
 		try {
 			$this->checkFileAccess($path);
 		} catch (\Exception $e) {
@@ -325,5 +333,10 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			throw $e;
 		}
 		return $result;
+	}
+
+	private function isPartFile($path) {
+		$extension = pathinfo($path, PATHINFO_EXTENSION);
+		return ($extension === 'part');
 	}
 }
