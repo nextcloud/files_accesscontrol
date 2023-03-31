@@ -656,6 +656,16 @@ trait WebDav {
 	}
 
 	/**
+	 * @When User "([^"]*)" empties trashbin
+	 * @param string $user user
+	 */
+	public function emptyTrashbin($user) {
+		$client = $this->getSabreClient($user);
+		$response = $client->request('DELETE', $this->makeSabrePath($user, 'trash', 'trashbin'));
+		Assert::assertEquals(204, $response['statusCode']);
+	}
+
+	/**
 	 * @Given User :user created a folder :destination
 	 * @param string $user
 	 * @param string $destination
