@@ -945,6 +945,28 @@ trait WebDav {
 		}
 	}
 
+	/**
+	 * @Then /^User "([^"]*)" sees no files in the trashbin$/
+	 * @param string $user
+	 */
+	public function userSeesNoFilesInTheTrashbin($user) {
+		$client = $this->getSabreClient($user);
+		$properties = [
+			'{DAV:}getetag'
+		];
+
+		$response = $client->propfind($this->makeSabrePath($user, 'trash', 'trashbin'), $properties, 1);
+
+		// Remove the root entry to only have the directory listing
+		unset($response['/remote.php/dav/trashbin/' . $user . '/trash/']);
+
+		$count = count($response);
+		if ($count !== 0) {
+			var_dump($response);
+		}
+
+		Assert::assertEquals(0, $count);
+	}
 
 	/**
 	 * @param string $user
