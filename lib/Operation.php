@@ -36,6 +36,7 @@ use OCP\WorkflowEngine\IComplexOperation;
 use OCP\WorkflowEngine\IManager;
 use OCP\WorkflowEngine\IRuleMatcher;
 use OCP\WorkflowEngine\ISpecificOperation;
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use UnexpectedValueException;
 
@@ -47,14 +48,24 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	private File $fileEntity;
 	private IMountManager $mountManager;
 	private IRootFolder $rootFolder;
+	protected LoggerInterface $logger;
 
-	public function __construct(IManager $manager, IL10N $l, IURLGenerator $urlGenerator, File $fileEntity, IMountManager $mountManager, IRootFolder $rootFolder) {
+	public function __construct(
+		IManager $manager,
+		IL10N $l,
+		IURLGenerator $urlGenerator,
+		File $fileEntity,
+		IMountManager $mountManager,
+		IRootFolder $rootFolder,
+		LoggerInterface $logger
+	) {
 		$this->manager = $manager;
 		$this->l = $l;
 		$this->urlGenerator = $urlGenerator;
 		$this->fileEntity = $fileEntity;
 		$this->mountManager = $mountManager;
 		$this->rootFolder = $rootFolder;
+		$this->logger = $logger;
 	}
 
 	/**
@@ -83,6 +94,8 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$this->nestingLevel--;
 
 		if (!empty($match)) {
+			$e = new \RuntimeException('Access denied for path ' . $path . ' that is ' . ($isDir ? '' : 'not ') . 'a directory and matches rules: ' . json_encode($match));
+			$this->logger->debug($e->getMessage(), ['exception' => $e]);
 			// All Checks of one operation matched: prevent access
 			throw new ForbiddenException('Access denied', false);
 		}
