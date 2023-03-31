@@ -31,12 +31,14 @@ use OCP\IDBConnection;
 use OCP\IRequest;
 
 class EndpointController extends OCSController {
+	protected IDBConnection $db;
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		protected IDBConnection $db,
+		IDBConnection $db
 	) {
 		parent::__construct($appName, $request);
+		$this->db = $db;
 	}
 
 	/**
