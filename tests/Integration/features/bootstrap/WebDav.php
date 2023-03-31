@@ -960,7 +960,12 @@ trait WebDav {
 		// Remove the root entry to only have the directory listing
 		unset($response['/remote.php/dav/trashbin/' . $user . '/trash/']);
 
-		Assert::assertEquals(0, count($response));
+		$count = count($response);
+		if ($count !== 0) {
+			var_dump($response);
+		}
+
+		Assert::assertEquals(0, $count);
 	}
 
 
