@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>files_accesscontrol_testing</id>
+	<name>Files AccessControl Testing</name>
+	<summary><![CDATA[1]]></summary>
+	<description><![CDATA[2]]></description>
+
+	<version>0.3.0</version>
+	<licence>agpl</licence>
+	<author>Joas Schilling</author>
+	<namespace>FilesAccessControlTesting</namespace>
+
+	<types>
+		<logging/>
+	</types>
+
+	<category>tools</category>
+
+	<website>https://github.com/nextcloud/files_accesscontrol</website>
+	<bugs>https://github.com/nextcloud/files_accesscontrol/issues</bugs>
+	<repository>https://github.com/nextcloud/files_accesscontrol.git</repository>
+
+	<dependencies>
+		<nextcloud min-version="25" max-version="25" />
+	</dependencies>
+</info>
