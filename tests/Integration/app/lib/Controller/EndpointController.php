@@ -25,8 +25,8 @@ declare(strict_types=1);
 
 namespace OCA\FilesAccessControlTesting\Controller;
 
-use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
 use OCP\IRequest;
 
