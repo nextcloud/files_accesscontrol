@@ -265,6 +265,9 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 	private function getNode(IStorage $storage, string $path): ?Node {
 		$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
+		if ($mountPoint === false) {
+			return null;
+		}
 		$fullPath = $mountPoint->getMountPoint() . $path;
 		try {
 			return $this->rootFolder->get($fullPath);
