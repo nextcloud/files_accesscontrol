@@ -656,6 +656,16 @@ trait WebDav {
 	}
 
 	/**
+	 * @When User "([^"]*)" empties trashbin
+	 * @param string $user user
+	 */
+	public function emptyTrashbin($user) {
+		$client = $this->getSabreClient($user);
+		$response = $client->request('DELETE', $this->makeSabrePath($user, 'trash', 'trashbin'));
+		Assert::assertEquals(204, $response['statusCode']);
+	}
+
+	/**
 	 * @Given User :user created a folder :destination
 	 * @param string $user
 	 * @param string $destination
@@ -960,10 +970,13 @@ trait WebDav {
 		// Remove the root entry to only have the directory listing
 		unset($response['/remote.php/dav/trashbin/' . $user . '/trash/']);
 
-		Assert::assertEquals(0, count($response));
+		$count = count($response);
+		if ($count !== 0) {
+			var_dump($response);
+		}
+
+		Assert::assertEquals(0, $count);
 	}
-
-
 
 	/**
 	 * @param string $user

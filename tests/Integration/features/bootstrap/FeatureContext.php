@@ -82,6 +82,14 @@ class FeatureContext implements Context {
 			$this->userDeletesFile('test1', 'file', '/foobar.txt');
 		} catch (\Exception $e) {
 		}
+		try {
+			$this->userDeletesFile('test1', 'file', '/definitely.notexe');
+		} catch (\Exception $e) {
+		}
+		try {
+			$this->emptyTrashbin('test1');
+		} catch (\Exception $e) {
+		}
 	}
 
 	/**
