@@ -22,11 +22,16 @@
 namespace OCA\FilesAccessControl;
 
 use Exception;
+use OC\Files\FileInfo;
+use OC\Files\Node\Folder;
+use OC\Files\Node\LazyFolder;
+use OC\Files\View;
 use OCA\WorkflowEngine\Entity\File;
 use OCP\EventDispatcher\Event;
 use OCP\Files\ForbiddenException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Mount\IMountManager;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\Files\Storage\IStorage;
@@ -60,7 +65,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	/**
 	 * @throws ForbiddenException
 	 */
-	public function checkFileAccess(IStorage $storage, string $path, bool $isDir = false): void {
+	public function checkFileAccess(IStorage $storage, string $path, bool $isDir = false, $cacheEntry = null): void {
 		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
@@ -73,7 +78,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$filePath = $this->translatePath($storage, $path);
 		$ruleMatcher = $this->manager->getRuleMatcher();
 		$ruleMatcher->setFileInfo($storage, $filePath, $isDir);
-		$node = $this->getNode($storage, $path);
+		$node = $this->getNode($storage, $path, $cacheEntry);
 		if ($node !== null) {
 			$ruleMatcher->setEntitySubject($this->fileEntity, $node);
 		}
@@ -120,10 +125,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		}
 
 		return isset($segment[2]) && in_array($segment[2], [
-			'files',
-			'thumbnails',
-			'files_versions',
-		]);
+				'files',
+				'thumbnails',
+				'files_versions',
+			]);
 	}
 
 	/**
@@ -263,13 +268,36 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		// Noop
 	}
 
-	private function getNode(IStorage $storage, string $path): ?Node {
+	private function getNode(IStorage $storage, string $path, $cacheEntry = null): ?Node {
+		/** @var IMountPoint|false $mountPoint */
 		$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
-		$fullPath = $mountPoint->getMountPoint() . $path;
-		try {
-			return $this->rootFolder->get($fullPath);
-		} catch (NotFoundException $e) {
+		if (!$mountPoint === false) {
 			return null;
+		}
+
+		$fullPath = $mountPoint->getMountPoint() . $path;
+		if ($cacheEntry) {
+			// todo: LazyNode?
+			$info = new FileInfo($fullPath, $mountPoint->getStorage(), $path, $cacheEntry, $mountPoint);
+			$parentPath = dirname($fullPath);
+			$parent = new LazyFolder(function() use ($parentPath) {
+				return $this->rootFolder->get($parentPath);
+			}, [
+				'path' => $parentPath,
+			]);
+			$isDir = $info->getType() === FileInfo::TYPE_FOLDER;
+			$view = new View('');
+			if ($isDir) {
+				return new Folder($this->rootFolder, $view, $path, $info, $parent);
+			} else {
+				return new \OC\Files\Node\File($this->rootFolder, $view, $path, $info, $parent);
+			}
+		} else {
+			try {
+				return $this->rootFolder->get($fullPath);
+			} catch (NotFoundException $e) {
+				return null;
+			}
 		}
 	}
 }
