@@ -26,15 +26,20 @@ use OC\Files\Filesystem;
 use OCA\FilesAccessControl\Listener\FlowRegisterOperationListener;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
+use OCA\WorkflowEngine\Helper\ScopeContext;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Files\Storage\IStorage;
+use OCP\IUserSession;
 use OCP\Util;
+use OCP\WorkflowEngine\IManager;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
 
 class Application extends App implements IBootstrap {
+	private bool $hasAccessRules = true;
+
 	public function __construct() {
 		parent::__construct('files_accesscontrol');
 	}
@@ -48,13 +53,13 @@ class Application extends App implements IBootstrap {
 	}
 
 	/**
-	 * @internal
 	 * @param $mountPoint
 	 * @param IStorage $storage
 	 * @return StorageWrapper|IStorage
+	 * @internal
 	 */
 	public function addStorageWrapperCallback($mountPoint, IStorage $storage) {
-		if (!OC::$CLI && $mountPoint !== '/') {
+		if (!OC::$CLI && $mountPoint !== '/' && $this->hasAccessRules) {
 			/** @var Operation $operation */
 			$operation = $this->getContainer()->get(Operation::class);
 			return new StorageWrapper([
@@ -73,5 +78,12 @@ class Application extends App implements IBootstrap {
 	}
 
 	public function boot(IBootContext $context): void {
+		$this->hasAccessRules = $context->injectFn([$this, 'checkHasAccessRules']);
+	}
+
+	public function checkHasAccessRules(IManager $manager) {
+		$scope = new ScopeContext(IManager::SCOPE_ADMIN);
+		$operations = $manager->getOperations(Operation::class, $scope);
+		return count($operations) > 0;
 	}
 }
