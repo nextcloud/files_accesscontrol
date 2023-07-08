@@ -30,7 +30,6 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
 
 class StorageWrapper extends Wrapper implements IWriteStreamStorage {
-
 	/** @var Operation */
 	protected $operation;
 
