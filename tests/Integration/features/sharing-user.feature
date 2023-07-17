@@ -83,3 +83,38 @@ Feature: Sharing user
     And as user "test2"
     When User "test2" deletes file "/subdir/foobar.txt"
     Then The webdav response should have a status code "403"
+
+  Scenario: Upload and share a file that is allowed by mimetype exludes
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/directory"} |
+    | checks-1  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "application/pdf"} |
+
+    Given User "test1" uploads file "data/nextcloud.pdf" to "/nextcloud.pdf"
+    And The webdav response should have a status code "201"
+    And user "test1" shares file "/nextcloud.pdf" with user "test2"
+    And Downloading file "/nextcloud.pdf" as "test1"
+    And The webdav response should have a status code "200"
+    And Downloading file "/nextcloud.pdf" as "test2"
+    And The webdav response should have a status code "200"
+
+  Scenario: Share a file that is allowed by mimetype exludes
+    Given User "test1" uploads file "data/nextcloud.pdf" to "/nextcloud2.pdf"
+    And The webdav response should have a status code "201"
+    And user "test1" shares file "/nextcloud2.pdf" with user "test2"
+    And Downloading file "/nextcloud2.pdf" as "test1"
+    And The webdav response should have a status code "200"
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/directory"} |
+    | checks-1  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "application/pdf"} |
+    And Downloading file "/nextcloud2.pdf" as "test2"
+    And The webdav response should have a status code "200"
