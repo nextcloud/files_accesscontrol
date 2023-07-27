@@ -183,26 +183,26 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "baf13f74c7bad9e134b8b95fbea945d5bee1d98d"
+                "reference": "9f3b3ae222a6deb5c1fe70b8b2c1d64f9708bb50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/baf13f74c7bad9e134b8b95fbea945d5bee1d98d",
-                "reference": "baf13f74c7bad9e134b8b95fbea945d5bee1d98d",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/9f3b3ae222a6deb5c1fe70b8b2c1d64f9708bb50",
+                "reference": "9f3b3ae222a6deb5c1fe70b8b2c1d64f9708bb50",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4 || ~8.0 || ~8.1",
+                "php": "~8.0 || ~8.1 || ~8.2",
                 "psr/clock": "^1.0",
-                "psr/container": "^1.1.1",
+                "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
-                "psr/log": "^1.1"
+                "psr/log": "^1.1.4"
             },
             "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "26.0.0-dev"
+                    "dev-master": "28.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -220,7 +220,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2023-05-13T00:33:05+00:00"
+            "time": "2023-07-27T00:35:59+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -391,16 +391,16 @@
         },
         {
             "name": "php-cs-fixer/shim",
-            "version": "v3.17.0",
+            "version": "v3.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/shim.git",
-                "reference": "f51b4aed90565c447136f1d015798f6f7c82490f"
+                "reference": "f6692934a6d1fe40fd8bc3339487490baa4a6700"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/shim/zipball/f51b4aed90565c447136f1d015798f6f7c82490f",
-                "reference": "f51b4aed90565c447136f1d015798f6f7c82490f",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/shim/zipball/f6692934a6d1fe40fd8bc3339487490baa4a6700",
+                "reference": "f6692934a6d1fe40fd8bc3339487490baa4a6700",
                 "shasum": ""
             },
             "require": {
@@ -437,22 +437,22 @@
             "description": "A tool to automatically fix PHP code style",
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/shim/issues",
-                "source": "https://github.com/PHP-CS-Fixer/shim/tree/v3.17.0"
+                "source": "https://github.com/PHP-CS-Fixer/shim/tree/v3.22.0"
             },
-            "time": "2023-05-22T20:00:38+00:00"
+            "time": "2023-07-16T23:08:49+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.26",
+            "version": "9.2.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "443bc6912c9bd5b409254a40f4b0f4ced7c80ea1"
+                "reference": "b0a88255cb70d52653d80c890bd7f38740ea50d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/443bc6912c9bd5b409254a40f4b0f4ced7c80ea1",
-                "reference": "443bc6912c9bd5b409254a40f4b0f4ced7c80ea1",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/b0a88255cb70d52653d80c890bd7f38740ea50d1",
+                "reference": "b0a88255cb70d52653d80c890bd7f38740ea50d1",
                 "shasum": ""
             },
             "require": {
@@ -508,7 +508,8 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.26"
+                "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.27"
             },
             "funding": [
                 {
@@ -516,7 +517,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-03-06T12:58:08+00:00"
+            "time": "2023-07-26T13:44:30+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -912,22 +913,27 @@
         },
         {
             "name": "psr/container",
-            "version": "1.1.2",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/container.git",
-                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea"
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/513e0666f7216c7459170d56df27dfcefe1689ea",
-                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.4.0"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Psr\\Container\\": "src/"
@@ -954,9 +960,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/1.1.2"
+                "source": "https://github.com/php-fig/container/tree/2.0.2"
             },
-            "time": "2021-11-05T16:50:12+00:00"
+            "time": "2021-11-05T16:47:00+00:00"
         },
         {
             "name": "psr/event-dispatcher",
