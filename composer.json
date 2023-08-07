@@ -9,8 +9,9 @@
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
 		"platform": {
-			"php": "8.0"
-		}
+			"php": "8.0.2"
+		},
+		"sort-packages": true
 	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
@@ -20,8 +21,8 @@
 		"test:integration": "cd tests/Integration && ./run.sh"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^9.5",
-		"nextcloud/coding-standard": "^1.0.0",
-		"nextcloud/ocp": "dev-master"
+		"nextcloud/coding-standard": "^1.1",
+		"nextcloud/ocp": "dev-master",
+		"phpunit/phpunit": "^9.6"
 	}
 }
