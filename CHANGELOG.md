@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.15.3 - 2023-09-20
+### Fixed
+- Improve performance of checking the rules
+  [#424](https://github.com/nextcloud/files_accesscontrol/pull/424)
+
 ## 1.15.2 - 2023-08-24
 ### Fixed
 - Fix moving of mountpoints
