@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\FilesAccessControl;
 
 use OC\Files\Cache\Wrapper\CacheWrapper as Wrapper;
+use OC\Files\Storage\Wrapper\Jail;
 use OCP\Constants;
 use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
@@ -21,11 +22,11 @@ class CacheWrapper extends Wrapper {
 
 	public function __construct(
 		ICache $cache,
-		protected readonly IStorage $storage,
 		protected readonly IMountPoint $mountPoint,
 		protected readonly Operation $operation,
 	) {
 		parent::__construct($cache);
+		$this->storage = $mountPoint->getStorage();
 		$this->mask = Constants::PERMISSION_ALL
 			& ~Constants::PERMISSION_READ
 			& ~Constants::PERMISSION_CREATE
@@ -37,7 +38,13 @@ class CacheWrapper extends Wrapper {
 	protected function formatCacheEntry($entry) {
 		if (isset($entry['path']) && isset($entry['permissions'])) {
 			try {
-				$this->operation->checkFileAccess($this->storage, $entry['path'], $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry);
+				$storage = $this->storage;
+				$path = $entry['path'];
+				if ($storage?->instanceOfStorage(Jail::class)) {
+					/** @var Jail $storage */
+					$path = $storage->getJailedPath($path);
+				}
+				$this->operation->checkFileAccess($path, $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry);
 			} catch (ForbiddenException) {
 				$entry['permissions'] &= $this->mask;
 			}
