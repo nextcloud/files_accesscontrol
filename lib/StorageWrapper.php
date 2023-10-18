@@ -26,12 +26,14 @@ use OC\Files\Storage\Storage;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
 
 class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	/** @var Operation */
 	protected $operation;
+	protected IMountPoint $mount;
 
 	/** @var string */
 	public $mountPoint;
@@ -45,6 +47,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		parent::__construct($parameters);
 		$this->operation = $parameters['operation'];
 		$this->mountPoint = $parameters['mountPoint'];
+		$this->mount = $parameters['mount'];
 
 		$this->mask = Constants::PERMISSION_ALL;
 		$this->mask &= ~Constants::PERMISSION_READ;
@@ -57,7 +60,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	protected function checkFileAccess(string $path, bool $isDir = false): void {
-		$this->operation->checkFileAccess($this, $path, $isDir);
+		$this->operation->checkFileAccess($this, $path, $this->mount, $isDir);
 	}
 
 	/*
@@ -261,7 +264,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			$storage = $this;
 		}
 		$cache = $this->storage->getCache($path, $storage);
-		return new CacheWrapper($cache, $storage, $this->operation);
+		return new CacheWrapper($cache, $storage, $this->operation, $this->mount);
 	}
 
 	/**

@@ -26,6 +26,7 @@ namespace OCA\FilesAccessControl\Tests\Unit;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -75,7 +76,7 @@ class StorageWrapperTest extends TestCase {
 
 		$this->operation->expects($this->once())
 			->method('checkFileAccess')
-			->with($storage, $path);
+			->with($storage, $path, $this->createMock(IMountPoint::class), false);
 
 		self::invokePrivate($storage, 'checkFileAccess', [$path]);
 	}

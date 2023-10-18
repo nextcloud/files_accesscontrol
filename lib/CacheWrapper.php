@@ -25,11 +25,13 @@ use OC\Files\Cache\Wrapper\CacheWrapper as Wrapper;
 use OCP\Constants;
 use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 
 class CacheWrapper extends Wrapper {
 	protected Operation $operation;
 	protected IStorage $storage;
+	protected IMountPoint $mountPoint;
 	protected int $mask;
 
 	/**
@@ -37,10 +39,11 @@ class CacheWrapper extends Wrapper {
 	 * @param IStorage $storage
 	 * @param Operation $operation
 	 */
-	public function __construct(ICache $cache, IStorage $storage, Operation $operation) {
+	public function __construct(ICache $cache, IStorage $storage, Operation $operation, IMountPoint $mountPoint) {
 		parent::__construct($cache);
 		$this->storage = $storage;
 		$this->operation = $operation;
+		$this->mountPoint = $mountPoint;
 
 		$this->mask = Constants::PERMISSION_ALL;
 		$this->mask &= ~Constants::PERMISSION_READ;
@@ -57,7 +60,7 @@ class CacheWrapper extends Wrapper {
 	protected function formatCacheEntry($entry) {
 		if (isset($entry['path']) && isset($entry['permissions'])) {
 			try {
-				$this->operation->checkFileAccess($this->storage, $entry['path'], $entry['mimetype'] === 'httpd/unix-directory', $entry);
+				$this->operation->checkFileAccess($this->storage, $entry['path'], $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry);
 			} catch (ForbiddenException $e) {
 				$entry['permissions'] &= $this->mask;
 			}

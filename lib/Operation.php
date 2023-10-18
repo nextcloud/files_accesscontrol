@@ -77,7 +77,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @param array|ICacheEntry|null $cacheEntry
 	 * @throws ForbiddenException
 	 */
-	public function checkFileAccess(IStorage $storage, string $path, bool $isDir = false, $cacheEntry = null): void {
+	public function checkFileAccess(IStorage $storage, string $path, IMountPoint $mountPoint, bool $isDir, $cacheEntry = null): void {
 		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
@@ -90,7 +90,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$filePath = $this->translatePath($storage, $path);
 		$ruleMatcher = $this->manager->getRuleMatcher();
 		$ruleMatcher->setFileInfo($storage, $filePath, $isDir);
-		$node = $this->getNode($storage, $path, $cacheEntry);
+		$node = $this->getNode($path, $mountPoint, $cacheEntry);
 		if ($node !== null) {
 			$ruleMatcher->setEntitySubject($this->fileEntity, $node);
 		}
@@ -289,13 +289,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	/**
 	 * @param array|ICacheEntry|null $cacheEntry
 	 */
-	private function getNode(IStorage $storage, string $path, $cacheEntry = null): ?Node {
-		/** @var IMountPoint|false $mountPoint */
-		$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
-		if (!$mountPoint) {
-			return null;
-		}
-
+	private function getNode(string $path, IMountPoint $mountPoint, $cacheEntry = null): ?Node {
 		$fullPath = $mountPoint->getMountPoint() . $path;
 		if ($cacheEntry) {
 			// todo: LazyNode?
