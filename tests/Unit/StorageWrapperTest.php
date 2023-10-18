@@ -59,7 +59,7 @@ class StorageWrapperTest extends TestCase {
 
 		$this->operation->expects($this->once())
 			->method('checkFileAccess')
-			->with($storage, $path);
+			->with($storage, $path, $this->createMock(IMountPoint::class), false);
 
 		self::invokePrivate($storage, 'checkFileAccess', [$path, $isDir]);
 	}
