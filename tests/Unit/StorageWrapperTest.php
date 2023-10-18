@@ -39,12 +39,19 @@ class StorageWrapperTest extends TestCase {
 	/** @var Operation|MockObject */
 	protected $operation;
 
+	/** @var IMountPoint|MockObject */
+	protected $mountPoint;
+
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->storage = $this->createMock(IStorage::class);
 
 		$this->operation = $this->createMock(Operation::class);
+
+		$this->mountPoint = $this->createMock(IMountPoint::class);
+		$this->mountPoint->method('getMountPoint')->willReturn('mountPoint');
+		$this->mountPoint->method('getStorage')->willReturn($this->storage);
 	}
 
 	protected function getInstance(array $methods = []) {
@@ -53,6 +60,7 @@ class StorageWrapperTest extends TestCase {
 				[
 					'storage' => $this->storage,
 					'mountPoint' => 'mountPoint',
+					'mount' => $this->mountPoint,
 					'operation' => $this->operation,
 				]
 			])
@@ -76,7 +84,7 @@ class StorageWrapperTest extends TestCase {
 
 		$this->operation->expects($this->once())
 			->method('checkFileAccess')
-			->with($storage, $path, $this->createMock(IMountPoint::class), false);
+			->with($path, $this->mountPoint, false);
 
 		self::invokePrivate($storage, 'checkFileAccess', [$path]);
 	}

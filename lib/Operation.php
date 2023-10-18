@@ -77,13 +77,14 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @param array|ICacheEntry|null $cacheEntry
 	 * @throws ForbiddenException
 	 */
-	public function checkFileAccess(IStorage $storage, string $path, IMountPoint $mountPoint, bool $isDir, $cacheEntry = null): void {
-		if (!$this->isBlockablePath($storage, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
+	public function checkFileAccess(string $path, IMountPoint $mountPoint, bool $isDir, $cacheEntry = null): void {
+		if (!$this->isBlockablePath($mountPoint, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
 			// https://github.com/nextcloud/files_accesscontrol/issues/12
 			return;
 		}
+		$storage = $mountPoint->getStorage();
 
 		$this->nestingLevel++;
 
@@ -107,24 +108,8 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		}
 	}
 
-	protected function isBlockablePath(IStorage $storage, string $path): bool {
-		if (property_exists($storage, 'mountPoint')) {
-			$hasMountPoint = $storage instanceof StorageWrapper;
-			if (!$hasMountPoint) {
-				$ref = new ReflectionClass($storage);
-				$prop = $ref->getProperty('mountPoint');
-				$hasMountPoint = $prop->isPublic();
-			}
-
-			if ($hasMountPoint) {
-				/** @var StorageWrapper $storage */
-				$fullPath = $storage->mountPoint . ltrim($path, '/');
-			} else {
-				$fullPath = $path;
-			}
-		} else {
-			$fullPath = $path;
-		}
+	protected function isBlockablePath(IMountPoint $mountPoint, string $path): bool {
+		$fullPath = $mountPoint->getMountPoint() . ltrim($path, '/');
 
 		if (substr_count($fullPath, '/') < 3) {
 			return false;
@@ -291,22 +276,21 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 */
 	private function getNode(string $path, IMountPoint $mountPoint, $cacheEntry = null): ?Node {
 		$fullPath = $mountPoint->getMountPoint() . $path;
-		if ($cacheEntry) {
-			// todo: LazyNode?
-			$info = new FileInfo($fullPath, $mountPoint->getStorage(), $path, $cacheEntry, $mountPoint);
-			$isDir = $info->getType() === FileInfo::TYPE_FOLDER;
-			$view = new View('');
-			if ($isDir) {
-				return new Folder($this->rootFolder, $view, $path, $info);
-			} else {
-				return new \OC\Files\Node\File($this->rootFolder, $view, $path, $info);
-			}
+		if (!$cacheEntry) {
+			$cacheEntry = $mountPoint->getStorage()->getCache()->get($path);
+		}
+		if (!$cacheEntry) {
+			return null;
+		}
+
+		// todo: LazyNode?
+		$info = new FileInfo($fullPath, $mountPoint->getStorage(), $path, $cacheEntry, $mountPoint);
+		$isDir = $info->getType() === FileInfo::TYPE_FOLDER;
+		$view = new View('');
+		if ($isDir) {
+			return new Folder($this->rootFolder, $view, $path, $info);
 		} else {
-			try {
-				return $this->rootFolder->get($fullPath);
-			} catch (NotFoundException $e) {
-				return null;
-			}
+			return new \OC\Files\Node\File($this->rootFolder, $view, $path, $info);
 		}
 	}
 }

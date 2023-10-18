@@ -60,7 +60,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	protected function checkFileAccess(string $path, bool $isDir = false): void {
-		$this->operation->checkFileAccess($this, $path, $this->mount, $isDir);
+		$this->operation->checkFileAccess($path, $this->mount, $isDir);
 	}
 
 	/*
@@ -264,7 +264,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			$storage = $this;
 		}
 		$cache = $this->storage->getCache($path, $storage);
-		return new CacheWrapper($cache, $storage, $this->operation, $this->mount);
+		return new CacheWrapper($cache, $this->operation, $this->mount);
 	}
 
 	/**
