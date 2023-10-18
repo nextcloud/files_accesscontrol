@@ -12,14 +12,17 @@ use OC\Files\Cache\Wrapper\CacheWrapper as Wrapper;
 use OCP\Constants;
 use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 
 class CacheWrapper extends Wrapper {
 	protected readonly int $mask;
+	protected readonly ?IStorage $storage;
 
 	public function __construct(
 		ICache $cache,
 		protected readonly IStorage $storage,
+		protected readonly IMountPoint $mountPoint,
 		protected readonly Operation $operation,
 	) {
 		parent::__construct($cache);
@@ -33,7 +36,7 @@ class CacheWrapper extends Wrapper {
 	protected function formatCacheEntry($entry) {
 		if (isset($entry['path']) && isset($entry['permissions'])) {
 			try {
-				$this->operation->checkFileAccess($this->storage, $entry['path'], $entry['mimetype'] === 'httpd/unix-directory', $entry);
+				$this->operation->checkFileAccess($this->storage, $entry['path'], $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry);
 			} catch (ForbiddenException) {
 				$entry['permissions'] &= $this->mask;
 			}
