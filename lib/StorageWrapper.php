@@ -21,7 +21,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	protected readonly Operation $operation;
 	public readonly string $mountPoint;
 	protected readonly int $mask;
-	private readonly IMountPoint $mount;
+	protected readonly IMountPoint $mount;
 
 	/**
 	 * @param array $parameters
@@ -43,7 +43,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	protected function checkFileAccess(string $path, ?bool $isDir = null): void {
-		$this->operation->checkFileAccess($this, $path, is_bool($isDir) ? $isDir : $this->is_dir($path));
+		$this->operation->checkFileAccess($this, $path, $this->mount, is_bool($isDir) ? $isDir : $this->is_dir($path));
 	}
 
 	/*
@@ -264,7 +264,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			$storage = $this;
 		}
 		$cache = $this->storage->getCache($path, $storage);
-		return new CacheWrapper($cache, $storage, $this->operation);
+		return new CacheWrapper($cache, $storage, $this->mount, $this->operation);
 	}
 
 	/**
