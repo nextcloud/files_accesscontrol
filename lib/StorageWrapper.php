@@ -313,7 +313,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	/**
 	 * @throws ForbiddenException
 	 */
-	public function writeStream(string $path, $stream, int $size = null): int {
+	public function writeStream(string $path, $stream, ?int $size = null): int {
 		if (!$this->isPartFile($path)) {
 			$this->checkFileAccess($path);
 		}
