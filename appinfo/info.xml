@@ -18,6 +18,7 @@ Learn more about File Access Control on [https://nextcloud.com/workflow](https:/
 	<author>Arthur Schiwon</author>
 	<author>Joas Schilling</author>
 	<author>Morris Jobke</author>
+
 	<namespace>FilesAccessControl</namespace>
 
 	<types>
