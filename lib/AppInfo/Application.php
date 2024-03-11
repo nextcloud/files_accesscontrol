@@ -30,6 +30,7 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
@@ -53,13 +54,14 @@ class Application extends App implements IBootstrap {
 	 * @param IStorage $storage
 	 * @return StorageWrapper|IStorage
 	 */
-	public function addStorageWrapperCallback($mountPoint, IStorage $storage) {
+	public function addStorageWrapperCallback($mountPoint, IStorage $storage, IMountPoint $mount) {
 		if (!OC::$CLI && $mountPoint !== '/') {
 			/** @var Operation $operation */
 			$operation = $this->getContainer()->get(Operation::class);
 			return new StorageWrapper([
 				'storage' => $storage,
 				'mountPoint' => $mountPoint,
+				'mount' => $mount,
 				'operation' => $operation,
 			]);
 		}
