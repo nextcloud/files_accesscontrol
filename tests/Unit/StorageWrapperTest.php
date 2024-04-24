@@ -61,23 +61,22 @@ class StorageWrapperTest extends TestCase {
 
 	public function dataCheckFileAccess(): array {
 		return [
-			['path1'],
-			['path2'],
+			['path1', true],
+			['path2', false],
 		];
 	}
 
 	/**
 	 * @dataProvider dataCheckFileAccess
-	 * @param string $path
 	 */
-	public function testCheckFileAccess(string $path): void {
+	public function testCheckFileAccess(string $path, bool $isDir): void {
 		$storage = $this->getInstance();
 
 		$this->operation->expects($this->once())
 			->method('checkFileAccess')
 			->with($storage, $path);
 
-		self::invokePrivate($storage, 'checkFileAccess', [$path]);
+		self::invokePrivate($storage, 'checkFileAccess', [$path, $isDir]);
 	}
 
 	public function dataSinglePath(): array {

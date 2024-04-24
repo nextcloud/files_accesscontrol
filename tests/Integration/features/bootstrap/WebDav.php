@@ -128,18 +128,19 @@ trait WebDav {
 	}
 
 	/**
-	 * @When /^User "([^"]*)" copies file "([^"]*)" to "([^"]*)"$/
+	 * @When /^User "([^"]*)" copies (file|folder|entry) "([^"]*)" to "([^"]*)"$/
 	 * @param string $user
 	 * @param string $fileSource
 	 * @param string $fileDestination
 	 */
-	public function userCopiesFileTo($user, $fileSource, $fileDestination) {
+	public function userCopiesFileTo($user, $entry, $fileSource, $fileDestination) {
 		$fullUrl = $this->baseUrl . $this->getDavFilesPath($user);
 		$headers['Destination'] = $fullUrl . $fileDestination;
 		try {
 			$this->response = $this->makeDavRequest($user, 'COPY', $fileSource, $headers);
 		} catch (\GuzzleHttp\Exception\ClientException $e) {
-			// 4xx and 5xx responses cause an exception
+			$this->response = $e->getResponse();
+		} catch (\GuzzleHttp\Exception\ServerException $e) {
 			$this->response = $e->getResponse();
 		}
 	}
@@ -383,7 +384,9 @@ trait WebDav {
 		}
 	}
 
-	/*Returns the elements of a propfind, $folderDepth requires 1 to see elements without children*/
+	/**
+	 * Returns the elements of a propfind, $folderDepth requires 1 to see elements without children
+	 */
 	public function listFolder($user, $path, $folderDepth, $properties = null) {
 		$client = $this->getSabreClient($user);
 		if (!$properties) {
@@ -421,7 +424,7 @@ trait WebDav {
 	}
 
 	/**
-	 * Returns the elements of a searc command
+	 * Returns the elements of a search command
 	 * @param string $properties properties which needs to be included in the report
 	 * @param string $filterRules filter-rules to choose what needs to appear in the report
 	 */
@@ -517,7 +520,8 @@ trait WebDav {
 		}
 	}
 
-	/* Returns the elements of a report command
+	/**
+	 * Returns the elements of a report command
 	 * @param string $user
 	 * @param string $path
 	 * @param string $properties properties which needs to be included in the report
