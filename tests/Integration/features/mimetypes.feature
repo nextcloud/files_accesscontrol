@@ -65,3 +65,23 @@
     And The webdav response should have a status code "403"
     And Downloading file "/nc.exe" as "test1"
     And The webdav response should have a status code "404"
+
+  Scenario: Blocking anything but folders still allows to rename folders
+    Given User "test1" uploads file "data/hello" to "/hello"
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
+    Given User "test1" created a folder "/folder"
+    And The webdav response should have a status code "201"
+    When User "test1" moves folder "/folder" to "/folder-renamed"
+    And The webdav response should have a status code "201"
+    When User "test1" copies folder "/folder-renamed" to "/folder-copied"
+    And The webdav response should have a status code "201"
+    When User "test1" moves file "/hello" to "/hello.txt"
+    And The webdav response should have a status code "403"
+    When User "test1" copies file "/hello" to "/hello.txt"
+    And The webdav response should have a status code "403"

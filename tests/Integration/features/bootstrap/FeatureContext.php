@@ -131,11 +131,16 @@ class FeatureContext implements Context {
 	// ChecksumsContext
 	/**
 	 * @Then The webdav response should have a status code :statusCode
-	 * @param int $statusCode
+	 * @param string $statusCode
 	 * @throws \Exception
 	 */
 	public function theWebdavResponseShouldHaveAStatusCode($statusCode) {
-		if ((int)$statusCode !== $this->response->getStatusCode()) {
+		if (str_contains($statusCode, '|')) {
+			$statusCodes = array_map('intval', explode('|', $statusCode));
+		} else {
+			$statusCodes = [(int) $statusCode];
+		}
+		if (!in_array($this->response->getStatusCode(), $statusCodes, true)) {
 			throw new \Exception("Expected $statusCode, got ".$this->response->getStatusCode());
 		}
 	}

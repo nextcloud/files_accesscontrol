@@ -56,8 +56,8 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	/**
 	 * @throws ForbiddenException
 	 */
-	protected function checkFileAccess(string $path, bool $isDir = false): void {
-		$this->operation->checkFileAccess($this, $path, $isDir);
+	protected function checkFileAccess(string $path, ?bool $isDir = null): void {
+		$this->operation->checkFileAccess($this, $path, is_bool($isDir) ? $isDir : $this->is_dir($path));
 	}
 
 	/*
@@ -165,7 +165,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function file_get_contents($path) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, false);
 		return $this->storage->file_get_contents($path);
 	}
 
@@ -178,7 +178,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function file_put_contents($path, $data) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, false);
 		return $this->storage->file_put_contents($path, $data);
 	}
 
@@ -190,7 +190,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function unlink($path) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, false);
 		return $this->storage->unlink($path);
 	}
 
@@ -203,8 +203,9 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function rename($path1, $path2) {
-		$this->checkFileAccess($path1);
-		$this->checkFileAccess($path2);
+		$isDir = $this->is_dir($path1);
+		$this->checkFileAccess($path1, $isDir);
+		$this->checkFileAccess($path2, $isDir);
 		return $this->storage->rename($path1, $path2);
 	}
 
@@ -217,8 +218,9 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function copy($path1, $path2) {
-		$this->checkFileAccess($path1);
-		$this->checkFileAccess($path2);
+		$isDir = $this->is_dir($path1);
+		$this->checkFileAccess($path1, $isDir);
+		$this->checkFileAccess($path2, $isDir);
 		return $this->storage->copy($path1, $path2);
 	}
 
@@ -231,7 +233,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function fopen($path, $mode) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, false);
 		return $this->storage->fopen($path, $mode);
 	}
 
@@ -245,7 +247,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function touch($path, $mtime = null) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, false);
 		return $this->storage->touch($path, $mtime);
 	}
 
@@ -274,7 +276,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	public function getDirectDownload($path) {
-		$this->checkFileAccess($path);
+		$this->checkFileAccess($path, false);
 		return $this->storage->getDirectDownload($path);
 	}
 
@@ -290,7 +292,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			return $this->copy($sourceInternalPath, $targetInternalPath);
 		}
 
-		$this->checkFileAccess($targetInternalPath);
+		$this->checkFileAccess($targetInternalPath, $sourceStorage->is_dir($sourceInternalPath));
 		return $this->storage->copyFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 
@@ -306,7 +308,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			return $this->rename($sourceInternalPath, $targetInternalPath);
 		}
 
-		$this->checkFileAccess($targetInternalPath);
+		$this->checkFileAccess($targetInternalPath, $sourceStorage->is_dir($sourceInternalPath));
 		return $this->storage->moveFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 
@@ -315,7 +317,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	public function writeStream(string $path, $stream, ?int $size = null): int {
 		if (!$this->isPartFile($path)) {
-			$this->checkFileAccess($path);
+			$this->checkFileAccess($path, false);
 		}
 
 		$result = $this->storage->writeStream($path, $stream, $size);
@@ -323,10 +325,10 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			return $result;
 		}
 
-		// Required for object storage since  part file is not in the storage so we cannot check it before moving it to the storage
+		// Required for object storage since part file is not in the storage so we cannot check it before moving it to the storage
 		// As an alternative we might be able to check on the cache update/insert/delete though the Cache wrapper
 		try {
-			$this->checkFileAccess($path);
+			$this->checkFileAccess($path, false);
 		} catch (\Exception $e) {
 			$this->storage->unlink($path);
 			throw $e;
