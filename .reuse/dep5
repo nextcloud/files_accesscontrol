@@ -8,15 +8,11 @@ Copyright: none
 License: CC0-1.0
 
 Files: l10n/*.js l10n/*.json
-Copyright: 2016 Nextcloud contributors
+Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
 License: AGPL-3.0-or-later
 
 Files: js/*.js.map js/*.js js/*.mjs js/*.mjs.map js/templates/*.handlebars emptyTemplates/*
 Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
-License: AGPL-3.0-or-later
-
-Files: composer/autoload.php composer/composer/autoload_classmap.php composer/composer/autoload_namespaces.php composer/composer/autoload_psr4.php composer/composer/autoload_real.php composer/composer/autoload_static.php composer/composer/installed.php
-Copyright: 2023 Nextcloud GmbH and Nextcloud contributors
 License: AGPL-3.0-or-later
 
 Files: screenshots/flow.png
