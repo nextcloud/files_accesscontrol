@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.19.1 – 2024-05-08
+### Fixed
+- Correctly handle directories when copying or renaming
+  [#210](https://github.com/nextcloud/files_accesscontrol/issues/210)
+
 ## 1.19.0 – 2024-03-08
 ### Changed
 - Nextcloud 29 compatibility
