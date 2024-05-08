@@ -1,4 +1,10 @@
+<!--
+  - SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Files access control
+
+[![REUSE status](https://api.reuse.software/badge/github.com/nextcloud/files_accesscontrol)](https://api.reuse.software/info/github.com/nextcloud/files_accesscontrol)
 
 Nextcloud's Files access control app enables administrators to protect data from unauthorized access or modifications.
 
