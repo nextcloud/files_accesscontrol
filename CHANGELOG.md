@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.17.2 – 2024-05-08
+### Fixed
+- Correctly handle directories when copying or renaming
+  [#210](https://github.com/nextcloud/files_accesscontrol/issues/210)
+
 ## 1.17.1 - 2023-09-20
 ### Fixed
 - Improve performance of checking the rules
