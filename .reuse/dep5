@@ -3,8 +3,12 @@ Upstream-Name: files_accesscontrol
 Upstream-Contact: Nextcloud <info@nextcloud.com>
 Source: https://github.com/nextcloud/files_accesscontrol
 
-Files: .gitattributes .github/CODEOWNERS .github/dependabot.yml .editorconfig composer.json composer.lock .gitignore tests/* .tx/config
+Files: .gitattributes .github/CODEOWNERS .github/dependabot.yml .editorconfig composer.json composer.lock .gitignore tests/Integration/data .tx/config
 Copyright: none
+License: CC0-1.0
+
+Files: tests/Integration/features/*.feature
+Copyright: 2023 Nextcloud GmbH and Nextcloud contributors
 License: CC0-1.0
 
 Files: .github/issue_template.md .github/contributing.md
