@@ -3,7 +3,7 @@ Upstream-Name: files_accesscontrol
 Upstream-Contact: Nextcloud <info@nextcloud.com>
 Source: https://github.com/nextcloud/files_accesscontrol
 
-Files: .gitattributes .github/CODEOWNERS .github/dependabot.yml .editorconfig composer.json composer.lock .gitignore tests/Integration/data .tx/config
+Files: .gitattributes .github/CODEOWNERS .github/dependabot.yml .editorconfig composer.json composer.lock tests/Integration/composer.json tests/phpunit.xml tests/Integration/composer.lock .gitignore tests/Integration/data .tx/config
 Copyright: none
 License: CC0-1.0
 
@@ -16,10 +16,6 @@ Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
 License: CC0-1.0
 
 Files: l10n/*.js l10n/*.json
-Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
-License: AGPL-3.0-or-later
-
-Files: js/*.js.map js/*.js js/*.mjs js/*.mjs.map js/templates/*.handlebars emptyTemplates/*
 Copyright: 2016 Nextcloud GmbH and Nextcloud contributors
 License: AGPL-3.0-or-later
 
