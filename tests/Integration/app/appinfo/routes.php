@@ -26,5 +26,7 @@ declare(strict_types=1);
 return [
 	'ocs' => [
 		['name' => 'Endpoint#reset', 'url' => '', 'verb' => 'DELETE'],
+		['name' => 'Endpoint#prepare', 'url' => '', 'verb' => 'POST'],
+		['name' => 'Endpoint#tagFile', 'url' => '/tag-file', 'verb' => 'POST'],
 	],
 ];
