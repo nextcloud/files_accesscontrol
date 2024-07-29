@@ -1,24 +1,18 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<phpunit bootstrap="bootstrap.php"
-		 verbose="true"
-		 convertDeprecationsToExceptions="true"
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 bootstrap="bootstrap.php"
 		 timeoutForSmallTests="900"
 		 timeoutForMediumTests="900"
 		 timeoutForLargeTests="900"
-		>
-	<testsuite name='Files Access Control Tests'>
-		<directory suffix='Test.php'>Unit</directory>
-	</testsuite>
-	<!-- filters for code coverage -->
-	<filter>
-		<whitelist>
-			<directory suffix=".php">../../files_accesscontrol/appinfo</directory>
-			<directory suffix=".php">../../files_accesscontrol/lib</directory>
-		</whitelist>
-	</filter>
-	<logging>
-		<!-- and this is where your report will be written -->
-		<log type="coverage-clover" target="./clover.xml"/>
-	</logging>
+		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+		 cacheDirectory=".phpunit.cache">
+  <testsuite name="Files Access Control Tests">
+    <directory suffix="Test.php">Unit</directory>
+  </testsuite>
+  <source>
+    <include>
+      <directory suffix=".php">../../files_accesscontrol/appinfo</directory>
+      <directory suffix=".php">../../files_accesscontrol/lib</directory>
+    </include>
+  </source>
 </phpunit>
-
