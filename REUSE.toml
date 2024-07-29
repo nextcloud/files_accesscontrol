@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+version = 1
+SPDX-PackageName = "files_accesscontrol"
+SPDX-PackageSupplier = "Nextcloud <info@nextcloud.com>"
+SPDX-PackageDownloadLocation = "https://github.com/nextcloud/files_accesscontrol"
+
+[[annotations]]
+path = [".gitattributes", ".github/CODEOWNERS", ".github/dependabot.yml", ".editorconfig", "composer.json", "composer.lock", "tests/Integration/composer.json", "tests/phpunit.xml", "tests/Integration/composer.lock", ".gitignore", "tests/Integration/data/*", ".tx/config"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "none"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = "tests/Integration/features/**.feature"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2023 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = [".github/issue_template.md", ".github/contributing.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["l10n/**.js", "l10n/**.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2016 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = "screenshots/flow.png"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2017 Nextcloud GmbH and Nextcloud contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["img/app-dark.svg", "img/app.png", "img/app.svg"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018-2024 Google LLC"
+SPDX-License-Identifier = "Apache-2.0"
