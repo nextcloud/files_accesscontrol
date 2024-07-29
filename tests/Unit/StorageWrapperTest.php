@@ -16,22 +16,17 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class StorageWrapperTest extends TestCase {
-
-	/** @var IStorage|MockObject */
-	protected $storage;
-
-	/** @var Operation|MockObject */
-	protected $operation;
+	protected IStorage&MockObject $storage;
+	protected Operation&MockObject $operation;
 
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->storage = $this->createMock(IStorage::class);
-
 		$this->operation = $this->createMock(Operation::class);
 	}
 
-	protected function getInstance(array $methods = []) {
+	protected function getInstance(array $methods = []): StorageWrapper&MockObject {
 		return $this->getMockBuilder(StorageWrapper::class)
 			->setConstructorArgs([
 				[
@@ -40,11 +35,11 @@ class StorageWrapperTest extends TestCase {
 					'operation' => $this->operation,
 				]
 			])
-			->setMethods($methods)
+			->onlyMethods($methods)
 			->getMock();
 	}
 
-	public function dataCheckFileAccess(): array {
+	public static function dataCheckFileAccess(): array {
 		return [
 			['path1', true],
 			['path2', false],
@@ -64,7 +59,7 @@ class StorageWrapperTest extends TestCase {
 		self::invokePrivate($storage, 'checkFileAccess', [$path, $isDir]);
 	}
 
-	public function dataSinglePath(): array {
+	public static function dataSinglePath(): array {
 		$methods = ['mkdir', 'rmdir', 'file_get_contents', 'unlink', 'getDirectDownload'];
 
 		$tests = [];
@@ -79,10 +74,6 @@ class StorageWrapperTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSinglePath
-	 * @param string $method
-	 * @param string $path
-	 * @param bool $return
-	 * @param null|\Exception $expected
 	 */
 	public function testSinglePath(string $method, string $path, bool $return, ?\Exception $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
@@ -119,7 +110,7 @@ class StorageWrapperTest extends TestCase {
 		}
 	}
 
-	public function dataSinglePathOverWritten(): array {
+	public static function dataSinglePathOverWritten(): array {
 		$methods = ['isCreatable', 'isReadable', 'isUpdatable', 'isDeletable'];
 
 		$tests = [];
@@ -134,11 +125,6 @@ class StorageWrapperTest extends TestCase {
 
 	/**
 	 * @dataProvider dataSinglePathOverWritten
-	 * @param string $method
-	 * @param string $path
-	 * @param bool $return
-	 * @param null|\Exception $checkAccess
-	 * @param bool $expected
 	 */
 	public function testSinglePathOverWritten(string $method, string $path, bool $return, ?\Exception $checkAccess, bool $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);

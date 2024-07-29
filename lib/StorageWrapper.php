@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,13 +17,9 @@ use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
 
 class StorageWrapper extends Wrapper implements IWriteStreamStorage {
-	/** @var Operation */
-	protected $operation;
-
-	/** @var string */
-	public $mountPoint;
-	/** @var int */
-	protected $mask;
+	protected readonly Operation $operation;
+	public readonly string $mountPoint;
+	protected readonly int $mask;
 
 	/**
 	 * @param array $parameters
@@ -31,11 +29,11 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		$this->operation = $parameters['operation'];
 		$this->mountPoint = $parameters['mountPoint'];
 
-		$this->mask = Constants::PERMISSION_ALL;
-		$this->mask &= ~Constants::PERMISSION_READ;
-		$this->mask &= ~Constants::PERMISSION_CREATE;
-		$this->mask &= ~Constants::PERMISSION_UPDATE;
-		$this->mask &= ~Constants::PERMISSION_DELETE;
+		$this->mask = Constants::PERMISSION_ALL
+			& ~Constants::PERMISSION_READ
+			& ~Constants::PERMISSION_CREATE
+			& ~Constants::PERMISSION_UPDATE
+			& ~Constants::PERMISSION_DELETE;
 	}
 
 	/**
@@ -321,8 +319,8 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		return $result;
 	}
 
-	private function isPartFile($path) {
+	private function isPartFile(string $path): bool {
 		$extension = pathinfo($path, PATHINFO_EXTENSION);
-		return ($extension === 'part');
+		return $extension === 'part';
 	}
 }

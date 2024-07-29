@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -31,31 +33,17 @@ use ReflectionClass;
 use UnexpectedValueException;
 
 class Operation implements IComplexOperation, ISpecificOperation {
-	protected IManager $manager;
-	protected IL10N $l;
-	protected IURLGenerator $urlGenerator;
 	protected int $nestingLevel = 0;
-	private File $fileEntity;
-	private IMountManager $mountManager;
-	private IRootFolder $rootFolder;
-	protected LoggerInterface $logger;
 
 	public function __construct(
-		IManager $manager,
-		IL10N $l,
-		IURLGenerator $urlGenerator,
-		File $fileEntity,
-		IMountManager $mountManager,
-		IRootFolder $rootFolder,
-		LoggerInterface $logger
+		protected readonly IManager $manager,
+		protected readonly IL10N $l,
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly File $fileEntity,
+		protected readonly IMountManager $mountManager,
+		protected readonly IRootFolder $rootFolder,
+		protected readonly LoggerInterface $logger
 	) {
-		$this->manager = $manager;
-		$this->l = $l;
-		$this->urlGenerator = $urlGenerator;
-		$this->fileEntity = $fileEntity;
-		$this->mountManager = $mountManager;
-		$this->rootFolder = $rootFolder;
-		$this->logger = $logger;
 	}
 
 	/**
