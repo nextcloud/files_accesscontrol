@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -27,7 +29,7 @@ class Application extends App implements IBootstrap {
 	/**
 	 * @internal
 	 */
-	public function addStorageWrapper() {
+	public function addStorageWrapper(): void {
 		// Needs to be added as the first layer
 		Filesystem::addStorageWrapper('files_accesscontrol', [$this, 'addStorageWrapperCallback'], -10);
 	}

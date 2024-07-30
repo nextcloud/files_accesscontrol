@@ -6,7 +6,7 @@ SPDX-PackageSupplier = "Nextcloud <info@nextcloud.com>"
 SPDX-PackageDownloadLocation = "https://github.com/nextcloud/files_accesscontrol"
 
 [[annotations]]
-path = [".gitattributes", ".github/CODEOWNERS", ".github/dependabot.yml", ".editorconfig", "composer.json", "composer.lock", "tests/Integration/composer.json", "tests/phpunit.xml", "tests/Integration/composer.lock", ".gitignore", "tests/Integration/data/*", ".tx/config"]
+path = [".gitattributes", ".github/CODEOWNERS", ".github/dependabot.yml", ".editorconfig", "composer.json", "composer.lock", "psalm.xml", "tests/psalm-baseline.xml", "tests/Integration/composer.json", "tests/phpunit.xml", "tests/Integration/composer.lock", ".gitignore", "tests/Integration/data/*", ".tx/config"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "none"
 SPDX-License-Identifier = "CC0-1.0"

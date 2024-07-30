@@ -13,20 +13,20 @@ use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
-use Psr\Container\ContainerInterface;
 
+/**
+ * @template-implements IEventListener<RegisterOperationsEvent>
+ */
 class FlowRegisterOperationListener implements IEventListener {
-	private ContainerInterface $c;
-
-	public function __construct(ContainerInterface $c) {
-		$this->c = $c;
+	public function __construct(
+		protected readonly Operation $operation) {
 	}
 
 	public function handle(Event $event): void {
 		if (!$event instanceof RegisterOperationsEvent) {
 			return;
 		}
-		$event->registerOperation($this->c->get(Operation::class));
+		$event->registerOperation($this->operation);
 		Util::addScript('files_accesscontrol', 'admin');
 	}
 }

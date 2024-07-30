@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
@@ -31,31 +33,17 @@ use ReflectionClass;
 use UnexpectedValueException;
 
 class Operation implements IComplexOperation, ISpecificOperation {
-	protected IManager $manager;
-	protected IL10N $l;
-	protected IURLGenerator $urlGenerator;
 	protected int $nestingLevel = 0;
-	private File $fileEntity;
-	private IMountManager $mountManager;
-	private IRootFolder $rootFolder;
-	protected LoggerInterface $logger;
 
 	public function __construct(
-		IManager $manager,
-		IL10N $l,
-		IURLGenerator $urlGenerator,
-		File $fileEntity,
-		IMountManager $mountManager,
-		IRootFolder $rootFolder,
-		LoggerInterface $logger
+		protected readonly IManager $manager,
+		protected readonly IL10N $l,
+		protected readonly IURLGenerator $urlGenerator,
+		protected readonly File $fileEntity,
+		protected readonly IMountManager $mountManager,
+		protected readonly IRootFolder $rootFolder,
+		protected readonly LoggerInterface $logger
 	) {
-		$this->manager = $manager;
-		$this->l = $l;
-		$this->urlGenerator = $urlGenerator;
-		$this->fileEntity = $fileEntity;
-		$this->mountManager = $mountManager;
-		$this->rootFolder = $rootFolder;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -150,7 +138,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return 'files/' . $innerPath;
 		} elseif ($folder === 'thumbnails') {
 			[$fileId,] = explode('/', $innerPath, 2);
-			$innerPath = $storage->getCache()->getPathById($fileId);
+			$innerPath = $storage->getCache()->getPathById((int) $fileId);
 
 			if ($innerPath !== null) {
 				return 'files/' . $innerPath;
@@ -168,7 +156,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if (isset($step['class']) && $step['class'] === 'OC\Core\Controller\LoginController' &&
+			if (isset($step['class']) && $step['class'] === \OC\Core\Controller\LoginController::class &&
 				isset($step['function']) && $step['function'] === 'tryLogin') {
 				return true;
 			}
@@ -179,7 +167,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 	/**
 	 * @param string $name
-	 * @param array[] $checks
+	 * @param array $checks
 	 * @param string $operation
 	 * @throws UnexpectedValueException
 	 */
@@ -285,7 +273,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		if ($cacheEntry) {
 			// todo: LazyNode?
 			$info = new FileInfo($fullPath, $mountPoint->getStorage(), $path, $cacheEntry, $mountPoint);
-			$isDir = $info->getType() === FileInfo::TYPE_FOLDER;
+			$isDir = $info->getType() === \OCP\Files\FileInfo::TYPE_FOLDER;
 			$view = new View('');
 			if ($isDir) {
 				return new Folder($this->rootFolder, $view, $path, $info);
