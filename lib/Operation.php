@@ -138,7 +138,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return 'files/' . $innerPath;
 		} elseif ($folder === 'thumbnails') {
 			[$fileId,] = explode('/', $innerPath, 2);
-			$innerPath = $storage->getCache()->getPathById($fileId);
+			$innerPath = $storage->getCache()->getPathById((int) $fileId);
 
 			if ($innerPath !== null) {
 				return 'files/' . $innerPath;
@@ -156,7 +156,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if (isset($step['class']) && $step['class'] === 'OC\Core\Controller\LoginController' &&
+			if (isset($step['class']) && $step['class'] === \OC\Core\Controller\LoginController::class &&
 				isset($step['function']) && $step['function'] === 'tryLogin') {
 				return true;
 			}
@@ -167,7 +167,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 	/**
 	 * @param string $name
-	 * @param array[] $checks
+	 * @param array $checks
 	 * @param string $operation
 	 * @throws UnexpectedValueException
 	 */
@@ -273,7 +273,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		if ($cacheEntry) {
 			// todo: LazyNode?
 			$info = new FileInfo($fullPath, $mountPoint->getStorage(), $path, $cacheEntry, $mountPoint);
-			$isDir = $info->getType() === FileInfo::TYPE_FOLDER;
+			$isDir = $info->getType() === \OCP\Files\FileInfo::TYPE_FOLDER;
 			$view = new View('');
 			if ($isDir) {
 				return new Folder($this->rootFolder, $view, $path, $info);
