@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.25.0@01a8eb06b9e9cc6cfb6a320bf9fb14331919d505">
+  <file src="lib/AppInfo/Application.php">
+    <UndefinedClass>
+      <code><![CDATA[Filesystem]]></code>
+      <code><![CDATA[OC]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/CacheWrapper.php">
+    <UndefinedClass>
+      <code><![CDATA[Wrapper]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Operation.php">
+    <InvalidArgument>
+      <code><![CDATA[$this->fileEntity]]></code>
+    </InvalidArgument>
+    <MissingDependency>
+      <code><![CDATA[StorageWrapper]]></code>
+    </MissingDependency>
+    <PossiblyFalseArgument>
+      <code><![CDATA[strrpos($innerPath, '.v')]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$innerPath]]></code>
+    </PossiblyUndefinedArrayOffset>
+    <UndefinedClass>
+      <code><![CDATA[File]]></code>
+      <code><![CDATA[FileInfo]]></code>
+      <code><![CDATA[Folder]]></code>
+      <code><![CDATA[View]]></code>
+      <code><![CDATA[\OC\Core\Controller\LoginController]]></code>
+      <code><![CDATA[\OC\Files\Node\File]]></code>
+      <code><![CDATA[protected]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/StorageWrapper.php">
+    <UndefinedClass>
+      <code><![CDATA[Wrapper]]></code>
+    </UndefinedClass>
+    <UnimplementedInterfaceMethod>
+      <code><![CDATA[StorageWrapper]]></code>
+    </UnimplementedInterfaceMethod>
+  </file>
+</files>

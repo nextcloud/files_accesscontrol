@@ -16,12 +16,17 @@
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
+		"psalm": "psalm.phar --threads=1",
+		"psalm:dev": "psalm.phar --no-cache --threads=$(nproc)",
+		"psalm:update-baseline": "psalm.phar --threads=1 --update-baseline",
+		"psalm:clear": "psalm.phar --clear-cache && psalm --clear-global-cache",
 		"test:unit": "vendor/bin/phpunit --color -c tests/phpunit.xml",
 		"test:integration": "cd tests/Integration && ./run.sh"
 	},
 	"require-dev": {
 		"nextcloud/coding-standard": "^1.2.1",
 		"nextcloud/ocp": "dev-master",
-		"phpunit/phpunit": "^10.5.28"
+		"phpunit/phpunit": "^10.5.28",
+		"psalm/phar": "^5.25"
 	}
 }

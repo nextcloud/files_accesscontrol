@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ca7504fa94344756b98c8578b8d8bfc",
+    "content-hash": "b51569c38b1e9cefa9019861208691ea",
     "packages": [],
     "packages-dev": [
         {
@@ -802,6 +802,41 @@
                 }
             ],
             "time": "2024-07-18T14:54:16+00:00"
+        },
+        {
+            "name": "psalm/phar",
+            "version": "5.25.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/psalm/phar.git",
+                "reference": "d42708449bd2d99ec6509924332fd94263974b20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/d42708449bd2d99ec6509924332fd94263974b20",
+                "reference": "d42708449bd2d99ec6509924332fd94263974b20",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "conflict": {
+                "vimeo/psalm": "*"
+            },
+            "bin": [
+                "psalm.phar"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Composer-based Psalm Phar",
+            "support": {
+                "issues": "https://github.com/psalm/phar/issues",
+                "source": "https://github.com/psalm/phar/tree/5.25.0"
+            },
+            "time": "2024-06-19T20:02:02+00:00"
         },
         {
             "name": "psr/clock",
