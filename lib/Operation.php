@@ -103,10 +103,6 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return false;
 		}
 
-		if (preg_match('/\.ocTransferId\d+\.part$/i', $path)) {
-			return false;
-		}
-
 		// '', admin, 'files', 'path/to/file.txt'
 		$segment = explode('/', $fullPath, 4);
 
@@ -116,6 +112,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		}
 
 		return isset($segment[2]) && in_array($segment[2], [
+			'uploads',
 			'files',
 			'thumbnails',
 			'files_versions',
