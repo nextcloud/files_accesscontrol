@@ -58,6 +58,16 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return;
 		}
 
+		/**
+		 * Optimization:
+		 * When uploading part files we check all rules up front.
+		 * If a rule matches that does not depend on:
+		 *  - FileMimeType
+		 *  - FileSystemTags
+		 * we can already deny the upload and don't need to wait until the chunk assembly
+		 */
+		$partFileUpload = true; //$this->isPartFileUpload($path);
+
 		$this->nestingLevel++;
 
 		$filePath = $this->translatePath($storage, $path);
@@ -68,9 +78,16 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			$ruleMatcher->setEntitySubject($this->fileEntity, $node);
 		}
 		$ruleMatcher->setOperation($this);
-		$match = $ruleMatcher->getFlows();
+		$match = $ruleMatcher->getFlows(!$partFileUpload);
 
 		$this->nestingLevel--;
+
+		\OC::$server->getLogger()->error('json_encode(array_map(fn ($i) => get_class($i), $match))');
+		if ($partFileUpload) {
+			// [{"id":1,"class":"OCA\\FilesAccessControl\\Operation","name":"","checks":"[5,6,4]","operation":"deny","entity":"OCA\\WorkflowEngine\\Entity\\File","events":"[]","scope_type":0,"scope_actor_id":""}]
+			\OC::$server->getLogger()->error(json_encode($match));
+//			$match = array_filter($match, );
+		}
 
 		if (!empty($match)) {
 			$e = new \RuntimeException('Access denied for path ' . $path . ' that is ' . ($isDir ? '' : 'not ') . 'a directory and matches rules: ' . json_encode($match));
@@ -78,6 +95,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			// All Checks of one operation matched: prevent access
 			throw new ForbiddenException('Access denied by access control', false);
 		}
+	}
+
+	protected function isPartFileUpload(string $path): bool {
+		return preg_match('/\.ocTransferId\d+\.part$/i', $path) === 1;
 	}
 
 	protected function isBlockablePath(IStorage $storage, string $path): bool {
@@ -103,9 +124,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return false;
 		}
 
-		if (preg_match('/\.ocTransferId\d+\.part$/i', $path)) {
-			return false;
-		}
+		// FIXME check that uploads/ path does not break below
+		// if (preg_match('/\.ocTransferId\d+\.part$/i', $path)) {
+		// return false;
+		// }
 
 		// '', admin, 'files', 'path/to/file.txt'
 		$segment = explode('/', $fullPath, 4);
@@ -126,6 +148,9 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * For thumbnails and versions we want to check the tags of the original file
 	 */
 	protected function translatePath(IStorage $storage, string $path): string {
+		// Cut of potential part file suffix
+		$path = preg_replace('/\.ocTransferId\d+\.part$/i', '', $path);
+
 		if (substr_count($path, '/') < 1) {
 			return $path;
 		}
