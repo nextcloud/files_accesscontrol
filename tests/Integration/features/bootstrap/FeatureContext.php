@@ -124,7 +124,7 @@ class FeatureContext implements Context {
 		if (str_contains($statusCode, '|')) {
 			$statusCodes = array_map('intval', explode('|', $statusCode));
 		} else {
-			$statusCodes = [(int) $statusCode];
+			$statusCodes = [(int)$statusCode];
 		}
 		if (!in_array($this->response->getStatusCode(), $statusCodes, true)) {
 			throw new \Exception("Expected $statusCode, got ".$this->response->getStatusCode());

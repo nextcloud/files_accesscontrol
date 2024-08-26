@@ -138,7 +138,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return 'files/' . $innerPath;
 		} elseif ($folder === 'thumbnails') {
 			[$fileId,] = explode('/', $innerPath, 2);
-			$innerPath = $storage->getCache()->getPathById((int) $fileId);
+			$innerPath = $storage->getCache()->getPathById((int)$fileId);
 
 			if ($innerPath !== null) {
 				return 'files/' . $innerPath;
