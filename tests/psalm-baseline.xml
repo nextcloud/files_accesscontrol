@@ -18,9 +18,6 @@
     <MissingDependency>
       <code><![CDATA[StorageWrapper]]></code>
     </MissingDependency>
-    <PossiblyFalseArgument>
-      <code><![CDATA[strrpos($innerPath, '.v')]]></code>
-    </PossiblyFalseArgument>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$innerPath]]></code>
     </PossiblyUndefinedArrayOffset>
