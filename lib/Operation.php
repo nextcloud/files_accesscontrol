@@ -134,7 +134,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		[$folder, $innerPath] = explode('/', $path, 2);
 
 		if ($folder === 'files_versions') {
-			$innerPath = substr($innerPath, 0, strrpos($innerPath, '.v'));
+			if (preg_match('/.+\.v\d{10}$/', basename($innerPath))) {
+				// Remove trailing ".v{timestamp}"
+				$innerPath = substr($innerPath, 0, -12);
+			}
 			return 'files/' . $innerPath;
 		} elseif ($folder === 'thumbnails') {
 			[$fileId,] = explode('/', $innerPath, 2);
