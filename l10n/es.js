@@ -1,7 +1,7 @@
 OC.L10N.register(
     "files_accesscontrol",
     {
-    "No rule given" : "No se ha dado ninguna regla",
+    "No rule given" : "No se ha proporcionado ninguna regla",
     "Block access to a file" : "Bloquear acceso a un archivo",
     "File is accessed" : "Se ha accedido al archivo",
     "File access control" : "Control de acceso a los archivos",
