@@ -19,7 +19,8 @@ use OCP\WorkflowEngine\Events\RegisterOperationsEvent;
  */
 class FlowRegisterOperationListener implements IEventListener {
 	public function __construct(
-		protected readonly Operation $operation) {
+		protected readonly Operation $operation,
+	) {
 	}
 
 	public function handle(Event $event): void {

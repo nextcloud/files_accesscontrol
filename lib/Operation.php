@@ -42,7 +42,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		protected readonly File $fileEntity,
 		protected readonly IMountManager $mountManager,
 		protected readonly IRootFolder $rootFolder,
-		protected readonly LoggerInterface $logger
+		protected readonly LoggerInterface $logger,
 	) {
 	}
 
