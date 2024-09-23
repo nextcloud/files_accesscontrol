@@ -127,7 +127,7 @@ class FeatureContext implements Context {
 			$statusCodes = [(int)$statusCode];
 		}
 		if (!in_array($this->response->getStatusCode(), $statusCodes, true)) {
-			throw new \Exception("Expected $statusCode, got ".$this->response->getStatusCode());
+			throw new \Exception("Expected $statusCode, got " . $this->response->getStatusCode());
 		}
 	}
 
