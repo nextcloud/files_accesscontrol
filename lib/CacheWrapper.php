@@ -31,7 +31,7 @@ class CacheWrapper extends Wrapper {
 	}
 
 	protected function formatCacheEntry($entry) {
-		if (isset($entry['path']) && isset($entry['permissions'])) {
+		if (isset($entry['path']) && isset($entry['permissions']) && $this->storage->getWrapperStorage() !== null) {
 			try {
 				$this->operation->checkFileAccess($this->storage, $entry['path'], $entry['mimetype'] === 'httpd/unix-directory', $entry);
 			} catch (ForbiddenException) {
