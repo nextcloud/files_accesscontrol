@@ -64,7 +64,9 @@ class StorageWrapperTest extends TestCase {
 
 		$tests = [];
 		foreach ($methods as $method) {
-			$tests[] = [$method, 'path1', true, null];
+			if ($method !== 'file_get_contents' && $method !== 'getDirectDownload') {
+				$tests[] = [$method, 'path1', true, null];
+			}
 			$tests[] = [$method, 'path2', false, null];
 			$tests[] = [$method, 'path3', true, new ForbiddenException('Access denied', false)];
 			$tests[] = [$method, 'path4', false, new ForbiddenException('Access denied', false)];

@@ -12,6 +12,7 @@ use OC\Files\Cache\Cache;
 use OC\Files\Storage\Storage;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OCP\Constants;
+use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
@@ -54,7 +55,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function mkdir($path) {
+	public function mkdir($path): bool {
 		$this->checkFileAccess($path, true);
 		return $this->storage->mkdir($path);
 	}
@@ -66,7 +67,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function rmdir($path) {
+	public function rmdir($path): bool {
 		$this->checkFileAccess($path, true);
 		return $this->storage->rmdir($path);
 	}
@@ -77,7 +78,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @param string $path
 	 * @return bool
 	 */
-	public function isCreatable($path) {
+	public function isCreatable($path): bool {
 		try {
 			$this->checkFileAccess($path);
 		} catch (ForbiddenException $e) {
@@ -92,7 +93,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @param string $path
 	 * @return bool
 	 */
-	public function isReadable($path) {
+	public function isReadable($path): bool {
 		try {
 			$this->checkFileAccess($path);
 		} catch (ForbiddenException $e) {
@@ -107,7 +108,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @param string $path
 	 * @return bool
 	 */
-	public function isUpdatable($path) {
+	public function isUpdatable($path): bool {
 		try {
 			$this->checkFileAccess($path);
 		} catch (ForbiddenException $e) {
@@ -122,7 +123,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @param string $path
 	 * @return bool
 	 */
-	public function isDeletable($path) {
+	public function isDeletable($path): bool {
 		try {
 			$this->checkFileAccess($path);
 		} catch (ForbiddenException $e) {
@@ -131,7 +132,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		return $this->storage->isDeletable($path);
 	}
 
-	public function getPermissions($path) {
+	public function getPermissions($path): int {
 		try {
 			$this->checkFileAccess($path);
 		} catch (ForbiddenException $e) {
@@ -147,7 +148,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return string
 	 * @throws ForbiddenException
 	 */
-	public function file_get_contents($path) {
+	public function file_get_contents($path): string|false {
 		$this->checkFileAccess($path, false);
 		return $this->storage->file_get_contents($path);
 	}
@@ -160,7 +161,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function file_put_contents($path, $data) {
+	public function file_put_contents($path, $data): int|float|false {
 		$this->checkFileAccess($path, false);
 		return $this->storage->file_put_contents($path, $data);
 	}
@@ -172,7 +173,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function unlink($path) {
+	public function unlink($path): bool {
 		$this->checkFileAccess($path, false);
 		return $this->storage->unlink($path);
 	}
@@ -180,16 +181,16 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	/**
 	 * see http://php.net/manual/en/function.rename.php
 	 *
-	 * @param string $path1
-	 * @param string $path2
+	 * @param string $source
+	 * @param string $target
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function rename($path1, $path2) {
-		$isDir = $this->is_dir($path1);
-		$this->checkFileAccess($path1, $isDir);
-		$this->checkFileAccess($path2, $isDir);
-		return $this->storage->rename($path1, $path2);
+	public function rename($source, $target): bool {
+		$isDir = $this->is_dir($source);
+		$this->checkFileAccess($source, $isDir);
+		$this->checkFileAccess($target, $isDir);
+		return $this->storage->rename($source, $target);
 	}
 
 	/**
@@ -200,11 +201,11 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function copy($path1, $path2) {
-		$isDir = $this->is_dir($path1);
-		$this->checkFileAccess($path1, $isDir);
-		$this->checkFileAccess($path2, $isDir);
-		return $this->storage->copy($path1, $path2);
+	public function copy($source, $target): bool {
+		$isDir = $this->is_dir($source);
+		$this->checkFileAccess($source, $isDir);
+		$this->checkFileAccess($target, $isDir);
+		return $this->storage->copy($source, $target);
 	}
 
 	/**
@@ -229,7 +230,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function touch($path, $mtime = null) {
+	public function touch($path, $mtime = null): bool {
 		$this->checkFileAccess($path, false);
 		return $this->storage->touch($path, $mtime);
 	}
@@ -241,7 +242,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @param Storage (optional) the storage to pass to the cache
 	 * @return Cache
 	 */
-	public function getCache($path = '', $storage = null) {
+	public function getCache($path = '', $storage = null): ICache {
 		if (!$storage) {
 			$storage = $this;
 		}
@@ -258,7 +259,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return array
 	 * @throws ForbiddenException
 	 */
-	public function getDirectDownload($path) {
+	public function getDirectDownload($path): array|false {
 		$this->checkFileAccess($path, false);
 		return $this->storage->getDirectDownload($path);
 	}
@@ -270,7 +271,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function copyFromStorage(IStorage $sourceStorage, $sourceInternalPath, $targetInternalPath) {
+	public function copyFromStorage(IStorage $sourceStorage, $sourceInternalPath, $targetInternalPath): bool {
 		if ($sourceStorage === $this) {
 			return $this->copy($sourceInternalPath, $targetInternalPath);
 		}
@@ -286,7 +287,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @return bool
 	 * @throws ForbiddenException
 	 */
-	public function moveFromStorage(IStorage $sourceStorage, $sourceInternalPath, $targetInternalPath) {
+	public function moveFromStorage(IStorage $sourceStorage, $sourceInternalPath, $targetInternalPath): bool {
 		if ($sourceStorage === $this) {
 			return $this->rename($sourceInternalPath, $targetInternalPath);
 		}
