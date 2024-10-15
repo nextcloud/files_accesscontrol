@@ -56,6 +56,9 @@ class FeatureContext implements Context {
 	/** @var string */
 	protected $baseUrl;
 
+	protected string $tagId = '';
+	protected array $createdUsers = [];
+
 	/**
 	 * FeatureContext constructor.
 	 */
@@ -69,27 +72,43 @@ class FeatureContext implements Context {
 	 * @AfterScenario
 	 */
 	public function cleanUpBetweenTests() {
-		// TODO: Remove all created tags?
 		$this->setCurrentUser('admin');
 		$this->sendingTo('DELETE', '/apps/files_accesscontrol_testing');
 		$this->assertStatusCode($this->response, 200);
+	}
 
-		try {
-			$this->userDeletesFile('test1', 'folder', '/subdir');
-		} catch (\Exception $e) {
+	/**
+	 * @AfterScenario
+	 */
+	public function tearDown() {
+		foreach ($this->createdUsers as $user) {
+			$this->deleteUser($user);
 		}
-		try {
-			$this->userDeletesFile('test1', 'file', '/foobar.txt');
-		} catch (\Exception $e) {
-		}
-		try {
-			$this->userDeletesFile('test1', 'file', '/definitely.notexe');
-		} catch (\Exception $e) {
-		}
-		try {
-			$this->emptyTrashbin('test1');
-		} catch (\Exception $e) {
-		}
+	}
+
+	/**
+	 * @Given /^Ensure tag exists$/
+	 */
+	public function createTag() {
+		$this->setCurrentUser('admin');
+		$this->sendingTo('POST', '/apps/files_accesscontrol_testing');
+		$this->assertStatusCode($this->response, 200);
+
+		$ocsData = json_decode($this->response->getBody()->getContents(), true, flags: JSON_THROW_ON_ERROR);
+		$data = $ocsData['ocs']['data'];
+		$this->tagId = $data['tagId'];
+	}
+
+	/**
+	 * @Given /^user "([^"]*)" tags file "([^"]*)"$/
+	 */
+	public function tagFile(string $user, string $path) {
+		// TODO: Remove all created tags?
+		$this->setCurrentUser($user);
+		$this->sendingToWith('POST', '/apps/files_accesscontrol_testing/tag-file', [
+			'path' => $path,
+		]);
+		$this->assertStatusCode($this->response, 200);
 	}
 
 	/**
@@ -103,6 +122,7 @@ class FeatureContext implements Context {
 		$checks = [];
 		foreach ($formData as $key => $value) {
 			if (strpos($key, 'checks-') === 0) {
+				$value = str_replace('{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}', $this->tagId, $value);
 				$checks[] = json_decode($value, true);
 				unset($formData[$key]);
 			}
@@ -208,6 +228,26 @@ class FeatureContext implements Context {
 			],
 		];
 		$client->get($userProvisioningUrl . '/' . $user, $options2);
+
+		$this->createdUsers[] = $user;
+		$this->currentUser = $previous_user;
+	}
+
+	private function deleteUser(string $user): void {
+		$previous_user = $this->currentUser;
+		$this->currentUser = 'admin';
+
+		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users/' . $user;
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+		$client->delete($userProvisioningUrl, $options);
+
+		unset($this->createdUsers[$user]);
 
 		$this->currentUser = $previous_user;
 	}
