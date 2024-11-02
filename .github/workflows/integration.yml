@@ -115,3 +115,8 @@ jobs:
       - name: Run behat
         working-directory: apps/${{ env.APP_NAME }}/tests/Integration
         run: ./run.sh
+
+      - name: Print logs
+        if: always()
+        run: |
+          cat data/nextcloud.log
