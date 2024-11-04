@@ -10,7 +10,7 @@ Feature: manage-workflows
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "a"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "a"} |
 
   Scenario: Users can not create a global flow
     Given user "test1" creates global flow with 403
@@ -19,7 +19,7 @@ Feature: manage-workflows
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "a"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "a"} |
 
   # https://github.com/nextcloud/security-advisories/security/advisories/GHSA-h3c9-cmh8-7qpj
   Scenario: Users can not create a user flow
@@ -29,5 +29,5 @@ Feature: manage-workflows
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "a"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "a"} |
 
