@@ -11,7 +11,7 @@ Feature: Author
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
     Then The webdav response should have a status code "403"
     Then User "test1" sees no files in the trashbin
@@ -25,7 +25,7 @@ Feature: Author
       | entity    | OCA\WorkflowEngine\Entity\File   |
       | events    | []                               |
       | operation | deny                             |
-      | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName","operator":"is","value":"foobar.txt"} |
     And as user "test1"
     When Downloading file "/foobar.txt"
     Then The webdav response should have a status code "404"
@@ -42,7 +42,7 @@ Feature: Author
       | entity    | OCA\WorkflowEngine\Entity\File   |
       | events    | []                               |
       | operation | deny                             |
-      | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     When User "test1" uploads file "data/textfile-2.txt" to "/foobar.txt"
     Then The webdav response should have a status code "403"
 
@@ -55,7 +55,7 @@ Feature: Author
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     When User "test1" deletes file "/foobar.txt"
     Then The webdav response should have a status code "403"
 
@@ -70,6 +70,6 @@ Feature: Author
       | entity    | OCA\WorkflowEngine\Entity\File   |
       | events    | []                               |
       | operation | deny                             |
-      | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     When User "test1" deletes file "/subdir/foobar.txt"
     Then The webdav response should have a status code "403"

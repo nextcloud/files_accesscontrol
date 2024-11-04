@@ -12,7 +12,7 @@
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "application/javascript"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "application/javascript"} |
     Given User "test1" uploads file "data/code.js" to "/code.js"
     And The webdav response should have a status code "403"
     And Downloading file "/code.js" as "test1"
@@ -26,7 +26,7 @@
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "text/plain"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "text/plain"} |
     Given User "test1" uploads file "data/code.js" to "/code.js"
     And The webdav response should have a status code "201"
     And Downloading file "/code.js" as "test1"
@@ -43,7 +43,7 @@
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "application/octet-stream"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "application/octet-stream"} |
     Given User "test1" uploads file "data/hello" to "/hello"
     And The webdav response should have a status code "403"
     And Downloading file "/hello" as "test1"
@@ -60,7 +60,7 @@
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "is", "value": "application/x-ms-dos-executable"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "application/x-ms-dos-executable"} |
     Given User "test1" uploads file "data/nc.exe" to "/nc.exe"
     And The webdav response should have a status code "403"
     And Downloading file "/nc.exe" as "test1"
@@ -74,7 +74,7 @@
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
     Given User "test1" created a folder "/folder"
     And The webdav response should have a status code "201"
     When User "test1" moves folder "/folder" to "/folder-renamed"

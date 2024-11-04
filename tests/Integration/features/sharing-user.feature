@@ -12,7 +12,7 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
     Then The webdav response should have a status code "403"
 
@@ -31,7 +31,7 @@ Feature: Sharing user
       | entity    | OCA\WorkflowEngine\Entity\File   |
       | events    | []                               |
       | operation | deny                             |
-      | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And as user "test2"
     When Downloading file "/foobar.txt"
     Then The webdav response should have a status code "403"
@@ -48,7 +48,7 @@ Feature: Sharing user
       | entity    | OCA\WorkflowEngine\Entity\File   |
       | events    | []                               |
       | operation | deny                             |
-      | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And as user "test2"
     When User "test2" uploads file "data/textfile-2.txt" to "/foobar.txt"
     Then The webdav response should have a status code "403"
@@ -63,7 +63,7 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And as user "test2"
     When User "test2" deletes file "/foobar.txt"
     Then The webdav response should have a status code "204"
@@ -79,7 +79,7 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileName", "operator": "is", "value": "foobar.txt"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And as user "test2"
     When User "test2" deletes file "/subdir/foobar.txt"
     Then The webdav response should have a status code "403"
@@ -91,8 +91,8 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/directory"} |
-    | checks-1  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "application/pdf"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/directory"} |
+    | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "application/pdf"} |
 
     Given User "test1" uploads file "data/nextcloud.pdf" to "/nextcloud.pdf"
     And The webdav response should have a status code "201"
@@ -114,8 +114,8 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/directory"} |
-    | checks-1  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "application/pdf"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/directory"} |
+    | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "application/pdf"} |
     And Downloading file "/nextcloud2.pdf" as "test2"
     And The webdav response should have a status code "200"
 
@@ -138,7 +138,7 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileSystemTags", "operator": "is", "value": "{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileSystemTags", "operator": "is", "value": "{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}"} |
     Then Downloading file "/nextcloud2.txt" as "test2"
     And The webdav response should have a status code "404"
     And Downloading file "/nextcloud3.txt" as "test2"
@@ -165,7 +165,7 @@ Feature: Sharing user
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileSystemTags", "operator": "is", "value": "{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}"} |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileSystemTags", "operator": "is", "value": "{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}"} |
     Then Downloading file "/nextcloud2.txt" as "test2"
     And The webdav response should have a status code "200"
     And Downloading file "/nextcloud3.txt" as "test2"
