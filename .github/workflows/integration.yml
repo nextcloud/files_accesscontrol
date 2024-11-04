@@ -77,7 +77,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
-          extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite, mysql, pdo_mysql, pgsql, pdo_pgsql
+          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite, mysql, pdo_mysql, pgsql, pdo_pgsql
           coverage: none
           ini-file: development
           # Temporary workaround for missing pcntl_* in PHP 8.3: ini-values: apc.enable_cli=on
@@ -115,3 +115,8 @@ jobs:
       - name: Run behat
         working-directory: apps/${{ env.APP_NAME }}/tests/Integration
         run: ./run.sh
+
+      - name: Print logs
+        if: always()
+        run: |
+          cat data/nextcloud.log

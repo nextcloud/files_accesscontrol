@@ -118,7 +118,7 @@ class FeatureContext implements Context {
 		$formData['events'] = [];
 
 		$this->sendingToWith('POST', '/apps/workflowengine/api/v1/workflows/' . $scope, $formData);
-		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch');
+		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch:' . "\n" . $this->response->getBody()->getContents());
 	}
 
 	/**
