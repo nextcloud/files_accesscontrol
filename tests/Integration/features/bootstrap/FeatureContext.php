@@ -104,12 +104,11 @@ class FeatureContext implements Context {
 		$this->setCurrentUser($user);
 
 		$formData = $tableNode->getRowsHash();
-
 		$checks = [];
 		foreach ($formData as $key => $value) {
 			if (strpos($key, 'checks-') === 0) {
 				$value = str_replace('{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}', $this->tagId, $value);
-				$checks[] = json_decode($value, true);
+				$checks[] = json_decode($value, true, flags: JSON_THROW_ON_ERROR);
 				unset($formData[$key]);
 			}
 		}
