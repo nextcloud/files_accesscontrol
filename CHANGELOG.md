@@ -5,6 +5,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.0 – 2025-01-16
+### Changed
+- Require Nextcloud 31
+- Update translations
+- Update dependencies
+
 ## 1.20.1 – 2024-09-12
 ### Fixed
 - fix(versions): Fix compatibility with files_versions and PHP strict types
