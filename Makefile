@@ -27,29 +27,23 @@ appstore: clean
 	mkdir -p $(sign_dir)
 	rsync -a \
 	--exclude=/: \
-	--exclude=/build \
-	--exclude=/composer.json \
-	--exclude=/composer.lock \
-	--exclude=/docs \
-	--exclude=/translationfiles \
+	--exclude=/.git \
+	--exclude=/.github \
 	--exclude=/.tx \
+	--exclude=/build \
+	--exclude=/docs \
+	--exclude=/screenshots \
 	--exclude=/tests \
 	--exclude=/vendor \
-	--exclude=/.git \
-	--exclude=/screenshots \
-	--exclude=/.github \
-	--exclude=/l10n/l10n.pl \
-	--exclude=/CONTRIBUTING.md \
-	--exclude=/issue_template.md \
-	--exclude=/README.md \
 	--exclude=/.gitattributes \
 	--exclude=/.gitignore \
-	--exclude=/.scrutinizer.yml \
-	--exclude=/.travis.yml \
-	--exclude=/.drone.yml \
 	--exclude=/.php-cs-fixer.cache \
 	--exclude=/.php-cs-fixer.dist.php \
+	--exclude=/composer.json \
+	--exclude=/composer.lock \
 	--exclude=/Makefile \
+	--exclude=/psalm.xml \
+	--exclude=/README.md \
 	$(project_dir)/ $(sign_dir)/$(app_name)
 	tar -czf $(build_dir)/$(app_name).tar.gz \
 		-C $(sign_dir) $(app_name)
