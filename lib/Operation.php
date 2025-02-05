@@ -73,7 +73,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$this->nestingLevel--;
 
 		if (!empty($match)) {
-			$e = new \RuntimeException('Access denied for path ' . $path . ' that is ' . ($isDir ? '' : 'not ') . 'a directory and matches rules: ' . json_encode($match));
+			$e = new \RuntimeException('Access denied for path ' . $path . ' that is ' . ($isDir ? '' : 'not ') . 'a directory and matches rules: ' . (string)json_encode($match));
 			$this->logger->debug($e->getMessage(), ['exception' => $e]);
 			// All Checks of one operation matched: prevent access
 			throw new ForbiddenException('Access denied by access control', false);
