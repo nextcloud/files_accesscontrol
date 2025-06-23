@@ -159,8 +159,8 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		$trace = $exception->getTrace();
 
 		foreach ($trace as $step) {
-			if (isset($step['class']) && $step['class'] === \OC\Core\Controller\LoginController::class &&
-				isset($step['function']) && $step['function'] === 'tryLogin') {
+			if (isset($step['class']) && $step['class'] === \OC\Core\Controller\LoginController::class
+				&& isset($step['function']) && $step['function'] === 'tryLogin') {
 				return true;
 			}
 		}
