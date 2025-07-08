@@ -174,6 +174,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @param string $operation
 	 * @throws UnexpectedValueException
 	 */
+	#[\Override]
 	public function validateOperation(string $name, array $checks, string $operation): void {
 		if (empty($checks)) {
 			throw new UnexpectedValueException($this->l->t('No rule given'));
@@ -187,6 +188,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 *
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function getDisplayName(): string {
 		return $this->l->t('Block access to a file');
 	}
@@ -200,6 +202,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 *
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function getDescription(): string {
 		return '';
 	}
@@ -214,6 +217,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 *
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function getIcon(): string {
 		return $this->urlGenerator->imagePath('files_accesscontrol', 'app.svg');
 	}
@@ -230,6 +234,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 *
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function isAvailableForScope(int $scope): bool {
 		return $scope === IManager::SCOPE_ADMIN;
 	}
@@ -241,6 +246,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 *
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function getEntityId(): string {
 		return File::class;
 	}
@@ -254,10 +260,12 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 *
 	 * @since 18.0.0
 	 */
+	#[\Override]
 	public function getTriggerHint(): string {
 		return $this->l->t('File is accessed');
 	}
 
+	#[\Override]
 	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
 		// Noop
 	}
