@@ -54,11 +54,13 @@ class Application extends App implements IBootstrap {
 		return $storage;
 	}
 
+	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		Util::connectHook('OC_Filesystem', 'preSetup', $this, 'addStorageWrapper');
 		$context->registerEventListener(RegisterOperationsEvent::class, FlowRegisterOperationListener::class);
 	}
 
+	#[\Override]
 	public function boot(IBootContext $context): void {
 	}
 }

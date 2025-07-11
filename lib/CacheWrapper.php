@@ -30,6 +30,7 @@ class CacheWrapper extends Wrapper {
 			& ~Constants::PERMISSION_DELETE;
 	}
 
+	#[\Override]
 	protected function formatCacheEntry($entry) {
 		if (isset($entry['path']) && isset($entry['permissions'])) {
 			try {
