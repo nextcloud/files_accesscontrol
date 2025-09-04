@@ -25,7 +25,7 @@ jobs:
       matrix:
         php-versions: ['8.1']
         databases: ['sqlite', 'mysql', 'pgsql']
-        server-versions: ['master']
+        server-versions: ['stable32']
         primary-storage: ['local', 'minio']
 
     name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}-${{ matrix.primary-storage}}
