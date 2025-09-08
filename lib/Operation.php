@@ -294,7 +294,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 */
 	private function getNode(IStorage $storage, string $path, $cacheEntry = null): ?Node {
 		if ($storage->instanceOfStorage(StorageWrapper::class)) {
-			/** @var StorageWrapper $mountPoint */
+			/** @var StorageWrapper $storage */
 			$mountPoint = $storage->getMount();
 		} else {
 			// fairly sure this branch is never taken, but not 100%
