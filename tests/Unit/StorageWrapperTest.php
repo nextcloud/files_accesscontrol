@@ -11,6 +11,7 @@ namespace OCA\FilesAccessControl\Tests\Unit;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -27,12 +28,16 @@ class StorageWrapperTest extends TestCase {
 	}
 
 	protected function getInstance(array $methods = []): StorageWrapper&MockObject {
+		$mount = $this->createMock(IMountPoint::class);
+		$mount->method('getMountPoint')
+			->willReturn('mountPoint');
 		return $this->getMockBuilder(StorageWrapper::class)
 			->setConstructorArgs([
 				[
 					'storage' => $this->storage,
 					'mountPoint' => 'mountPoint',
 					'operation' => $this->operation,
+					'mount' => $mount,
 				]
 			])
 			->onlyMethods($methods)
