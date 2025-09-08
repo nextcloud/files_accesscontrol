@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace OCA\FilesAccessControl;
 
-use OC\Files\Cache\Cache;
 use OC\Files\Storage\Storage;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OCP\Constants;
@@ -155,7 +154,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * see http://php.net/manual/en/function.file_get_contents.php
 	 *
 	 * @param string $path
-	 * @return string
+	 * @return string|false
 	 * @throws ForbiddenException
 	 */
 	#[\Override]
@@ -168,12 +167,12 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * see http://php.net/manual/en/function.file_put_contents.php
 	 *
 	 * @param string $path
-	 * @param string $data
-	 * @return bool
+	 * @param mixed $data
+	 * @return int|float|false
 	 * @throws ForbiddenException
 	 */
 	#[\Override]
-	public function file_put_contents($path, $data): int|float|false {
+	public function file_put_contents(string $path, mixed $data): int|float|false {
 		$this->checkFileAccess($path, false);
 		return $this->storage->file_put_contents($path, $data);
 	}
@@ -228,7 +227,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 *
 	 * @param string $path
 	 * @param string $mode
-	 * @return resource
+	 * @return resource|false
 	 * @throws ForbiddenException
 	 */
 	#[\Override]
@@ -257,7 +256,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 *
 	 * @param string $path
 	 * @param Storage (optional) the storage to pass to the cache
-	 * @return Cache
+	 * @return ICache
 	 */
 	#[\Override]
 	public function getCache($path = '', $storage = null): ICache {
@@ -274,7 +273,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * For now the returned array can hold the parameter url - in future more attributes might follow.
 	 *
 	 * @param string $path
-	 * @return array
+	 * @return array|false
 	 * @throws ForbiddenException
 	 */
 	#[\Override]
@@ -326,7 +325,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			$this->checkFileAccess($path, false);
 		}
 
-		$result = $this->storage->writeStream($path, $stream, $size);
+		$result = parent::writeStream($path, $stream, $size);
 		if (!$this->isPartFile($path)) {
 			return $result;
 		}
