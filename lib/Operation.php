@@ -274,8 +274,16 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @param array|ICacheEntry|null $cacheEntry
 	 */
 	private function getNode(IStorage $storage, string $path, $cacheEntry = null): ?Node {
-		/** @var IMountPoint|false $mountPoint */
-		$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
+		$mountPoint = null;
+		$mounts = $this->mountManager->findByStorageId($storage->getId());
+		foreach ($mounts as $mount) {
+			// we don't want to root mount;
+			if (strlen($mount->getMountPoint()) > 2) {
+				$mountPoint = $mount;
+				break;
+			}
+		}
+
 		if (!$mountPoint) {
 			return null;
 		}
