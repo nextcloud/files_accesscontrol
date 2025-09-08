@@ -13,6 +13,7 @@ use OC\Files\Storage\Storage;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OCP\Constants;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
 
@@ -20,6 +21,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	protected readonly Operation $operation;
 	public readonly string $mountPoint;
 	protected readonly int $mask;
+	private readonly IMountPoint $mount;
 
 	/**
 	 * @param array $parameters
@@ -28,6 +30,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		parent::__construct($parameters);
 		$this->operation = $parameters['operation'];
 		$this->mountPoint = $parameters['mountPoint'];
+		$this->mount = $parameters['mount'];
 
 		$this->mask = Constants::PERMISSION_ALL
 			& ~Constants::PERMISSION_READ
@@ -322,5 +325,9 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	private function isPartFile(string $path): bool {
 		$extension = pathinfo($path, PATHINFO_EXTENSION);
 		return $extension === 'part';
+	}
+
+	public function getMount(): IMountPoint {
+		return $this->mount;
 	}
 }
