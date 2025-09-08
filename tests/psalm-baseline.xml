@@ -6,18 +6,10 @@
       <code><![CDATA[OC]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/CacheWrapper.php">
-    <UndefinedClass>
-      <code><![CDATA[Wrapper]]></code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Operation.php">
     <InvalidArgument>
       <code><![CDATA[$this->fileEntity]]></code>
     </InvalidArgument>
-    <MissingDependency>
-      <code><![CDATA[StorageWrapper]]></code>
-    </MissingDependency>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$innerPath]]></code>
     </PossiblyUndefinedArrayOffset>
@@ -30,13 +22,5 @@
       <code><![CDATA[\OC\Files\Node\File]]></code>
       <code><![CDATA[protected]]></code>
     </UndefinedClass>
-  </file>
-  <file src="lib/StorageWrapper.php">
-    <UndefinedClass>
-      <code><![CDATA[Wrapper]]></code>
-    </UndefinedClass>
-    <UnimplementedInterfaceMethod>
-      <code><![CDATA[StorageWrapper]]></code>
-    </UnimplementedInterfaceMethod>
   </file>
 </files>
