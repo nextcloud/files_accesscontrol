@@ -274,10 +274,17 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	 * @param array|ICacheEntry|null $cacheEntry
 	 */
 	private function getNode(IStorage $storage, string $path, $cacheEntry = null): ?Node {
-		/** @var IMountPoint|false $mountPoint */
-		$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
-		if (!$mountPoint) {
-			return null;
+		if ($storage->instanceOfStorage(StorageWrapper::class)) {
+			/** @var StorageWrapper $storage */
+			$mountPoint = $storage->getMount();
+		} else {
+			// fairly sure this branch is never taken, but not 100%
+
+			/** @var IMountPoint|false $mountPoint */
+			$mountPoint = current($this->mountManager->findByStorageId($storage->getId()));
+			if (!$mountPoint) {
+				return null;
+			}
 		}
 
 		$fullPath = $mountPoint->getMountPoint() . $path;
