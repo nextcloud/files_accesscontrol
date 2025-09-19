@@ -117,6 +117,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		return isset($segment[2]) && in_array($segment[2], [
 			'files',
 			'thumbnails',
+			'files_trashbin',
 			'files_versions',
 		]);
 	}
