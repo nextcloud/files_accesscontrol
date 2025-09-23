@@ -5,6 +5,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.1 – 2025-09-23
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(trashbin): Fix compatibility with files_trashbin
+- fix(mounts): Prevent additional check for root mount point which errors with LDAP
+
 ## 2.0.0 – 2025-01-16
 ### Changed
 - Require Nextcloud 31
