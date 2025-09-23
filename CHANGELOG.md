@@ -5,6 +5,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.20.2 – 2025-09-23
+### Changed
+- Update translations
+- Update dependencies
+
+### Fixed
+- fix(trashbin): Fix compatibility with files_trashbin
+- fix(mounts): Prevent additional check for root mount point which errors with LDAP
+
 ## 1.20.1 – 2024-09-12
 ### Fixed
 - fix(versions): Fix compatibility with files_versions and PHP strict types
