@@ -18,6 +18,7 @@ trait WebDav {
 	private $storedETAG = null;
 	/** @var int */
 	private $storedFileID = null;
+	private array $trashedFiles = [];
 
 	/**
 	 * @Given /^using dav path "([^"]*)"$/
@@ -55,6 +56,8 @@ trait WebDav {
 			$fullUrl = $this->baseUrl . $this->getDavFilesPath($user) . "$path";
 		} elseif ($type === 'uploads') {
 			$fullUrl = $this->baseUrl . $this->davPath . "$path";
+		} elseif ($type === 'trashbin') {
+			$fullUrl = $this->baseUrl . ltrim($path, '/');
 		} else {
 			$fullUrl = $this->baseUrl . $this->davPath . '/' . $type . "$path";
 		}
@@ -216,6 +219,18 @@ trait WebDav {
 	public function downloadingFile($fileName) {
 		try {
 			$this->response = $this->makeDavRequest($this->currentUser, 'GET', $fileName, []);
+		} catch (\GuzzleHttp\Exception\ClientException $e) {
+			$this->response = $e->getResponse();
+		}
+	}
+
+	/**
+	 * @When Downloading first trashed file
+	 * @param string $fileName
+	 */
+	public function downloadingTrashedFile() {
+		try {
+			$this->response = $this->makeDavRequest($this->currentUser, 'GET', array_shift($this->trashedFiles), [], type: 'trashbin');
 		} catch (\GuzzleHttp\Exception\ClientException $e) {
 			$this->response = $e->getResponse();
 		}
@@ -955,6 +970,24 @@ trait WebDav {
 		Assert::assertEquals(0, $count);
 	}
 
+	/**
+	 * @Then /^User "([^"]*)" loads file list of trashbin$/
+	 * @param string $user
+	 */
+	public function userLoadsFileListOfTrashbin($user) {
+		$client = $this->getSabreClient($user);
+		$properties = [
+			'{DAV:}getetag'
+		];
+
+		$response = $client->propfind($this->makeSabrePath($user, 'trash', 'trashbin'), $properties, 1);
+
+		// Remove the root entry to only have the directory listing
+		unset($response['/remote.php/dav/trashbin/' . $user . '/trash/']);
+
+		Assert::assertNotCount(0, $response);
+		$this->trashedFiles = array_keys($response);
+	}
 
 
 	/**
