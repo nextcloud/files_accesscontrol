@@ -85,3 +85,16 @@
     And The webdav response should have a status code "403"
     When User "test1" copies file "/hello" to "/hello.txt"
     And The webdav response should have a status code "403"
+
+  Scenario: Blocking by mimetype works in trashbin
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
+    | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "text/plain"} |
+    When User "test1" deletes file "/foobar.txt"
+    Then The webdav response should have a status code "204"
