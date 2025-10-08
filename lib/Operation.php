@@ -107,11 +107,18 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		}
 
 		// '', admin, 'files', 'path/to/file.txt'
-		$segment = explode('/', $fullPath, 4);
+		// '', admin, 'files_trashbin', 'versions', 'path/to/file.txt'
+		$segment = explode('/', $fullPath, 5);
 
 		if (isset($segment[2]) && $segment[1] === '__groupfolders' && $segment[2] === 'trash') {
 			// Special case, a file was deleted inside a groupfolder
 			return true;
+		}
+
+		if (isset($segment[3]) && $segment[2] === 'files_trashbin'
+			&& ($segment[3] === 'keys' || !isset($segment[4]))) {
+			// Ignore encryption keys in trashbin and the files and version folder themselves
+			return false;
 		}
 
 		return isset($segment[2]) && in_array($segment[2], [
@@ -138,6 +145,25 @@ class Operation implements IComplexOperation, ISpecificOperation {
 				// Remove trailing ".v{timestamp}"
 				$innerPath = substr($innerPath, 0, -12);
 			}
+			return 'files/' . $innerPath;
+		} elseif ($folder === 'files_trashbin') {
+			// 'files', 'path/to/file.txt'
+			// 'versions', 'path/to/file.txt'
+			$segments = explode('/', $innerPath, 2);
+			if (isset($segments[1])) {
+				$innerPath = $segments[1];
+			}
+
+			if (preg_match('/.+\.d\d{10}$/', basename($innerPath))) {
+				// Remove trailing ".d{timestamp}" of trashbin
+				$innerPath = substr($innerPath, 0, -12);
+			}
+
+			if ($folder === 'versions' && preg_match('/.+\.v\d{10}$/', basename($innerPath))) {
+				// Remove trailing ".v{timestamp}" of versions inside trashbin
+				$innerPath = substr($innerPath, 0, -12);
+			}
+
 			return 'files/' . $innerPath;
 		} elseif ($folder === 'thumbnails') {
 			[$fileId,] = explode('/', $innerPath, 2);
