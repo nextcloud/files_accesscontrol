@@ -94,7 +94,7 @@
     | entity    | OCA\WorkflowEngine\Entity\File   |
     | events    | []                               |
     | operation | deny                             |
-    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
-    | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "text/plain"} |
+    | checks-0  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
+    | checks-1  | {"class":"OCA\\WorkflowEngine\\Check\\FileMimeType", "operator": "!is", "value": "text/plain"} |
     When User "test1" deletes file "/foobar.txt"
     Then The webdav response should have a status code "204"
