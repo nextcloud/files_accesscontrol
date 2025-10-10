@@ -5,6 +5,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.0.1 – 2025-10-10
+### Fixed
+- fix(trashbin): Fix compatibility with files_trashbin when allowing by mimetype
+
 ## 3.0.0 – 2025-09-23
 ### Changed
 - Require Nextcloud 32
