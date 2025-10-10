@@ -104,12 +104,11 @@ class FeatureContext implements Context {
 		$this->setCurrentUser($user);
 
 		$formData = $tableNode->getRowsHash();
-
 		$checks = [];
 		foreach ($formData as $key => $value) {
 			if (strpos($key, 'checks-') === 0) {
 				$value = str_replace('{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}', $this->tagId, $value);
-				$checks[] = json_decode($value, true);
+				$checks[] = json_decode($value, true, flags: JSON_THROW_ON_ERROR);
 				unset($formData[$key]);
 			}
 		}
@@ -118,7 +117,7 @@ class FeatureContext implements Context {
 		$formData['events'] = [];
 
 		$this->sendingToWith('POST', '/apps/workflowengine/api/v1/workflows/' . $scope, $formData);
-		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch');
+		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch:' . "\n" . $this->response->getBody()->getContents());
 	}
 
 	/**
@@ -144,10 +143,10 @@ class FeatureContext implements Context {
 		if (str_contains($statusCode, '|')) {
 			$statusCodes = array_map('intval', explode('|', $statusCode));
 		} else {
-			$statusCodes = [(int) $statusCode];
+			$statusCodes = [(int)$statusCode];
 		}
 		if (!in_array($this->response->getStatusCode(), $statusCodes, true)) {
-			throw new \Exception("Expected $statusCode, got ".$this->response->getStatusCode());
+			throw new \Exception("Expected $statusCode, got " . $this->response->getStatusCode());
 		}
 	}
 
