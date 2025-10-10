@@ -5,6 +5,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.20.3 – 2025-10-10
+### Fixed
+- fix(trashbin): Fix compatibility with files_trashbin when allowing by mimetype
+
 ## 1.20.2 – 2025-09-23
 ### Changed
 - Update translations
