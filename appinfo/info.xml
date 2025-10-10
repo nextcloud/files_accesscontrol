@@ -17,7 +17,7 @@ An example would be to deny access to MS Excel/XLSX files owned by the "Human Re
 
 Learn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow)</description>
 
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<licence>agpl</licence>
 	<author>Arthur Schiwon</author>
 	<author>Joas Schilling</author>
