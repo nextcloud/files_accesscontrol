@@ -20,6 +20,7 @@ trait WebDav {
 	/** @var int */
 	private $storedFileID = null;
 	private array $trashedFiles = [];
+	protected array $lastShareData = [];
 
 	/**
 	 * @Given /^using dav path "([^"]*)"$/
@@ -141,7 +142,7 @@ trait WebDav {
 	 * @param string $range
 	 */
 	public function downloadPublicFileWithRange($range) {
-		$token = $this->lastShareData->data->token;
+		$token = $this->lastShareData['token'];
 		$fullUrl = $this->baseUrl . 'public.php/webdav';
 
 		$client = new GClient();
@@ -151,7 +152,11 @@ trait WebDav {
 			'Range' => $range
 		];
 
-		$this->response = $client->request('GET', $fullUrl, $options);
+		try {
+			$this->response = $client->request('GET', $fullUrl, $options);
+		} catch (\GuzzleHttp\Exception\ClientException $e) {
+			$this->response = $e->getResponse();
+		}
 	}
 
 	/**
@@ -159,7 +164,7 @@ trait WebDav {
 	 * @param string $range
 	 */
 	public function downloadPublicFileInsideAFolderWithRange($path, $range) {
-		$token = $this->lastShareData->data->token;
+		$token = $this->lastShareData['token'];
 		$fullUrl = $this->baseUrl . 'public.php/webdav' . "$path";
 
 		$client = new GClient();
@@ -170,7 +175,11 @@ trait WebDav {
 		];
 		$options['auth'] = [$token, ''];
 
-		$this->response = $client->request('GET', $fullUrl, $options);
+		try {
+			$this->response = $client->request('GET', $fullUrl, $options);
+		} catch (\GuzzleHttp\Exception\ClientException $e) {
+			$this->response = $e->getResponse();
+		}
 	}
 
 	/**
@@ -190,8 +199,13 @@ trait WebDav {
 	 */
 	public function checkPropForFile($file, $prefix, $prop, $value) {
 		$elementList = $this->propfindFile($this->currentUser, $file, "<$prefix:$prop/>");
-		$property = $elementList['/' . $this->getDavFilesPath($this->currentUser) . $file][200]["{DAV:}$prop"];
-		Assert::assertEquals($property, $value);
+		if ($prefix === 'oc') {
+			$prefix = '{http://owncloud.org/ns}';
+		} else {
+			$prefix = '{DAV:}';
+		}
+		$property = $elementList['/' . $this->getDavFilesPath($this->currentUser) . $file][200]["$prefix$prop"];
+		Assert::assertEquals($value, $property);
 	}
 
 	/**
