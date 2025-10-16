@@ -5,7 +5,7 @@
     Given as user "test1"
     And using new dav path
 
-   Scenario: Can properly block path detected mimetypes for application/javscript
+   Scenario: Can properly block path detected mimetypes for application/javascript
     And user "admin" creates global flow with 200
     | name      | Admin flow                       |
     | class     | OCA\FilesAccessControl\Operation |
