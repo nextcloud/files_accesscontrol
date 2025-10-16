@@ -172,3 +172,35 @@ Feature: Sharing user
     And The webdav response should have a status code "404"
     And user "test2" should see following elements
       | /nextcloud2.txt |
+
+  Scenario: Downloading is still blocked when Secure View is enabled
+    Given the following files app config is set
+      | watermark_enabled | yes |
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    And The webdav response should have a status code "201"
+    And user "test1" shares file "/foobar.txt" with user "test2"
+    And as user "test2"
+    When File "/foobar.txt" should have prop "oc:permissions" equal to "SRGDNVW"
+    When Downloading file "/foobar.txt"
+    Then The webdav response should have a status code "200"
+    When Downloading file "/foobar.txt" with range "1-4"
+    Then The webdav response should have a status code "200"
+    And user "test1" shares file "/foobar.txt" publicly
+    And as user "test2"
+    When Downloading last public shared file with range "1-4"
+    Then The webdav response should have a status code "200"
+    And user "admin" creates global flow with 200
+      | name      | Admin flow                       |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | deny                             |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "text/plain"} |
+    And as user "test2"
+    When File "/foobar.txt" should have prop "oc:permissions" equal to "SRD"
+    When Downloading file "/foobar.txt"
+    Then The webdav response should have a status code "404"
+    When Downloading file "/foobar.txt" with range "1-4"
+    Then The webdav response should have a status code "404"
+    When Downloading last public shared file with range "1-4"
+    Then The webdav response should have a status code "404"
