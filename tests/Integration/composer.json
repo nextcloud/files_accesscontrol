@@ -5,9 +5,9 @@
 		}
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^9.6.21",
-		"behat/behat": "^3.14.0",
-		"guzzlehttp/guzzle": "^7.9.2",
-		"sabre/dav": "^4.6.0"
+		"phpunit/phpunit": "^10.5.58",
+		"behat/behat": "^3.26.0",
+		"guzzlehttp/guzzle": "^7.10.0",
+		"sabre/dav": "^4.7.0"
 	}
 }
