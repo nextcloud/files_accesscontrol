@@ -42,7 +42,8 @@ class CacheWrapper extends Wrapper {
 				$path = $entry['path'];
 				if ($storage?->instanceOfStorage(Jail::class)) {
 					/** @var Jail $storage */
-					$path = $storage->getJailedPath($path);
+					$jailedPath = $storage->getJailedPath($path);
+					$path = $jailedPath ?? $path;
 				}
 				$this->operation->checkFileAccess($path, $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry);
 			} catch (ForbiddenException) {
