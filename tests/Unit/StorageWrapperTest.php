@@ -11,6 +11,7 @@ namespace OCA\FilesAccessControl\Tests\Unit;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -19,11 +20,20 @@ class StorageWrapperTest extends TestCase {
 	protected IStorage&MockObject $storage;
 	protected Operation&MockObject $operation;
 
+	/** @var IMountPoint|MockObject */
+	protected $mountPoint;
+
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->storage = $this->createMock(IStorage::class);
 		$this->operation = $this->createMock(Operation::class);
+
+		$this->mountPoint = $this->createMock(IMountPoint::class);
+		$this->mountPoint->method('getMountPoint')
+			->willReturn('mountPoint');
+		$this->mountPoint->method('getStorage')
+			->willReturn($this->storage);
 	}
 
 	protected function getInstance(array $methods = []): StorageWrapper&MockObject {
@@ -32,6 +42,7 @@ class StorageWrapperTest extends TestCase {
 				[
 					'storage' => $this->storage,
 					'mountPoint' => 'mountPoint',
+					'mount' => $this->mountPoint,
 					'operation' => $this->operation,
 				]
 			])
@@ -54,7 +65,7 @@ class StorageWrapperTest extends TestCase {
 
 		$this->operation->expects($this->once())
 			->method('checkFileAccess')
-			->with($storage, $path);
+			->with($path, $this->mountPoint, $isDir);
 
 		self::invokePrivate($storage, 'checkFileAccess', [$path, $isDir]);
 	}

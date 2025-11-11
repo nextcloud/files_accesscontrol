@@ -70,6 +70,7 @@ jobs:
       matrix:
         php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
+        richdocuments-versions: ['stable31']
 
     name: OCI PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
 
@@ -114,6 +115,14 @@ jobs:
           persist-credentials: false
           path: apps/${{ env.APP_NAME }}
 
+      - name: Checkout app (richdocuments)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          path: apps/richdocuments
+          repository: nextcloud/richdocuments
+          ref: ${{ matrix.richdocuments-versions }}
+
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # v2.31.1
         with:
@@ -140,6 +149,10 @@ jobs:
         run: |
           composer remove nextcloud/ocp --dev
           composer i
+
+      - name: Set up dependencies (richdocuments)
+        working-directory: apps/richdocuments
+        run: composer i --no-dev
 
       - name: Set up Nextcloud
         env:
