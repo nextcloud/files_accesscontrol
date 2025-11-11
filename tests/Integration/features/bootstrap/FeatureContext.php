@@ -45,6 +45,8 @@ class FeatureContext implements Context {
 	protected string $tagId = '';
 	protected array $createdUsers = [];
 
+	protected array $changedConfigs = [];
+
 	/**
 	 * FeatureContext constructor.
 	 */
@@ -61,6 +63,12 @@ class FeatureContext implements Context {
 		$this->setCurrentUser('admin');
 		$this->sendingTo('DELETE', '/apps/files_accesscontrol_testing');
 		$this->assertStatusCode($this->response, 200);
+
+		foreach ($this->changedConfigs as $appId => $configs) {
+			foreach ($configs as $config) {
+				$this->sendingTo('DELETE', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $config);
+			}
+		}
 	}
 
 	/**
@@ -133,6 +141,20 @@ class FeatureContext implements Context {
 		]);
 	}
 
+	/**
+	 * @Given /^user "([^"]*)" shares file "([^"]*)" publicly$/
+	 */
+	public function userSharesFilePublicly(string $sharer, string $file): void {
+		$this->setCurrentUser($sharer);
+		$this->sendingToWith('POST', '/apps/files_sharing/api/v1/shares', [
+			'path' => $file,
+			'permissions' => 19,
+			'shareType' => 3,
+		]);
+		$responseBody = json_decode($this->response->getBody()->getContents(), true, flags: JSON_THROW_ON_ERROR);
+		$this->lastShareData = $responseBody['ocs']['data'];
+	}
+
 	// ChecksumsContext
 	/**
 	 * @Then The webdav response should have a status code :statusCode
@@ -147,6 +169,18 @@ class FeatureContext implements Context {
 		}
 		if (!in_array($this->response->getStatusCode(), $statusCodes, true)) {
 			throw new \Exception("Expected $statusCode, got " . $this->response->getStatusCode());
+		}
+	}
+
+
+	#[\Behat\Step\Given('the following :appId app config is set')]
+	public function setAppConfig(string $appId, TableNode $formData): void {
+		$this->setCurrentUser('admin');
+		foreach ($formData->getRows() as $row) {
+			$this->sendingToWith('POST', '/apps/provisioning_api/api/v1/config/apps/' . $appId . '/' . $row[0], [
+				'value' => $row[1],
+			]);
+			$this->changedConfigs[$appId][] = $row[0];
 		}
 	}
 
