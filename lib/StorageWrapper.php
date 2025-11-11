@@ -8,11 +8,12 @@ declare(strict_types=1);
 
 namespace OCA\FilesAccessControl;
 
-use OC\Files\Cache\Cache;
 use OC\Files\Storage\Storage;
 use OC\Files\Storage\Wrapper\Wrapper;
 use OCP\Constants;
+use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
+use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
 use OCP\Files\Storage\IWriteStreamStorage;
 
@@ -20,6 +21,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	protected readonly Operation $operation;
 	public readonly string $mountPoint;
 	protected readonly int $mask;
+	protected readonly IMountPoint $mount;
 
 	/**
 	 * @param array $parameters
@@ -28,6 +30,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		parent::__construct($parameters);
 		$this->operation = $parameters['operation'];
 		$this->mountPoint = $parameters['mountPoint'];
+		$this->mount = $parameters['mount'];
 
 		$this->mask = Constants::PERMISSION_ALL
 			& ~Constants::PERMISSION_READ
@@ -40,7 +43,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * @throws ForbiddenException
 	 */
 	protected function checkFileAccess(string $path, ?bool $isDir = null): void {
-		$this->operation->checkFileAccess($this, $path, is_bool($isDir) ? $isDir : $this->is_dir($path));
+		$this->operation->checkFileAccess($path, $this->mount, is_bool($isDir) ? $isDir : $this->is_dir($path));
 	}
 
 	/*
@@ -144,7 +147,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * see http://php.net/manual/en/function.file_get_contents.php
 	 *
 	 * @param string $path
-	 * @return string
+	 * @return string|false
 	 * @throws ForbiddenException
 	 */
 	public function file_get_contents($path) {
@@ -156,8 +159,8 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * see http://php.net/manual/en/function.file_put_contents.php
 	 *
 	 * @param string $path
-	 * @param string $data
-	 * @return bool
+	 * @param mixed $data
+	 * @return int|float|false
 	 * @throws ForbiddenException
 	 */
 	public function file_put_contents($path, $data) {
@@ -212,7 +215,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 *
 	 * @param string $path
 	 * @param string $mode
-	 * @return resource
+	 * @return resource|bool
 	 * @throws ForbiddenException
 	 */
 	public function fopen($path, $mode) {
@@ -239,14 +242,14 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 *
 	 * @param string $path
 	 * @param Storage (optional) the storage to pass to the cache
-	 * @return Cache
+	 * @return ICache
 	 */
 	public function getCache($path = '', $storage = null) {
 		if (!$storage) {
 			$storage = $this;
 		}
 		$cache = $this->storage->getCache($path, $storage);
-		return new CacheWrapper($cache, $storage, $this->operation);
+		return new CacheWrapper($cache, $this->mount, $this->operation);
 	}
 
 	/**
@@ -255,7 +258,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 * For now the returned array can hold the parameter url - in future more attributes might follow.
 	 *
 	 * @param string $path
-	 * @return array
+	 * @return array|bool
 	 * @throws ForbiddenException
 	 */
 	public function getDirectDownload($path) {
@@ -303,7 +306,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			$this->checkFileAccess($path, false);
 		}
 
-		$result = $this->storage->writeStream($path, $stream, $size);
+		$result = parent::writeStream($path, $stream, $size);
 		if (!$this->isPartFile($path)) {
 			return $result;
 		}
@@ -322,5 +325,9 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	private function isPartFile(string $path): bool {
 		$extension = pathinfo($path, PATHINFO_EXTENSION);
 		return $extension === 'part';
+	}
+
+	public function getMount(): IMountPoint {
+		return $this->mount;
 	}
 }

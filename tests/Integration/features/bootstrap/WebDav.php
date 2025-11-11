@@ -19,6 +19,7 @@ trait WebDav {
 	/** @var int */
 	private $storedFileID = null;
 	private array $trashedFiles = [];
+	protected array $lastShareData = [];
 
 	/**
 	 * @Given /^using dav path "([^"]*)"$/
@@ -140,17 +141,21 @@ trait WebDav {
 	 * @param string $range
 	 */
 	public function downloadPublicFileWithRange($range) {
-		$token = $this->lastShareData->data->token;
-		$fullUrl = $this->baseUrl . "public.php/webdav";
+		$token = $this->lastShareData['token'];
+		$fullUrl = $this->baseUrl . 'public.php/webdav';
 
 		$client = new GClient();
 		$options = [];
-		$options['auth'] = [$token, ""];
+		$options['auth'] = [$token, ''];
 		$options['headers'] = [
 			'Range' => $range
 		];
 
-		$this->response = $client->request("GET", $fullUrl, $options);
+		try {
+			$this->response = $client->request('GET', $fullUrl, $options);
+		} catch (\GuzzleHttp\Exception\ClientException $e) {
+			$this->response = $e->getResponse();
+		}
 	}
 
 	/**
@@ -158,8 +163,8 @@ trait WebDav {
 	 * @param string $range
 	 */
 	public function downloadPublicFileInsideAFolderWithRange($path, $range) {
-		$token = $this->lastShareData->data->token;
-		$fullUrl = $this->baseUrl . "public.php/webdav" . "$path";
+		$token = $this->lastShareData['token'];
+		$fullUrl = $this->baseUrl . 'public.php/webdav' . "$path";
 
 		$client = new GClient();
 		$options = [
@@ -167,9 +172,13 @@ trait WebDav {
 				'Range' => $range
 			]
 		];
-		$options['auth'] = [$token, ""];
+		$options['auth'] = [$token, ''];
 
-		$this->response = $client->request("GET", $fullUrl, $options);
+		try {
+			$this->response = $client->request('GET', $fullUrl, $options);
+		} catch (\GuzzleHttp\Exception\ClientException $e) {
+			$this->response = $e->getResponse();
+		}
 	}
 
 	/**
@@ -189,8 +198,13 @@ trait WebDav {
 	 */
 	public function checkPropForFile($file, $prefix, $prop, $value) {
 		$elementList = $this->propfindFile($this->currentUser, $file, "<$prefix:$prop/>");
-		$property = $elementList['/'.$this->getDavFilesPath($this->currentUser).$file][200]["{DAV:}$prop"];
-		Assert::assertEquals($property, $value);
+		if ($prefix === 'oc') {
+			$prefix = '{http://owncloud.org/ns}';
+		} else {
+			$prefix = '{DAV:}';
+		}
+		$property = $elementList['/' . $this->getDavFilesPath($this->currentUser) . $file][200]["$prefix$prop"];
+		Assert::assertEquals($value, $property);
 	}
 
 	/**

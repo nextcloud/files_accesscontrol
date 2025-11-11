@@ -6,18 +6,10 @@
       <code><![CDATA[OC]]></code>
     </UndefinedClass>
   </file>
-  <file src="lib/CacheWrapper.php">
-    <UndefinedClass>
-      <code><![CDATA[Wrapper]]></code>
-    </UndefinedClass>
-  </file>
   <file src="lib/Operation.php">
     <InvalidArgument>
       <code><![CDATA[$this->fileEntity]]></code>
     </InvalidArgument>
-    <MissingDependency>
-      <code><![CDATA[StorageWrapper]]></code>
-    </MissingDependency>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$innerPath]]></code>
     </PossiblyUndefinedArrayOffset>
@@ -32,11 +24,15 @@
     </UndefinedClass>
   </file>
   <file src="lib/StorageWrapper.php">
-    <UndefinedClass>
-      <code><![CDATA[Wrapper]]></code>
-    </UndefinedClass>
-    <UnimplementedInterfaceMethod>
-      <code><![CDATA[StorageWrapper]]></code>
-    </UnimplementedInterfaceMethod>
+    <ParamNameMismatch>
+      <code><![CDATA[$path1]]></code>
+      <code><![CDATA[$path1]]></code>
+      <code><![CDATA[$path1]]></code>
+      <code><![CDATA[$path1]]></code>
+      <code><![CDATA[$path2]]></code>
+      <code><![CDATA[$path2]]></code>
+      <code><![CDATA[$path2]]></code>
+      <code><![CDATA[$path2]]></code>
+    </ParamNameMismatch>
   </file>
 </files>
