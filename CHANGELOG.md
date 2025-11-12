@@ -5,6 +5,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.20.4 – 2025-11-12
+### Fixed
+- perf: Improve performance by reusing the existing mount point
+
 ## 1.20.3 – 2025-10-10
 ### Fixed
 - fix(trashbin): Fix compatibility with files_trashbin when allowing by mimetype
