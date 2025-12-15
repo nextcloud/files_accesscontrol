@@ -197,7 +197,7 @@ Feature: Sharing user
       | operation | deny                             |
       | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "text/plain"} |
     And as user "test2"
-    When File "/foobar.txt" should have prop "oc:permissions" equal to "SRD"
+    When Propfind for file "/foobar.txt" prop "oc:permissions" fails with 403 "<s:message>No read permissions."
     When Downloading file "/foobar.txt"
     Then The webdav response should have a status code "403"
     When Downloading file "/foobar.txt" with range "1-4"
