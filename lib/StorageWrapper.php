@@ -268,18 +268,44 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	}
 
 	/**
-	 * A custom storage implementation can return an url for direct download of a give file.
+	 * A custom storage implementation can return a url for direct download of a give file.
 	 *
 	 * For now the returned array can hold the parameter url - in future more attributes might follow.
 	 *
 	 * @param string $path
-	 * @return array|false
+	 * @return array{expiration: ?int, url: ?string}|false
 	 * @throws ForbiddenException
 	 */
 	#[\Override]
 	public function getDirectDownload($path): array|false {
 		$this->checkFileAccess($path, false);
 		return $this->storage->getDirectDownload($path);
+	}
+
+	/**
+	 * A custom storage implementation can return a url for direct download of a give file.
+	 *
+	 * For now the returned array can hold the parameter url - in future more attributes might follow.
+	 *
+	 * @param string $fileId
+	 * @return array{expiration: ?int, url: ?string}|false
+	 * @throws ForbiddenException
+	 */
+	#[\Override]
+	public function getDirectDownloadById(string $fileId): array|false {
+		// We first check if something is providing direct download, to save ID to path resolution
+		$data = $this->storage->getDirectDownloadById($fileId);
+		if ($data === false) {
+			return false;
+		}
+
+		// We would have actually a result, so lets see if the user should be able to access it
+		$path = $this->getCache()->getPathById((int)$fileId);
+		if ($path !== null) {
+			$this->checkFileAccess($path, false);
+		}
+
+		return $data;
 	}
 
 	/**
