@@ -140,7 +140,7 @@ Feature: Sharing user
     | operation | deny                             |
     | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileSystemTags", "operator": "is", "value": "{{{FILES_ACCESSCONTROL_INTEGRATIONTEST_TAGID}}}"} |
     Then Downloading file "/nextcloud2.txt" as "test2"
-    And The webdav response should have a status code "403"
+    And The webdav response should have a status code "404"
     And Downloading file "/nextcloud3.txt" as "test2"
     And The webdav response should have a status code "200"
     And user "test2" should see following elements
@@ -169,7 +169,7 @@ Feature: Sharing user
     Then Downloading file "/nextcloud2.txt" as "test2"
     And The webdav response should have a status code "200"
     And Downloading file "/nextcloud3.txt" as "test2"
-    And The webdav response should have a status code "403"
+    And The webdav response should have a status code "404"
     And user "test2" should see following elements
       | /nextcloud2.txt |
 
@@ -197,10 +197,10 @@ Feature: Sharing user
       | operation | deny                             |
       | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "text/plain"} |
     And as user "test2"
-    When Propfind for file "/foobar.txt" prop "oc:permissions" fails with 403 "<s:message>No read permissions."
+    When File "/foobar.txt" should have prop "oc:permissions" equal to "SRD"
     When Downloading file "/foobar.txt"
-    Then The webdav response should have a status code "403"
+    Then The webdav response should have a status code "404"
     When Downloading file "/foobar.txt" with range "1-4"
-    Then The webdav response should have a status code "403"
+    Then The webdav response should have a status code "404"
     When Downloading last public shared file with range "1-4"
     Then The webdav response should have a status code "404"
