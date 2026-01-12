@@ -209,15 +209,6 @@ trait WebDav {
 	}
 
 	/**
-	 * @Then /^Propfind for file "([^"]*)" prop "([^"]*):([^"]*)" fails with ([0-9]+) "([^"]*)"$/
-	 */
-	public function checkPropForFileFails(string $file, string $prefix, string $prop, int $status, string $message): void {
-		$this->propfindFileFailed($this->currentUser, $file, "<$prefix:$prop/>");
-		Assert::assertEquals($status, $this->response['statusCode']);
-		Assert::assertStringContainsString($message, $this->response['body']);
-	}
-
-	/**
 	 * @Then /^Image search should work$/
 	 */
 	public function search(): void {
@@ -432,26 +423,6 @@ trait WebDav {
 		$response = $client->request('PROPFIND', $this->makeSabrePath($user, $path), $body);
 		$parsedResponse = $client->parseMultistatus($response['body']);
 		return $parsedResponse;
-	}
-
-	/**
-	 * Returns the elements of a propfind command
-	 * @param string $properties properties which needs to be included in the report
-	 */
-	public function propfindFileFailed(string $user, string $path, string $properties = ''): void {
-		$client = $this->getSabreClient($user);
-
-		$body = '<?xml version="1.0" encoding="utf-8" ?>
-					<d:propfind  xmlns:d="DAV:"
-						xmlns:oc="http://owncloud.org/ns"
-						xmlns:nc="http://nextcloud.org/ns"
-						xmlns:ocs="http://open-collaboration-services.org/ns">
-						<d:prop>
-							' . $properties . '
-						</d:prop>
-					</d:propfind>';
-
-		$this->response = $client->request('PROPFIND', $this->makeSabrePath($user, $path), $body);
 	}
 
 	/**
