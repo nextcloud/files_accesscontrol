@@ -404,11 +404,10 @@ trait WebDav {
 	}
 
 	/**
-	 * Returns the elements of a profind command
+	 * Returns the elements of a propfind command
 	 * @param string $properties properties which needs to be included in the report
-	 * @param string $filterRules filter-rules to choose what needs to appear in the report
 	 */
-	public function propfindFile(string $user, string $path, string $properties = '') {
+	public function propfindFile(string $user, string $path, string $properties = ''): array {
 		$client = $this->getSabreClient($user);
 
 		$body = '<?xml version="1.0" encoding="utf-8" ?>
