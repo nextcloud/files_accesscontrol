@@ -1,7 +1,11 @@
 OC.L10N.register(
     "files_accesscontrol",
     {
-    "No rule given" : "Tidak ada peraturan yang diberikan",
-    "File access control" : "Akses kontrol berkas"
+    "No rule given" : "Tidak ada aturan yang diberikan",
+    "Block access to a file" : "Blokir akses ke berkas",
+    "File is accessed" : "Berkas diakses",
+    "File access control" : "Kontrol Akses Berkas",
+    "Control access to files based on conditions" : "Kendalikan akses ke berkas berdasarkan kondisi",
+    "Nextcloud's File Access Control app enables administrators to protect data from unauthorized access or modifications.\n\n## How it works\nThe administrator can create and manage a set of rule groups. Each of the rule groups consists of one or more rules. If all rules of a group hold true, the group matches the request and access is being denied or the upload is blocked. The rules criteria range from IP address, MIME type and request time to group membership, tags, user agent and more.\n\nAn example would be to deny access to MS Excel/XLSX files owned by the \"Human Resources\" group accessed from an IP not on the internal company network or to block uploads of files bigger than 512 mb by students in the \"1st year\" group.\n\nLearn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow)" : "Aplikasi Kontrol Akses Berkas Nextcloud memungkinkan administrator melindungi data dari akses atau modifikasi yang tidak sah.\n\n## Cara kerjanya\nAdministrator dapat membuat dan mengelola sekumpulan grup aturan. Setiap grup aturan terdiri dari satu atau lebih aturan. Jika semua aturan dalam suatu grup terpenuhi, grup tersebut cocok dengan permintaan dan akses akan ditolak atau unggahan akan diblokir. Kriteria aturan mencakup alamat IP, tipe MIME, dan waktu permintaan hingga keanggotaan grup, tag, user agent, dan lainnya.\n\nContohnya, menolak akses ke berkas MS Excel/XLSX milik grup \"Sumber Daya Manusia\" yang diakses dari IP yang tidak berada di jaringan internal perusahaan, atau memblokir unggahan berkas yang lebih besar dari 512 mb oleh siswa dalam grup \"Tahun 1\".\n\nPelajari lebih lanjut tentang Kontrol Akses Berkas di [https://nextcloud.com/workflow](https://nextcloud.com/workflow)"
 },
 "nplurals=1; plural=0;");
