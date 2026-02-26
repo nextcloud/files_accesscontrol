@@ -8,16 +8,16 @@ declare(strict_types=1);
 
 namespace OCA\FilesAccessControl\Tests\Unit;
 
+use OC\Files\Storage\Storage;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Mount\IMountPoint;
-use OCP\Files\Storage\IStorage;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class StorageWrapperTest extends TestCase {
-	protected IStorage&MockObject $storage;
+	protected Storage&MockObject $storage;
 	protected Operation&MockObject $operation;
 
 	/** @var IMountPoint|MockObject */
@@ -26,7 +26,7 @@ class StorageWrapperTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->storage = $this->createMock(IStorage::class);
+		$this->storage = $this->createMock(Storage::class);
 		$this->operation = $this->createMock(Operation::class);
 
 		$this->mountPoint = $this->createMock(IMountPoint::class);
