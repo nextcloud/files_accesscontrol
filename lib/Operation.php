@@ -12,6 +12,7 @@ use Exception;
 use OC\Files\FileInfo;
 use OC\Files\Node\Folder;
 use OC\Files\View;
+use OCA\GroupFolders\Mount\GroupMountPoint;
 use OCA\WorkflowEngine\Entity\File;
 use OCP\EventDispatcher\Event;
 use OCP\Files\Cache\ICacheEntry;
@@ -124,6 +125,22 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			return $path;
 		}
 
+		if ($storage->getMount() instanceof GroupMountPoint) {
+			$mountPoint = $storage->getMount()->getMountPoint();
+			if (substr_count($mountPoint, '/') >= 3) {
+				// '', 'user', 'files_version', 'groupfolder/$id'
+				[,, $folder] = explode('/', $mountPoint);
+				if ($folder === 'files_versions' && preg_match('/.+\.v\d{10}$/', basename($path))) {
+					// Remove trailing ".v{timestamp}"
+					return substr($path, 0, -12);
+				}
+				if ($folder === 'files_trashbin' && preg_match('/.+\.d\d{10}$/', basename($path))) {
+					// Remove trailing ".d{timestamp}"
+					return substr($path, 0, -12);
+				}
+			}
+		}
+
 		// 'files', 'path/to/file.txt'
 		[$folder, $innerPath] = explode('/', $path, 2);
 
@@ -174,6 +191,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		foreach ($trace as $step) {
 			if (isset($step['class']) && $step['class'] === \OC\Core\Controller\LoginController::class
 				&& isset($step['function']) && $step['function'] === 'tryLogin') {
+				return true;
+			}
+			if (isset($step['class']) && $step['class'] === \OCA\GroupFolders\Trash\TrashBackend::class
+				&& isset($step['function']) && $step['function'] === 'setupTrashFolder') {
 				return true;
 			}
 		}
