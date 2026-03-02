@@ -71,6 +71,7 @@ jobs:
         php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
         richdocuments-versions: ['stable32']
+        groupfolders-versions: ['stable32']
 
     name: SQLite PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
 
@@ -103,6 +104,14 @@ jobs:
           repository: nextcloud/richdocuments
           ref: ${{ matrix.richdocuments-versions }}
 
+      - name: Checkout app (groupfolders)
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+          path: apps/groupfolders
+          repository: nextcloud/groupfolders
+          ref: ${{ matrix.groupfolders-versions }}
+
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # v2.36.0
         with:
@@ -132,6 +141,10 @@ jobs:
 
       - name: Set up dependencies (richdocuments)
         working-directory: apps/richdocuments
+        run: composer i --no-dev
+
+      - name: Set up dependencies (groupfolders)
+        working-directory: apps/groupfolders
         run: composer i --no-dev
 
       - name: Set up Nextcloud
