@@ -31,5 +31,6 @@
 		<file name="tests/stubs/oc_files_cache_wrapper_cachewrapper.php" />
 		<file name="tests/stubs/oc_files_storage_wrapper_wrapper.php" />
 		<file name="tests/stubs/oc_files_storage_wrapper_jail.php" />
+		<file name="tests/stubs/oca_groupfolders.php" />
 	</stubs>
 </psalm>
