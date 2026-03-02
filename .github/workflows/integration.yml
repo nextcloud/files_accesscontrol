@@ -27,6 +27,7 @@ jobs:
         databases: ['sqlite', 'mysql', 'pgsql']
         server-versions: ['stable31']
         richdocuments-versions: ['stable31']
+        groupfolders-versions: ['stable31']
         primary-storage: ['local', 'minio']
 
     name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}-${{ matrix.primary-storage}}
@@ -36,11 +37,11 @@ jobs:
         env:
           MINIO_ACCESS_KEY: minio
           MINIO_SECRET_KEY: minio123
-        image: ghcr.io/nextcloud/continuous-integration-minio:latest
+        image: ghcr.io/nextcloud/continuous-integration-minio:latest # zizmor: ignore[unpinned-images]
         ports:
           - "9000:9000"
       postgres:
-        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest
+        image: ghcr.io/nextcloud/continuous-integration-postgres-14:latest # zizmor: ignore[unpinned-images]
         ports:
           - 4445:5432/tcp
         env:
@@ -49,7 +50,7 @@ jobs:
           POSTGRES_DB: nextcloud
         options: --health-cmd pg_isready --health-interval 5s --health-timeout 2s --health-retries 5
       mysql:
-        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest
+        image: ghcr.io/nextcloud/continuous-integration-mariadb-10.6:latest # zizmor: ignore[unpinned-images]
         ports:
           - 4444:3306/tcp
         env:
@@ -83,6 +84,14 @@ jobs:
           repository: nextcloud/richdocuments
           ref: ${{ matrix.richdocuments-versions }}
 
+      - name: Checkout app (groupfolders)
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+          path: apps/groupfolders
+          repository: nextcloud/groupfolders
+          ref: ${{ matrix.groupfolders-versions }}
+
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@c541c155eee45413f5b09a52248675b1a2575231 # v2.31.1
         with:
@@ -106,6 +115,10 @@ jobs:
 
       - name: Set up dependencies (richdocuments)
         working-directory: apps/richdocuments
+        run: composer i --no-dev
+
+      - name: Set up dependencies (groupfolders)
+        working-directory: apps/groupfolders
         run: composer i --no-dev
 
       - name: Set up Nextcloud for S3 primary storage
