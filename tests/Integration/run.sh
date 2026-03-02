@@ -17,6 +17,7 @@ cp -R ./app "../../../${APP_NAME}_testing"
 ${ROOT_DIR}/occ app:enable $APP_NAME
 ${ROOT_DIR}/occ app:enable --force "${APP_NAME}_testing"
 ${ROOT_DIR}/occ app:enable --force richdocuments
+${ROOT_DIR}/occ app:enable --force groupfolders
 ${ROOT_DIR}/occ app:list | grep $APP_NAME
 
 export TEST_SERVER_URL="http://localhost:8080/"
