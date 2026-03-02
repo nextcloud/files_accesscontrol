@@ -162,7 +162,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			// 'versions', 'path/to/file.txt'
 			$segments = explode('/', $innerPath, 2);
 			if (isset($segments[1])) {
-				$innerPath = $segments[1];
+				[$folder, $innerPath] = $segments;
 			}
 
 			if (preg_match('/.+\.d\d{10}$/', basename($innerPath))) {
