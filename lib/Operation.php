@@ -12,6 +12,7 @@ use Exception;
 use OC\Files\FileInfo;
 use OC\Files\Node\Folder;
 use OC\Files\View;
+use OCA\GroupFolders\Mount\GroupMountPoint;
 use OCA\WorkflowEngine\Entity\File;
 use OCP\EventDispatcher\Event;
 use OCP\Files\Cache\ICacheEntry;
@@ -62,7 +63,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 
 		$this->nestingLevel++;
 
-		$filePath = $this->translatePath($storage, $path);
+		$filePath = $this->translatePath($mountPoint, $storage, $path);
 		$ruleMatcher = $this->manager->getRuleMatcher();
 		$ruleMatcher->setFileInfo($storage, $filePath, $isDir);
 		$node = $this->getNode($path, $mountPoint, $cacheEntry);
@@ -119,8 +120,31 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	/**
 	 * For thumbnails and versions we want to check the tags of the original file
 	 */
-	protected function translatePath(IStorage $storage, string $path): string {
-		if (substr_count($path, '/') < 1) {
+	protected function translatePath(IMountPoint $mountPoint, IStorage $storage, string $path): string {
+		if ($mountPoint instanceof GroupMountPoint) {
+			/**
+			 * Case    | Mount point path                      | Path ($path)
+			 * --------+---------------------------------------+--------------------------------
+			 * Files   | /user/files/$folderName/              | Subfolder/File.txt
+			 * Trash   | /user/files_trashbin/groupfolder/$id/ | Subfolder/File.txt.v{timestamp}
+			 * Version | /user/files_versions/groupfolder/$id/ | Subfolder/File.txt.d{timestamp}
+			 */
+			$mountPath = $mountPoint->getMountPoint();
+			if (substr_count($mountPath, '/') >= 3) {
+				[,, $folder] = explode('/', $mountPath);
+				if ($folder === 'files_versions' && preg_match('/.+\.v\d{10}$/', basename($path))) {
+					// Remove trailing ".v{timestamp}"
+					return substr($path, 0, -12);
+				}
+				if ($folder === 'files_trashbin' && preg_match('/.+\.d\d{10}$/', basename($path))) {
+					// Remove trailing ".d{timestamp}"
+					return substr($path, 0, -12);
+				}
+			}
+			return $path;
+		}
+
+		if (substr_count($path, '/') === 0) {
 			return $path;
 		}
 
@@ -174,6 +198,10 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		foreach ($trace as $step) {
 			if (isset($step['class']) && $step['class'] === \OC\Core\Controller\LoginController::class &&
 				isset($step['function']) && $step['function'] === 'tryLogin') {
+				return true;
+			}
+			if (isset($step['class']) && $step['class'] === \OCA\GroupFolders\Trash\TrashBackend::class
+				&& isset($step['function']) && $step['function'] === 'setupTrashFolder') {
 				return true;
 			}
 		}
