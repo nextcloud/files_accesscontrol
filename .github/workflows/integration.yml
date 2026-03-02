@@ -25,7 +25,7 @@ jobs:
       matrix:
         php-versions: ['8.4']
         databases: ['sqlite', 'mysql', 'pgsql']
-        server-versions: ['master']
+        server-versions: ['carl/workflow-outdated-events']
         richdocuments-versions: ['main']
         primary-storage: ['local', 'minio']
 
