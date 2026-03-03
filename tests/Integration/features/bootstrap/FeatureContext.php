@@ -13,6 +13,11 @@ require __DIR__ . '/WebDav.php';
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Exception\ClientException;
@@ -26,6 +31,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FeatureContext implements Context {
 	use WebDav;
+	use CommandLineTrait;
 
 	protected $regularUser = '123456';
 	protected $adminUser = ['admin', 'admin'];
@@ -44,6 +50,8 @@ class FeatureContext implements Context {
 
 	protected string $tagId = '';
 	protected array $createdUsers = [];
+	protected array $createdGroups = [];
+	protected array $createdGroupFolders = [];
 
 	protected array $changedConfigs = [];
 
@@ -55,10 +63,8 @@ class FeatureContext implements Context {
 		$this->baseUrl = getenv('TEST_SERVER_URL');
 	}
 
-	/**
-	 * @BeforeScenario
-	 * @AfterScenario
-	 */
+	#[BeforeScenario]
+	#[AfterScenario]
 	public function cleanUpBetweenTests() {
 		$this->setCurrentUser('admin');
 		$this->sendingTo('DELETE', '/apps/files_accesscontrol_testing');
@@ -71,18 +77,21 @@ class FeatureContext implements Context {
 		}
 	}
 
-	/**
-	 * @AfterScenario
-	 */
+	#[AfterScenario]
 	public function tearDown() {
 		foreach ($this->createdUsers as $user) {
 			$this->deleteUser($user);
 		}
+		foreach ($this->createdGroups as $group) {
+			$this->deleteGroup($group);
+		}
+		foreach ($this->createdGroupFolders as $folderId) {
+			$this->runOcc(['groupfolders:delete', '--force', $folderId]);
+			$this->theCommandWasSuccessful();
+		}
 	}
 
-	/**
-	 * @Given /^Ensure tag exists$/
-	 */
+	#[Given(pattern: 'Ensure tag exists')]
 	public function createTag() {
 		$this->setCurrentUser('admin');
 		$this->sendingTo('POST', '/apps/files_accesscontrol_testing');
@@ -93,9 +102,7 @@ class FeatureContext implements Context {
 		$this->tagId = $data['tagId'];
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" tags file "([^"]*)"$/
-	 */
+	#[Given(pattern: '/^user "([^"]*)" tags file "([^"]*)"$/')]
 	public function tagFile(string $user, string $path) {
 		// TODO: Remove all created tags?
 		$this->setCurrentUser($user);
@@ -105,9 +112,7 @@ class FeatureContext implements Context {
 		$this->assertStatusCode($this->response, 200);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" creates (global|user) flow with (\d+)$/
-	 */
+	#[Given(pattern: '/^user "([^"]*)" creates (global|user) flow with (\d+)$/')]
 	public function createFlow(string $user, string $scope, int $statusCode, TableNode $tableNode) {
 		$this->setCurrentUser($user);
 
@@ -128,9 +133,7 @@ class FeatureContext implements Context {
 		Assert::assertSame($statusCode, $this->response->getStatusCode(), 'HTTP status code mismatch:' . "\n" . $this->response->getBody()->getContents());
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" shares file "([^"]*)" with user "([^"]*)"$/
-	 */
+	#[Given(pattern: '/^user "([^"]*)" shares file "([^"]*)" with user "([^"]*)"$/')]
 	public function userSharesFile(string $sharer, string $file, string $sharee): void {
 		$this->setCurrentUser($sharer);
 		$this->sendingToWith('POST', '/apps/files_sharing/api/v1/shares', [
@@ -141,9 +144,7 @@ class FeatureContext implements Context {
 		]);
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" shares file "([^"]*)" publicly$/
-	 */
+	#[Given(pattern: '/^user "([^"]*)" shares file "([^"]*)" publicly$/')]
 	public function userSharesFilePublicly(string $sharer, string $file): void {
 		$this->setCurrentUser($sharer);
 		$this->sendingToWith('POST', '/apps/files_sharing/api/v1/shares', [
@@ -155,13 +156,19 @@ class FeatureContext implements Context {
 		$this->lastShareData = $responseBody['ocs']['data'];
 	}
 
+	#[Given(pattern: '/^setup group folder "([^"]*)" for group "([^"]*)"$/')]
+	public function createGroupFolderForGroup(string $folder, string $group): void {
+		$this->runOcc(['groupfolders:create', $folder]);
+		$this->theCommandWasSuccessful();
+		$folderId = (string)(int)$this->lastStdOut;
+		$this->createdGroupFolders[] = $folderId;
+		$this->runOcc(['groupfolders:group', $folderId, $group, 'read', 'write', 'delete']);
+		$this->theCommandWasSuccessful();
+	}
+
 	// ChecksumsContext
-	/**
-	 * @Then The webdav response should have a status code :statusCode
-	 * @param string $statusCode
-	 * @throws \Exception
-	 */
-	public function theWebdavResponseShouldHaveAStatusCode($statusCode) {
+	#[Then(pattern: 'The webdav response should have a status code :statusCode')]
+	public function theWebdavResponseShouldHaveAStatusCode(string $statusCode) {
 		if (str_contains($statusCode, '|')) {
 			$statusCodes = array_map('intval', explode('|', $statusCode));
 		} else {
@@ -173,7 +180,7 @@ class FeatureContext implements Context {
 	}
 
 
-	#[\Behat\Step\Given('the following :appId app config is set')]
+	#[Given('the following :appId app config is set')]
 	public function setAppConfig(string $appId, TableNode $formData): void {
 		$this->setCurrentUser('admin');
 		foreach ($formData->getRows() as $row) {
@@ -187,19 +194,14 @@ class FeatureContext implements Context {
 	/**
 	 * User management
 	 */
-
-	/**
-	 * @Given /^as user "([^"]*)"$/
-	 * @param string $user
-	 */
-	public function setCurrentUser(string $user): void {
+	#[Given('/^as user "([^"]*)"$/')]
+	public function setCurrentUser(string $user): string {
+		$before = $this->currentUser;
 		$this->currentUser = $user;
+		return $before ?? 'admin';
 	}
 
-	/**
-	 * @Given /^user "([^"]*)" exists$/
-	 * @param string $user
-	 */
+	#[Given('/^user "([^"]*)" exists$/')]
 	public function assureUserExists(string $user): void {
 		try {
 			$this->userExists($user);
@@ -271,26 +273,60 @@ class FeatureContext implements Context {
 		$this->currentUser = $previous_user;
 	}
 
+	#[Given('/^group "([^"]*)" exists$/')]
+	public function assureGroupExists(string $group): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendingToWith('POST', '/cloud/groups', [
+			'groupid' => $group,
+		]);
+
+		$jsonBody = json_decode($this->response->getBody()->getContents(), true);
+		if (isset($jsonBody['ocs']['meta'])) {
+			// 102 = group exists
+			// 200 = created with success
+			Assert::assertContains(
+				$jsonBody['ocs']['meta']['statuscode'],
+				[102, 200],
+				$jsonBody['ocs']['meta']['message']
+			);
+		} else {
+			throw new \Exception('Invalid response when create group');
+		}
+
+		$this->setCurrentUser($currentUser);
+
+		$this->createdGroups[$group] = $group;
+	}
+
+	private function deleteGroup(string $group): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendingTo('DELETE', '/cloud/groups/' . $group);
+		$this->setCurrentUser($currentUser);
+
+		unset($this->createdGroups[$group]);
+		$this->setCurrentUser($currentUser);
+	}
+
+	#[When('/^user "([^"]*)" is member of group "([^"]*)"$/')]
+	public function addingUserToGroup(string $user, string $group): void {
+		$currentUser = $this->setCurrentUser('admin');
+		$this->sendingToWith('POST', "/cloud/users/$user/groups", [
+			'groupid' => $group,
+		]);
+		$this->assertStatusCode($this->response, 200);
+		$this->setCurrentUser($currentUser);
+	}
+
 	/*
 	 * Requests
 	 */
 
-	/**
-	 * @When /^sending "([^"]*)" to "([^"]*)"$/
-	 * @param string $verb
-	 * @param string $url
-	 */
+	#[When(pattern: '/^sending "([^"]*)" to "([^"]*)"$/')]
 	public function sendingTo(string $verb, string $url): void {
-		$this->sendingToWith($verb, $url, null);
+		$this->sendingToWith($verb, $url);
 	}
 
-	/**
-	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
-	 * @param string $verb
-	 * @param string $url
-	 * @param array|null $body
-	 * @param array $headers
-	 */
+	#[When(pattern: '/^sending "([^"]*)" to "([^"]*)" with$/')]
 	public function sendingToWith(string $verb, string $url, ?array $body = null, array $headers = []): void {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$client = new Client();
@@ -320,10 +356,6 @@ class FeatureContext implements Context {
 		}
 	}
 
-	/**
-	 * @param ResponseInterface $response
-	 * @param int $statusCode
-	 */
 	protected function assertStatusCode(ResponseInterface $response, int $statusCode): void {
 		Assert::assertEquals($statusCode, $response->getStatusCode());
 	}
