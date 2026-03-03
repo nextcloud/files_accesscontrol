@@ -98,3 +98,20 @@
     | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "text/plain"} |
     When User "test1" deletes file "/foobar.txt"
     Then The webdav response should have a status code "204"
+
+  Scenario: Blocking by mimetype works in trashbin of groupfolders
+    Given group "group886" exists
+    And user "test1" is member of group "group886"
+    And setup group folder "Folder886" for group "group886"
+    Given User "test1" uploads file "data/textfile.txt" to "/Folder886/foobar.txt"
+    Then The webdav response should have a status code "201"
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
+    | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "text/plain"} |
+    When User "test1" deletes file "/Folder886/foobar.txt"
+    Then The webdav response should have a status code "204"
