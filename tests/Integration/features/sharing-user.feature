@@ -204,3 +204,4 @@ Feature: Sharing user
     Then The webdav response should have a status code "404"
     When Downloading last public shared file with range "1-4"
     Then The webdav response should have a status code "404"
+    When User "test2" moved file "/foobar.txt" to "/foobar-moved.txt"
