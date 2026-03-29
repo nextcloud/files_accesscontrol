@@ -32,7 +32,7 @@ jobs:
         id: versions
         uses: icewind1991/nextcloud-version-matrix@8a7bac6300b2f0f3100088b297995a229558ddba # v1.3.2
         with:
-          matrix: '{"mysql-versions": ["8.4"]}'
+          matrix: '{"mysql-versions": ["8.4"], "richdocuments-versions": ["stable33"], "groupfolders-versions": ["stable33"]}'
 
   changes:
     runs-on: ubuntu-latest-low
@@ -102,16 +102,32 @@ jobs:
           persist-credentials: false
           path: apps/${{ env.APP_NAME }}
 
+      - name: Checkout app (richdocuments)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          path: apps/richdocuments
+          repository: nextcloud/richdocuments
+          ref: ${{ matrix.richdocuments-versions }}
+
+      - name: Checkout app (groupfolders)
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          path: apps/groupfolders
+          repository: nextcloud/groupfolders
+          ref: ${{ matrix.groupfolders-versions }}
+
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
         with:
           php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
-          extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, mysql, pdo_mysql
+          extensions: apcu, bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, mysql, pdo_mysql
           coverage: none
           ini-file: development
           # Temporary workaround for missing pcntl_* in PHP 8.3
-          ini-values: disable_functions=
+          ini-values: apc.enable_cli=on, disable_functions=
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -133,6 +149,14 @@ jobs:
         run: |
           composer remove nextcloud/ocp --dev --no-scripts
           composer i
+
+      - name: Set up dependencies (richdocuments)
+        working-directory: apps/richdocuments
+        run: composer i --no-dev
+
+      - name: Set up dependencies (groupfolders)
+        working-directory: apps/groupfolders
+        run: composer i --no-dev
 
       - name: Set up Nextcloud
         env:
