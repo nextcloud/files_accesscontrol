@@ -32,7 +32,7 @@ class Application extends App implements IBootstrap {
 	 */
 	public function addStorageWrapper(): void {
 		// Needs to be added as the first layer
-		Filesystem::addStorageWrapper('files_accesscontrol', [$this, 'addStorageWrapperCallback'], -10);
+		Filesystem::addStorageWrapper('files_accesscontrol', $this->addStorageWrapperCallback(...), -10);
 	}
 
 	/**

@@ -8,25 +8,34 @@
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
 		"platform": {
-			"php": "8.1.32"
+			"php": "8.2"
 		},
-		"sort-packages": true
+		"sort-packages": true,
+		"allow-plugins": {
+			"bamarni/composer-bin-plugin": true
+		}
 	},
 	"scripts": {
+		"post-install-cmd": [
+			"@composer bin all install --ansi",
+			"composer dump-autoload"
+		],
+		"post-update-cmd": [
+			"@composer bin all install --ansi",
+			"composer dump-autoload"
+		],
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
-		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
+		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -not -path './build/*' -not -path './tests/integration/vendor/*' -print0 | xargs -0 -n1 php -l",
 		"psalm": "psalm --no-cache --threads=$(nproc)",
 		"psalm:dev": "@psalm",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline",
-		"test:unit": "vendor/bin/phpunit --color -c tests/phpunit.xml",
+		"rector:check": "rector --dry-run --clear-cache",
+		"rector:fix": "rector",
+		"test:unit": "phpunit --color -c tests/phpunit.xml",
 		"test:integration": "cd tests/Integration && ./run.sh"
 	},
-	"require-dev": {
-		"friendsofphp/php-cs-fixer": "^3.82.0",
-		"nextcloud/coding-standard": "^1.2.1",
-		"nextcloud/ocp": "dev-master",
-		"phpunit/phpunit": "^10.5.28",
-		"vimeo/psalm": "^6.12"
+	"require": {
+		"bamarni/composer-bin-plugin": "^1.9.1"
 	}
 }
