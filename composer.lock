@@ -4,9 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3cb73963272dd24cb258f6d64e6e5d4c",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "0661f8e7b27a88f869a8a0e50d701e51",
+    "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
             "version": "1.9.1",
@@ -65,6 +64,7 @@
             "time": "2026-02-04T10:18:12+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {},
