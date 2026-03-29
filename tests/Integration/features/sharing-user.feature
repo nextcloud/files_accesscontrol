@@ -197,10 +197,11 @@ Feature: Sharing user
       | operation | deny                             |
       | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "is", "value": "text/plain"} |
     And as user "test2"
-    When File "/foobar.txt" should have prop "oc:permissions" equal to "SRD"
+    When File "/foobar.txt" should have prop "oc:permissions" equal to "SRDN"
     When Downloading file "/foobar.txt"
     Then The webdav response should have a status code "404"
     When Downloading file "/foobar.txt" with range "1-4"
     Then The webdav response should have a status code "404"
     When Downloading last public shared file with range "1-4"
     Then The webdav response should have a status code "404"
+    When User "test2" moved file "/foobar.txt" to "/foobar-moved.txt"
