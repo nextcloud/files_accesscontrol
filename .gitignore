@@ -62,6 +62,7 @@ build/
 
 # Composer
 /vendor/
+/vendor-bin/*/vendor/
 /tests/Integration/output/
 /tests/Integration/vendor/
 
