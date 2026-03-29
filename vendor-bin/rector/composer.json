@@ -1,0 +1,12 @@
+{
+	"config": {
+		"platform": {
+			"php": "8.1"
+		},
+		"sort-packages": true
+	},
+	"require-dev": {
+		"nextcloud/rector": "^0.4",
+		"rector/rector": "^2.3"
+	}
+}
