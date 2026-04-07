@@ -71,7 +71,7 @@ jobs:
       - name: Composer update nextcloud/ocp
         id: update_branch
         env:
-          USE_COMPOSER_BIN: ${{ steps.check_files.outputs.files_exists }}
+          USE_COMPOSER_BIN: ${{ steps.check_composer_bin.outputs.files_exists }}
           BRANCH_NAME: ${{ matrix.branches }}
         run: |
           COMPOSER_CMD='composer'
