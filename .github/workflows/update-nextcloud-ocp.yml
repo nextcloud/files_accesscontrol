@@ -75,12 +75,12 @@ jobs:
           BRANCH_NAME: ${{ matrix.branches }}
         run: |
           COMPOSER_CMD='composer'
-          if [ $USE_COMPOSER_BIN == 'true' ]; then
+          if [[ "$USE_COMPOSER_BIN" == 'true' ]]; then
             COMPOSER_CMD='composer bin nextcloud-ocp'
           fi
 
           PACKAGE_VERSION="nextcloud/ocp:dev-$BRANCH_NAME"
-          if [ $BRANCH_NAME == 'main' ]; then
+          if [[ "$BRANCH_NAME" == 'main' ]]; then
             PACKAGE_VERSION='nextcloud/ocp:dev-master'
           fi
 
