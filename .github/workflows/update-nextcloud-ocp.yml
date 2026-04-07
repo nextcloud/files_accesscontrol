@@ -84,6 +84,7 @@ jobs:
             PACKAGE_VERSION='nextcloud/ocp:dev-master'
           fi
 
+          echo $COMPOSER_CMD require --dev $PACKAGE_VERSION
           $COMPOSER_CMD require --dev $PACKAGE_VERSION
 
       - name: Raise on issue on failure
