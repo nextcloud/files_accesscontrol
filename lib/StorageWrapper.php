@@ -86,7 +86,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	public function isCreatable($path): bool {
 		try {
 			$this->checkFileAccess($path);
-		} catch (ForbiddenException $e) {
+		} catch (ForbiddenException) {
 			return false;
 		}
 		return $this->storage->isCreatable($path);
@@ -102,7 +102,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	public function isReadable($path): bool {
 		try {
 			$this->checkFileAccess($path);
-		} catch (ForbiddenException $e) {
+		} catch (ForbiddenException) {
 			return false;
 		}
 		return $this->storage->isReadable($path);
@@ -118,7 +118,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	public function isUpdatable($path): bool {
 		try {
 			$this->checkFileAccess($path);
-		} catch (ForbiddenException $e) {
+		} catch (ForbiddenException) {
 			return false;
 		}
 		return $this->storage->isUpdatable($path);
@@ -134,7 +134,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	public function isDeletable($path): bool {
 		try {
 			$this->checkFileAccess($path);
-		} catch (ForbiddenException $e) {
+		} catch (ForbiddenException) {
 			return false;
 		}
 		return $this->storage->isDeletable($path);
@@ -144,7 +144,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	public function getPermissions($path): int {
 		try {
 			$this->checkFileAccess($path);
-		} catch (ForbiddenException $e) {
+		} catch (ForbiddenException) {
 			return $this->mask;
 		}
 		return $this->storage->getPermissions($path);
