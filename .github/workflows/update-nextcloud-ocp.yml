@@ -62,27 +62,33 @@ jobs:
         if: steps.checkout.outcome == 'success'
         run: composer install
 
-      - name: Composer update nextcloud/ocp # zizmor: ignore[template-injection]
+      - name: Check composer bin for nextcloud/ocp exists
+        id: check_composer_bin
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
+        with:
+          files: vendor-bin/nextcloud-ocp/composer.json
+
+      - name: Composer update nextcloud/ocp
         id: update_branch
-        if: ${{ steps.checkout.outcome == 'success' && matrix.branches != 'main' }}
-        run: composer bin nextcloud-ocp require --dev 'nextcloud/ocp:dev-${{ matrix.branches }}'
+        env:
+          USE_COMPOSER_BIN: ${{ steps.check_files.outputs.files_exists }}
+          BRANCH_NAME: ${{ matrix.branches }}
+        run: |
+          COMPOSER_CMD='composer'
+          if [ $USE_COMPOSER_BIN == 'true' ]; then
+            COMPOSER_CMD='composer bin nextcloud-ocp'
+          fi
+
+          PACKAGE_VERSION="nextcloud/ocp:dev-$BRANCH_NAME"
+          if [ $BRANCH_NAME == 'main' ]; then
+            PACKAGE_VERSION='nextcloud/ocp:dev-master'
+          fi
+
+          $COMPOSER_CMD require --dev $PACKAGE_VERSION
 
       - name: Raise on issue on failure
         uses: dacbd/create-issue-action@cdb57ab6ff8862aa09fee2be6ba77a59581921c2 # v2.0.0
         if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_branch.conclusion == 'failure' }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
-          body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
-
-      - name: Composer update nextcloud/ocp
-        id: update_main
-        if: ${{ steps.checkout.outcome == 'success' && matrix.branches == 'main' }}
-        run: composer bin nextcloud-ocp require --dev nextcloud/ocp:dev-master
-
-      - name: Raise on issue on failure
-        uses: dacbd/create-issue-action@cdb57ab6ff8862aa09fee2be6ba77a59581921c2 # v2.0.0
-        if: ${{ steps.checkout.outcome == 'success' && failure() && steps.update_main.conclusion == 'failure' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
