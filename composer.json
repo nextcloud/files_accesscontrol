@@ -37,5 +37,8 @@
 	},
 	"require": {
 		"bamarni/composer-bin-plugin": "^1.9.1"
+	},
+	"require-dev": {
+		"nextcloud/ocp": "dev-master"
 	}
 }
