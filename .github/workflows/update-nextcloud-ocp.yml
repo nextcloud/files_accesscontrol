@@ -95,27 +95,6 @@ jobs:
           title: 'Failed to update nextcloud/ocp package on branch ${{ matrix.branches }}'
           body: 'Please check the output of the GitHub action and manually resolve the issues<br>${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}<br>${{ steps.codeowners.outputs.codeowners }}'
 
-      - name: Reset checkout 3rdparty
-        if: steps.checkout.outcome == 'success'
-        run: |
-          git clean -f 3rdparty
-          git checkout 3rdparty
-        continue-on-error: true
-
-      - name: Reset checkout vendor
-        if: steps.checkout.outcome == 'success'
-        run: |
-          git clean -f vendor
-          git checkout vendor
-        continue-on-error: true
-
-      - name: Reset checkout vendor-bin
-        if: steps.checkout.outcome == 'success'
-        run: |
-          git clean -f vendor-bin
-          git checkout vendor-bin
-        continue-on-error: true
-
       - name: Create Pull Request
         if: steps.checkout.outcome == 'success'
         uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
@@ -127,6 +106,13 @@ jobs:
           signoff: true
           branch: 'automated/noid/${{ matrix.branches }}-update-nextcloud-ocp'
           title: '[${{ matrix.branches }}] Update nextcloud/ocp dependency'
+          add-path: |
+            composer.json
+            composer.lock
+            vendor-bin/nextcloud-ocp2/composer.json
+            vendor-bin/nextcloud-ocp2/composer.lock
+            vendor-bin/nextcloud-ocp/composer.json
+            vendor-bin/nextcloud-ocp/composer.lock
           body: |
             Auto-generated update of [nextcloud/ocp](https://github.com/nextcloud-deps/ocp/) dependency
           labels: |
