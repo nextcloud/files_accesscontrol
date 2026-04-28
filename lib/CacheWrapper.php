@@ -45,7 +45,10 @@ class CacheWrapper extends Wrapper {
 					$jailedPath = $storage->getJailedPath($path);
 					$path = $jailedPath ?? $path;
 				}
-				$this->operation->checkFileAccess($path, $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry);
+				$permissions = $this->operation->checkFileAccess($path, $this->mountPoint, $entry['mimetype'] === 'httpd/unix-directory', $entry, 0);
+				if ($permissions !== null) {
+					$entry['permissions'] &= $permissions;
+				}
 			} catch (ForbiddenException) {
 				$entry['permissions'] &= $this->mask;
 			}

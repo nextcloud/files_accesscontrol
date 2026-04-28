@@ -16,6 +16,21 @@ Feature: Author
     Then The webdav response should have a status code "403"
     Then User "test1" sees no files in the trashbin
 
+  Scenario: Propfind has restrictive permissions when file is blocked
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    And The webdav response should have a status code "201"
+    And user "admin" creates global flow with 200
+      | name      | Admin flow                       |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | deny                             |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName","operator":"is","value":"foobar.txt"} |
+    And as user "test1"
+    When File "foobar.txt" in listing of folder "/" should have prop "oc:permissions" equal to "R"
+    When Downloading file "/foobar.txt"
+    Then The webdav response should have a status code "404"
+
   Scenario: Downloading file is blocked
     Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
     And The webdav response should have a status code "201"

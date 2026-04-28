@@ -14,6 +14,7 @@ use OC\Files\Node\Folder;
 use OC\Files\View;
 use OCA\GroupFolders\Mount\GroupMountPoint;
 use OCA\WorkflowEngine\Entity\File;
+use OCP\Constants;
 use OCP\EventDispatcher\Event;
 use OCP\Files\Cache\ICacheEntry;
 use OCP\Files\ForbiddenException;
@@ -46,19 +47,29 @@ class Operation implements IComplexOperation, ISpecificOperation {
 	}
 
 	/**
+	 * Checks if the user can access the file according to the configured flows.
+	 *
+	 * Flows with `deny` operation always take precedence and make the check fail.
+	 *
+	 * If only flows with permissions match, requiredPermissions is used to decide
+	 * when the check should fail or succeed. If its value is 0, the function simply
+	 * returns the permissions granted by the flows.
+	 *
 	 * @param array|ICacheEntry|null $cacheEntry
+	 * @param int $requiredPermissions Permissions required for the check
+	 * @return int|null If access is not blocked, the permissions allowed by the operations or null if not relevant.
 	 * @throws ForbiddenException
 	 */
-	public function checkFileAccess(string $path, IMountPoint $mountPoint, bool $isDir, $cacheEntry = null): void {
+	public function checkFileAccess(string $path, IMountPoint $mountPoint, bool $isDir, $cacheEntry = null, int $requiredPermissions = Constants::PERMISSION_ALL): ?int {
 		if (!$this->isBlockablePath($mountPoint, $path) || $this->isCreatingSkeletonFiles() || $this->nestingLevel !== 0) {
 			// Allow creating skeletons and theming
 			// https://github.com/nextcloud/files_accesscontrol/issues/5
 			// https://github.com/nextcloud/files_accesscontrol/issues/12
-			return;
+			return null;
 		}
 		$storage = $mountPoint->getStorage();
 		if ($storage === null) {
-			return;
+			return null;
 		}
 
 		$this->nestingLevel++;
@@ -71,16 +82,43 @@ class Operation implements IComplexOperation, ISpecificOperation {
 			$ruleMatcher->setEntitySubject($this->fileEntity, $node);
 		}
 		$ruleMatcher->setOperation($this);
-		$match = $ruleMatcher->getFlows();
+		$match = $ruleMatcher->getFlows(false);
 
 		$this->nestingLevel--;
 
 		if (!empty($match)) {
+			$isDenied = false;
+			$computedPermissions = 0;
+			foreach ($match as $operation) {
+				$operationString = $operation['operation'];
+				if ($operationString === 'deny') {
+					$isDenied = true;
+					// block file access as if a deny operation is present it should take precedence
+					break;
+				}
+
+				try {
+					$parsedOperationParams = json_decode($operationString, true, flags: JSON_THROW_ON_ERROR);
+				} catch (\JsonException) {
+					// if we can't decode as JSON ignore...
+					continue;
+				}
+
+				$computedPermissions |= (int)($parsedOperationParams['permissions'] ?? 0);
+			}
+
+			if (!$isDenied && ($computedPermissions & $requiredPermissions) === $requiredPermissions) {
+				// enough permissions to perform the operation
+				return $computedPermissions;
+			}
+
 			$e = new \RuntimeException('Access denied for path ' . $path . ' that is ' . ($isDir ? '' : 'not ') . 'a directory and matches rules: ' . (string)json_encode($match));
 			$this->logger->debug($e->getMessage(), ['exception' => $e]);
 			// All Checks of one operation matched: prevent access
 			throw new ForbiddenException('Access denied by access control', false);
 		}
+
+		return null;
 	}
 
 	protected function isBlockablePath(IMountPoint $mountPoint, string $path): bool {

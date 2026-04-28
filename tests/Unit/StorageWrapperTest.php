@@ -11,8 +11,10 @@ namespace OCA\FilesAccessControl\Tests\Unit;
 use OC\Files\Storage\Storage;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
+use OCP\Constants;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Mount\IMountPoint;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -57,9 +59,7 @@ class StorageWrapperTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @dataProvider dataCheckFileAccess
-	 */
+	#[DataProvider('dataCheckFileAccess')]
 	public function testCheckFileAccess(string $path, bool $isDir): void {
 		$storage = $this->getInstance();
 
@@ -68,6 +68,16 @@ class StorageWrapperTest extends TestCase {
 			->with($path, $this->mountPoint, $isDir);
 
 		self::invokePrivate($storage, 'checkFileAccess', [$path, $isDir]);
+	}
+
+	public function testCheckFileAccessPassesPermissions(): void {
+		$storage = $this->getInstance();
+
+		$this->operation->expects($this->once())
+			->method('checkFileAccess')
+			->with('path', $this->mountPoint, false, null, Constants::PERMISSION_READ);
+
+		self::invokePrivate($storage, 'checkFileAccess', ['path', false, Constants::PERMISSION_READ]);
 	}
 
 	public static function dataSinglePath(): array {
@@ -85,9 +95,7 @@ class StorageWrapperTest extends TestCase {
 		return $tests;
 	}
 
-	/**
-	 * @dataProvider dataSinglePath
-	 */
+	#[DataProvider('dataSinglePath')]
 	public function testSinglePath(string $method, string $path, bool $return, ?\Exception $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
 
@@ -136,9 +144,71 @@ class StorageWrapperTest extends TestCase {
 		return $tests;
 	}
 
-	/**
-	 * @dataProvider dataSinglePathOverWritten
-	 */
+	public static function dataGetPermissions(): array {
+		return [
+			// operation returns null (no rule matched) → unmodified storage permissions
+			[null, null, Constants::PERMISSION_ALL, Constants::PERMISSION_ALL],
+			// operation returns granted permissions → intersected with storage
+			[Constants::PERMISSION_READ | Constants::PERMISSION_UPDATE, null, Constants::PERMISSION_ALL, Constants::PERMISSION_READ | Constants::PERMISSION_UPDATE],
+			// operation grants more than storage has → storage wins
+			[Constants::PERMISSION_ALL, null, Constants::PERMISSION_READ, Constants::PERMISSION_READ],
+			// operation throws ForbiddenException → mask (PERMISSION_SHARE only)
+			[null, new ForbiddenException('denied', false), Constants::PERMISSION_ALL, Constants::PERMISSION_SHARE],
+		];
+	}
+
+	#[DataProvider('dataGetPermissions')]
+	public function testGetPermissions(?int $operationReturn, ?\Exception $operationException, int $storagePermissions, int $expected): void {
+		$storageWrapper = $this->getInstance(['checkFileAccess']);
+
+		if ($operationException !== null) {
+			$storageWrapper->method('checkFileAccess')->willThrowException($operationException);
+		} else {
+			$storageWrapper->method('checkFileAccess')->willReturn($operationReturn);
+		}
+
+		$this->storage->method('getPermissions')->willReturn($storagePermissions);
+
+		$this->assertSame($expected, $storageWrapper->getPermissions('path'));
+	}
+
+	public static function dataFopenModes(): array {
+		$rw = Constants::PERMISSION_READ | Constants::PERMISSION_UPDATE;
+		$cw = Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE;
+		$crw = Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE | Constants::PERMISSION_READ;
+		return [
+			['r',   Constants::PERMISSION_READ],
+			['rb',  Constants::PERMISSION_READ],
+			['r+',  $rw],
+			['r+b', $rw],
+			['rb+', $rw],
+			['w',   $cw],
+			['wb',  $cw],
+			['w+',  $crw],
+			['a',   $cw],
+			['a+',  $crw],
+			['c',   $cw],
+			['c+',  $crw],
+			['x',   Constants::PERMISSION_CREATE],
+			['x+',  Constants::PERMISSION_CREATE | Constants::PERMISSION_READ],
+			['+zpZ', Constants::PERMISSION_ALL], // invalid mode → safe default
+		];
+	}
+
+	#[DataProvider('dataFopenModes')]
+	public function testFopenPermissionMapping(string $mode, int $expectedPermissions): void {
+		$storageWrapper = $this->getInstance(['checkFileAccess']);
+
+		$storageWrapper->expects($this->once())
+			->method('checkFileAccess')
+			->with('path', false, $expectedPermissions);
+
+		$this->storage->method('fopen')->willReturn(false);
+
+		$storageWrapper->fopen('path', $mode);
+	}
+
+	#[DataProvider('dataSinglePathOverWritten')]
 	public function testSinglePathOverWritten(string $method, string $path, bool $return, ?\Exception $checkAccess, bool $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
 
