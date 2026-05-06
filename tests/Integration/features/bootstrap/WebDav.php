@@ -191,6 +191,37 @@ trait WebDav {
 	}
 
 	/**
+	 * @Then /^File "([^"]*)" in listing of folder "([^"]*)" should have prop "([^"]*):([^"]*)" equal to "([^"]*)"$/
+	 */
+	public function checkPropForFileInFolder($file, $folder, $prefix, $prop, $value): void {
+		$mappedNs = match ($prefix) {
+			'oc' => '{http://owncloud.org/ns}',
+			'nc' => '{http://nextcloud.org/ns}',
+			'd' => '{DAV:}',
+			's' => '{http://sabredav.org/ns}',
+			default => throw new \UnexpectedValueException("Unknown prefix: $prefix")
+		};
+
+		$propKey = "$mappedNs$prop";
+		$response = $this->listFolder($this->currentUser, $folder, 1, [$propKey]);
+
+		$folder = trim($folder, '/');
+		$file = trim($file, '/');
+		$filePath = str_replace('//', '/', "/$folder/$file");
+		$key = '/' . $this->getDavFilesPath($this->currentUser) . $filePath;
+		if (!array_key_exists($key, $response)) {
+			Assert::fail("File $file is not in folder $folder");
+		}
+
+		if (!array_key_exists($propKey, $response[$key])) {
+			Assert::fail("Property $propKey not found in file $file");
+		}
+
+		$property = $response[$key][$propKey];
+		Assert::assertEquals($value, $property);
+	}
+
+	/**
 	 * @Then /^File "([^"]*)" should have prop "([^"]*):([^"]*)" equal to "([^"]*)"$/
 	 * @param string $file
 	 * @param string $prefix

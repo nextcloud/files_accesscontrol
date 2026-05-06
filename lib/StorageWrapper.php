@@ -40,10 +40,11 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	}
 
 	/**
+	 * @see Operation::checkFileAccess()
 	 * @throws ForbiddenException
 	 */
-	protected function checkFileAccess(string $path, ?bool $isDir = null): void {
-		$this->operation->checkFileAccess($path, $this->mount, is_bool($isDir) ? $isDir : $this->is_dir($path));
+	protected function checkFileAccess(string $path, ?bool $isDir = null, ?int $permissions = null): ?int {
+		return $this->operation->checkFileAccess($path, $this->mount, is_bool($isDir) ? $isDir : $this->is_dir($path), null, $permissions ?? Constants::PERMISSION_ALL);
 	}
 
 	/*
@@ -59,7 +60,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function mkdir($path): bool {
-		$this->checkFileAccess($path, true);
+		$this->checkFileAccess($path, true, Constants::PERMISSION_CREATE);
 		return $this->storage->mkdir($path);
 	}
 
@@ -72,7 +73,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function rmdir($path): bool {
-		$this->checkFileAccess($path, true);
+		$this->checkFileAccess($path, true, Constants::PERMISSION_DELETE);
 		return $this->storage->rmdir($path);
 	}
 
@@ -85,7 +86,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function isCreatable($path): bool {
 		try {
-			$this->checkFileAccess($path);
+			$this->checkFileAccess($path, null, Constants::PERMISSION_CREATE);
 		} catch (ForbiddenException) {
 			return false;
 		}
@@ -101,7 +102,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function isReadable($path): bool {
 		try {
-			$this->checkFileAccess($path);
+			$this->checkFileAccess($path, null, Constants::PERMISSION_READ);
 		} catch (ForbiddenException) {
 			return false;
 		}
@@ -117,7 +118,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function isUpdatable($path): bool {
 		try {
-			$this->checkFileAccess($path);
+			$this->checkFileAccess($path, null, Constants::PERMISSION_UPDATE);
 		} catch (ForbiddenException) {
 			return false;
 		}
@@ -133,7 +134,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function isDeletable($path): bool {
 		try {
-			$this->checkFileAccess($path);
+			$this->checkFileAccess($path, null, Constants::PERMISSION_DELETE);
 		} catch (ForbiddenException) {
 			return false;
 		}
@@ -143,10 +144,16 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function getPermissions($path): int {
 		try {
-			$this->checkFileAccess($path);
+			$permissions = $this->checkFileAccess($path, null, 0);
 		} catch (ForbiddenException) {
 			return $this->mask;
 		}
+
+		if ($permissions !== null) {
+			// override with permissions granted by the operation, if any
+			return $permissions & $this->storage->getPermissions($path);
+		}
+
 		return $this->storage->getPermissions($path);
 	}
 
@@ -159,7 +166,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function file_get_contents($path): string|false {
-		$this->checkFileAccess($path, false);
+		$this->checkFileAccess($path, false, Constants::PERMISSION_READ);
 		return $this->storage->file_get_contents($path);
 	}
 
@@ -173,7 +180,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function file_put_contents(string $path, mixed $data): int|float|false {
-		$this->checkFileAccess($path, false);
+		$this->checkFileAccess($path, false, Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE);
 		return $this->storage->file_put_contents($path, $data);
 	}
 
@@ -186,7 +193,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function unlink($path): bool {
-		$this->checkFileAccess($path, false);
+		$this->checkFileAccess($path, false, Constants::PERMISSION_DELETE);
 		return $this->storage->unlink($path);
 	}
 
@@ -201,8 +208,8 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function rename($source, $target): bool {
 		$isDir = $this->is_dir($source);
-		$this->checkFileAccess($source, $isDir);
-		$this->checkFileAccess($target, $isDir);
+		$this->checkFileAccess($source, $isDir, Constants::PERMISSION_READ | Constants::PERMISSION_DELETE);
+		$this->checkFileAccess($target, $isDir, Constants::PERMISSION_CREATE);
 		return $this->storage->rename($source, $target);
 	}
 
@@ -217,8 +224,8 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function copy($source, $target): bool {
 		$isDir = $this->is_dir($source);
-		$this->checkFileAccess($source, $isDir);
-		$this->checkFileAccess($target, $isDir);
+		$this->checkFileAccess($source, $isDir, Constants::PERMISSION_READ);
+		$this->checkFileAccess($target, $isDir, Constants::PERMISSION_CREATE);
 		return $this->storage->copy($source, $target);
 	}
 
@@ -232,7 +239,18 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function fopen($path, $mode) {
-		$this->checkFileAccess($path, false);
+		$hasPlus = str_contains($mode, '+');
+		$isRead = str_contains($mode, 'r');
+		$isExclusive = str_contains($mode, 'x');
+		$isWac = str_contains($mode, 'w') || str_contains($mode, 'a') || str_contains($mode, 'c');
+		$checkPermissions = match (true) {
+			$isWac => Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE | ($hasPlus ? Constants::PERMISSION_READ : 0),
+			$isExclusive => Constants::PERMISSION_CREATE | ($hasPlus ? Constants::PERMISSION_READ : 0),
+			$isRead => Constants::PERMISSION_READ | ($hasPlus ? Constants::PERMISSION_UPDATE : 0),
+			default => Constants::PERMISSION_ALL,
+		};
+
+		$this->checkFileAccess($path, false, $checkPermissions);
 		return $this->storage->fopen($path, $mode);
 	}
 
@@ -247,7 +265,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function touch($path, $mtime = null): bool {
-		$this->checkFileAccess($path, false);
+		$this->checkFileAccess($path, false, Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE);
 		return $this->storage->touch($path, $mtime);
 	}
 
@@ -278,7 +296,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	 */
 	#[\Override]
 	public function getDirectDownload($path): array|false {
-		$this->checkFileAccess($path, false);
+		$this->checkFileAccess($path, false, Constants::PERMISSION_READ);
 		return $this->storage->getDirectDownload($path);
 	}
 
@@ -302,7 +320,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		// We would have actually a result, so lets see if the user should be able to access it
 		$path = $this->getCache()->getPathById((int)$fileId);
 		if ($path !== null) {
-			$this->checkFileAccess($path, false);
+			$this->checkFileAccess($path, false, Constants::PERMISSION_READ);
 		}
 
 		return $data;
@@ -321,7 +339,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			return $this->copy($sourceInternalPath, $targetInternalPath);
 		}
 
-		$this->checkFileAccess($targetInternalPath, $sourceStorage->is_dir($sourceInternalPath));
+		$this->checkFileAccess($targetInternalPath, $sourceStorage->is_dir($sourceInternalPath), Constants::PERMISSION_CREATE);
 		return $this->storage->copyFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 
@@ -338,7 +356,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			return $this->rename($sourceInternalPath, $targetInternalPath);
 		}
 
-		$this->checkFileAccess($targetInternalPath, $sourceStorage->is_dir($sourceInternalPath));
+		$this->checkFileAccess($targetInternalPath, $sourceStorage->is_dir($sourceInternalPath), Constants::PERMISSION_CREATE);
 		return $this->storage->moveFromStorage($sourceStorage, $sourceInternalPath, $targetInternalPath);
 	}
 
@@ -348,7 +366,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	#[\Override]
 	public function writeStream(string $path, $stream, ?int $size = null): int {
 		if (!$this->isPartFile($path)) {
-			$this->checkFileAccess($path, false);
+			$this->checkFileAccess($path, false, Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE);
 		}
 
 		$result = parent::writeStream($path, $stream, $size);
@@ -359,7 +377,7 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 		// Required for object storage since part file is not in the storage so we cannot check it before moving it to the storage
 		// As an alternative we might be able to check on the cache update/insert/delete though the Cache wrapper
 		try {
-			$this->checkFileAccess($path, false);
+			$this->checkFileAccess($path, false, Constants::PERMISSION_CREATE | Constants::PERMISSION_UPDATE);
 		} catch (\Exception $e) {
 			$this->storage->unlink($path);
 			throw $e;
