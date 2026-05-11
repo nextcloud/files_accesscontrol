@@ -98,7 +98,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 				}
 
 				try {
-					$parsedOperationParams = json_decode($operationString, true, flags: JSON_THROW_ON_ERROR);
+					$parsedOperationParams = json_decode((string)$operationString, true, flags: JSON_THROW_ON_ERROR);
 				} catch (\JsonException) {
 					// if we can't decode as JSON ignore...
 					continue;
