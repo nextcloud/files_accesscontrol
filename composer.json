@@ -31,7 +31,7 @@
 		"psalm:dev": "@psalm",
 		"psalm:update-baseline": "psalm --threads=1 --update-baseline",
 		"rector:check": "rector --dry-run --clear-cache",
-		"rector:fix": "rector",
+		"rector:fix": "rector && php-cs-fixer fix",
 		"test:unit": "phpunit --color -c tests/phpunit.xml",
 		"test:integration": "cd tests/Integration && ./run.sh"
 	},
