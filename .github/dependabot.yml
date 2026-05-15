@@ -38,6 +38,20 @@ updates:
       default-days: 7
 
   - package-ecosystem: "github-actions"
+    target-branch: stable34
+    directory: ".github/workflows"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    schedule:
+      interval: weekly
+      day: saturday
+      time: "03:00"
+      timezone: Europe/Berlin
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "github-actions"
     target-branch: stable33
     directory: ".github/workflows"
     commit-message:
