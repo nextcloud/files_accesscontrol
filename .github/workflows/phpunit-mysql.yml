@@ -32,7 +32,7 @@ jobs:
         id: versions
         uses: icewind1991/nextcloud-version-matrix@8a7bac6300b2f0f3100088b297995a229558ddba # v1.3.2
         with:
-          matrix: '{"mysql-versions": ["8.4"], "richdocuments-versions": ["main"], "groupfolders-versions": ["master"]}'
+          matrix: '{"mysql-versions": ["8.4"], "richdocuments-versions": ["stable34"], "groupfolders-versions": ["stable34"]}'
 
   changes:
     runs-on: ubuntu-latest-low
