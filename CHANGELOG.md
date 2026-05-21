@@ -5,6 +5,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.0.3– 2026-05-21
+### Fixed
+- fix(teamfolder): Fix mimetype detection in teamfolder trashbin
+
 ## 3.0.2– 2025-11-12
 ### Fixed
 - perf: Improve performance by reusing the existing mount point
