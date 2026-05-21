@@ -5,6 +5,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0.1 – 2026-05-21
+### Fixed
+- fix(teamfolder): Fix mimetype detection in teamfolder trashbin
+
 ## 4.0.0 – 2026-01-30
 ### Changed
 - Require Nextcloud 33
