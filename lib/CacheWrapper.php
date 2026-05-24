@@ -36,7 +36,7 @@ class CacheWrapper extends Wrapper {
 
 	#[\Override]
 	protected function formatCacheEntry($entry) {
-		if (isset($entry['path']) && isset($entry['permissions'])) {
+		if (isset($entry['path']) && isset($entry['permissions']) && $this->storage->getWrapperStorage() !== null) {
 			try {
 				$storage = $this->storage;
 				$path = $entry['path'];
