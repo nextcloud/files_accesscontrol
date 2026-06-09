@@ -179,7 +179,6 @@ class FeatureContext implements Context {
 		}
 	}
 
-
 	#[Given('the following :appId app config is set')]
 	public function setAppConfig(string $appId, TableNode $formData): void {
 		$this->setCurrentUser('admin');

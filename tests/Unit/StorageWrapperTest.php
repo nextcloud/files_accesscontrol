@@ -99,7 +99,6 @@ class StorageWrapperTest extends TestCase {
 	public function testSinglePath(string $method, string $path, bool $return, ?\Exception $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
 
-
 		if (is_null($expected)) {
 			$storage->expects($this->once())
 				->method('checkFileAccess')
@@ -211,7 +210,6 @@ class StorageWrapperTest extends TestCase {
 	#[DataProvider('dataSinglePathOverWritten')]
 	public function testSinglePathOverWritten(string $method, string $path, bool $return, ?\Exception $checkAccess, bool $expected): void {
 		$storage = $this->getInstance(['checkFileAccess']);
-
 
 		if ($checkAccess === null) {
 			$storage->expects($this->once())

@@ -40,7 +40,6 @@ class EndpointController extends OCSController {
 		$query->delete('flow_operations')->executeStatement();
 		$query->delete('flow_operations_scope')->executeStatement();
 
-
 		try {
 			$tag = $this->systemTagManager->getTag('files_accesscontrol_intergrationtest', true, true);
 			$this->systemTagManager->deleteTags([$tag->getId()]);

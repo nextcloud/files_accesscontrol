@@ -1034,7 +1034,6 @@ trait WebDav {
 		$this->trashedFiles = array_keys($response);
 	}
 
-
 	/**
 	 * @param string $user
 	 * @param string $path
