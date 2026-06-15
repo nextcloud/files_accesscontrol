@@ -6,8 +6,8 @@ index e7baa9e..0f6b7fc 100644
        matrix:
          php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
          server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
-+        richdocuments-versions: ['main']
-+        groupfolders-versions: ['master']
++        richdocuments-versions: ['stable34']
++        groupfolders-versions: ['stable34']
 
      name: SQLite PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
 
