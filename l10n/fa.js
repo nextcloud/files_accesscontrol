@@ -1,11 +1,11 @@
 OC.L10N.register(
     "files_accesscontrol",
     {
-    "No rule given" : "قانونی داده نشده است",
-    "Block access to a file" : "محدودیت دسترسی به یک فایل",
-    "File is accessed" : "فایل ها قابل دسترسی است",
-    "File access control" : "واپایش دسترسی  به فایل",
-    "Control access to files based on conditions" : "کنترل دسترسی به پرونده ها را بر اساس شرایط موجود",
-    "Nextcloud's File Access Control app enables administrators to protect data from unauthorized access or modifications.\n\n## How it works\nThe administrator can create and manage a set of rule groups. Each of the rule groups consists of one or more rules. If all rules of a group hold true, the group matches the request and access is being denied or the upload is blocked. The rules criteria range from IP address, MIME type and request time to group membership, tags, user agent and more.\n\nAn example would be to deny access to MS Excel/XLSX files owned by the \"Human Resources\" group accessed from an IP not on the internal company network or to block uploads of files bigger than 512 mb by students in the \"1st year\" group.\n\nLearn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow)" : "برنامه واپایش دسترسی به فایل Nextcloud به مدیران امکان می‌دهد تا داده‌ها را در برابر دسترسی یا تغییرات غیرمجاز محافظت کنند.\n\n## چگونه کار می‌کند\nمدیر می‌تواند مجموعه‌ای از گروه‌های قانون را ایجاد و مدیریت کند. هر گروه از یک یا چند قانون تشکیل شده است. اگر همه قوانین یک گروه برقرار باشند، آن گروه با درخواست مطابقت پیدا می‌کند و دسترسی رد یا بارگذاری مسدود می‌شود. معیارهای قوانین گستره‌ای از نشانی IP، نوع MIME و زمان درخواست تا عضویت در گروه، برچسب‌ها، عامل کاربر (user agent) و موارد دیگر را در بر می‌گیرند.\n\nبرای نمونه، می‌توان دسترسی به فایل‌های MS Excel/XLSX متعلق به گروه \"Human Resources\" را که از نشانی IP خارج از شبکه داخلی شرکت انجام می‌شود رد کرد، یا بارگذاری فایل‌های بزرگ‌تر از ۵۱۲ مگابایت توسط دانشجویان گروه \"1st year\" را مسدود کرد.\n\nبرای آشنایی بیشتر با واپایش دسترسی به فایل به [https://nextcloud.com/workflow](https://nextcloud.com/workflow) مراجعه کنید"
+    "No rule given" : "قانونی مشخص نشده است",
+    "Block access to a file" : "مسدود کردن دسترسی به یک فایل",
+    "File is accessed" : "فایل در دسترس قرار گرفته است",
+    "File access control" : "کنترل دسترسی به فایل",
+    "Control access to files based on conditions" : "کنترل دسترسی به فایل‌ها بر اساس شرایط",
+    "Nextcloud's File Access Control app enables administrators to protect data from unauthorized access or modifications.\n\n## How it works\nThe administrator can create and manage a set of rule groups. Each of the rule groups consists of one or more rules. If all rules of a group hold true, the group matches the request and access is being denied or the upload is blocked. The rules criteria range from IP address, MIME type and request time to group membership, tags, user agent and more.\n\nAn example would be to deny access to MS Excel/XLSX files owned by the \"Human Resources\" group accessed from an IP not on the internal company network or to block uploads of files bigger than 512 mb by students in the \"1st year\" group.\n\nLearn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow)" : "برنامه کنترل دسترسی به فایل نکست‌کلود به مدیران امکان می‌دهد تا از داده‌ها در برابر دسترسی یا تغییرات غیرمجاز محافظت کنند."
 },
 "nplurals=2; plural=(n > 1);");
