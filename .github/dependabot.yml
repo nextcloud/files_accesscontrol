@@ -5,7 +5,6 @@ updates:
       - "/"
       - "/tests/Integration"
       - "/vendor-bin/csfixer"
-      - "/vendor-bin/openapi-extractor"
       - "/vendor-bin/phpunit"
       - "/vendor-bin/psalm"
       - "/vendor-bin/rector"
