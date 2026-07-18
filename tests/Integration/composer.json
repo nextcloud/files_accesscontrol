@@ -8,6 +8,6 @@
 		"phpunit/phpunit": "^10.5.58",
 		"behat/behat": "^3.26.0",
 		"guzzlehttp/guzzle": "^7.13.1",
-		"sabre/dav": "^4.7.0"
+		"sabre/dav": "^4.7.1"
 	}
 }
