@@ -5,6 +5,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.0 – 2026-08-07
+### Changed
+- Require Nextcloud 35
+- Require PHP 8.3
+- Update translations
+- Update dependencies
+
 ## 5.0.0 – 2026-05-11
 ### Added
 - Add support for granular permissions in Runtime Operations
