@@ -72,8 +72,8 @@ jobs:
         php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
         oci-versions: ['18', '21', '23']
-        richdocuments-versions: ['main']
-        groupfolders-versions: ['master']
+        richdocuments-versions: ['stable35']
+        groupfolders-versions: ['stable35']
 
     name: OCI ${{ matrix.oci-versions }} PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
 
