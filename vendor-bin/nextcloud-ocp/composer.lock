@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bf529412f8af2a44e866bb46745b00e",
+    "content-hash": "ba29dbea735431ef377488e58d91c7c6",
     "packages": [],
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "dev-master",
+            "version": "dev-stable35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "d120ec35c52c609770774e937bf4e6c7fc7dcc89"
+                "reference": "75e04c37b52633c6601b63af3a33a71e0f48967e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/d120ec35c52c609770774e937bf4e6c7fc7dcc89",
-                "reference": "d120ec35c52c609770774e937bf4e6c7fc7dcc89",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/75e04c37b52633c6601b63af3a33a71e0f48967e",
+                "reference": "75e04c37b52633c6601b63af3a33a71e0f48967e",
                 "shasum": ""
             },
             "require": {
@@ -33,7 +33,6 @@
                 "symfony/polyfill-php85": "^1.41",
                 "symfony/polyfill-php86": "^1.41"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -59,7 +58,7 @@
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
                 "source": "https://github.com/nextcloud-deps/ocp/tree/master"
             },
-            "time": "2026-08-22T00:35:13+00:00"
+            "time": "2026-08-24T17:09:03+00:00"
         },
         {
             "name": "psr/clock",
