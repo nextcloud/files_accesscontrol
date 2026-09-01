@@ -118,7 +118,7 @@ Feature: Author
       | operation | deny                             |
       | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And User "test1" recalculates the "md5" checksum of file "/foobar.txt"
-    Then The webdav response should not be successful
+    Then The webdav response should have a status code "403"
     And The webdav response should not have a header "OC-Checksum"
 
   Scenario: recalculating the checksum is blocked without READ permission
@@ -132,5 +132,5 @@ Feature: Author
       | operation | {"permissions": 0}               |
       | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
     And User "test1" recalculates the "md5" checksum of file "/foobar.txt"
-    Then The webdav response should not be successful
+    Then The webdav response should have a status code "403"
     And The webdav response should not have a header "OC-Checksum"
