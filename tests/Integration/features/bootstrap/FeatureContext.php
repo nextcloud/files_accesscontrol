@@ -179,6 +179,27 @@ class FeatureContext implements Context {
 		}
 	}
 
+	#[Then(pattern: 'The webdav response should not be successful')]
+	public function theWebdavResponseShouldNotBeSuccessful() {
+		if ($this->response->getStatusCode() < 400) {
+			throw new \Exception('Expected an error status code, got ' . $this->response->getStatusCode());
+		}
+	}
+
+	#[Then(pattern: 'The webdav response should have a header :header')]
+	public function theWebdavResponseShouldHaveAHeader(string $header) {
+		if (!$this->response->hasHeader($header)) {
+			throw new \Exception("Expected a $header header, got none");
+		}
+	}
+
+	#[Then(pattern: 'The webdav response should not have a header :header')]
+	public function theWebdavResponseShouldNotHaveAHeader(string $header) {
+		if ($this->response->hasHeader($header)) {
+			throw new \Exception("Expected no $header header, got " . $this->response->getHeaderLine($header));
+		}
+	}
+
 	#[Given('the following :appId app config is set')]
 	public function setAppConfig(string $appId, TableNode $formData): void {
 		$this->setCurrentUser('admin');

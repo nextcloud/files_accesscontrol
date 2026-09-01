@@ -271,6 +271,20 @@ trait WebDav {
 	}
 
 	/**
+	 * @When /^User "([^"]*)" recalculates the "([^"]*)" checksum of file "([^"]*)"$/
+	 * @param string $user
+	 * @param string $type
+	 * @param string $fileName
+	 */
+	public function userRecalculatesTheChecksumOfFile($user, $type, $fileName) {
+		try {
+			$this->response = $this->makeDavRequest($user, 'PATCH', $fileName, ['X-Recalculate-Hash' => $type]);
+		} catch (\GuzzleHttp\Exception\ClientException|\GuzzleHttp\Exception\ServerException $e) {
+			$this->response = $e->getResponse();
+		}
+	}
+
+	/**
 	 * @When Downloading first trashed file
 	 * @param string $fileName
 	 */
