@@ -4,10 +4,10 @@ index e7baa9e..0f6b7fc 100644
 +++ b/.github/workflows/phpunit-sqlite.yml
 @@ -70,6 +70,8 @@ jobs:
        matrix:
-         php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
-         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
-+        richdocuments-versions: ['main']
-+        groupfolders-versions: ['master']
+         php-versions: ${{ fromJson(needs.changes-and-matrix.outputs.php-version) }}
+         server-versions: ${{ fromJson(needs.changes-and-matrix.outputs.server-max) }}
++        richdocuments-versions: ['stable35']
++        groupfolders-versions: ['stable35']
 
      name: SQLite PHP ${{ matrix.php-versions }} Nextcloud ${{ matrix.server-versions }}
 
