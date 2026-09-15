@@ -4,8 +4,8 @@ index e703479..7b2dfe9 100644
 +++ b/.github/workflows/phpunit-pgsql.yml
 @@ -70,6 +70,8 @@ jobs:
        matrix:
-         php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
-         server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
+         php-versions: ${{ fromJson(needs.changes-and-matrix.outputs.php-version) }}
+         server-versions: ${{ fromJson(needs.changes-and-matrix.outputs.server-max) }}
 +        richdocuments-versions: ['stable32']
 +        groupfolders-versions: ['stable32']
 
