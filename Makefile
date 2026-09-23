@@ -35,6 +35,7 @@ appstore: clean
 	--exclude=/screenshots \
 	--exclude=/tests \
 	--exclude=/vendor \
+	--exclude=/vendor-bin \
 	--exclude=/.gitattributes \
 	--exclude=/.gitignore \
 	--exclude=/.php-cs-fixer.cache \
