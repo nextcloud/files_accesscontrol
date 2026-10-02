@@ -103,3 +103,34 @@ Feature: Author
       | /dir/foobar.txt  |
     When Downloading file "/dir/foobar.txt"
     Then The webdav response should have a status code "404"
+
+  Scenario: recalculating the checksum is blocked by a deny operation
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    Then The webdav response should have a status code "201"
+    When User "test1" recalculates the "md5" checksum of file "/foobar.txt"
+    Then The webdav response should have a status code "204"
+    And The webdav response should have a header "OC-Checksum"
+    When user "admin" creates global flow with 200
+      | name      | Flow denying foobar.txt          |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | deny                             |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    And User "test1" recalculates the "md5" checksum of file "/foobar.txt"
+    Then The webdav response should have a status code "403"
+    And The webdav response should not have a header "OC-Checksum"
+
+  Scenario: recalculating the checksum is blocked without READ permission
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    Then The webdav response should have a status code "201"
+    When user "admin" creates global flow with 200
+      | name      | Flow with NONE permissions       |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | {"permissions": 0}               |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    And User "test1" recalculates the "md5" checksum of file "/foobar.txt"
+    Then The webdav response should have a status code "403"
+    And The webdav response should not have a header "OC-Checksum"
