@@ -24,7 +24,9 @@ updates:
       default-days: 7
 
   - package-ecosystem: "github-actions"
-    directory: ".github/workflows"
+    directories:
+      - "/"
+      - "/.github/actions/*"
     commit-message:
       prefix: "ci"
       include: "scope"
@@ -38,7 +40,9 @@ updates:
 
   - package-ecosystem: "github-actions"
     target-branch: stable34
-    directory: ".github/workflows"
+    directories:
+      - "/"
+      - "/.github/actions/*"
     commit-message:
       prefix: "ci"
       include: "scope"
@@ -52,7 +56,9 @@ updates:
 
   - package-ecosystem: "github-actions"
     target-branch: stable33
-    directory: ".github/workflows"
+    directories:
+      - "/"
+      - "/.github/actions/*"
     commit-message:
       prefix: "ci"
       include: "scope"
@@ -66,7 +72,9 @@ updates:
 
   - package-ecosystem: "github-actions"
     target-branch: stable32
-    directory: ".github/workflows"
+    directories:
+      - "/"
+      - "/.github/actions/*"
     commit-message:
       prefix: "ci"
       include: "scope"
