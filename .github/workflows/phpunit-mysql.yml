@@ -57,7 +57,7 @@ jobs:
         id: versions
         uses: nextcloud-libraries/nextcloud-version-matrix@cd0211ffcef1065e2020cd579e4843b8746e7a58 # v1.3.3
         with:
-          matrix: '{"mysql-versions": ["8.4"], "richdocuments-versions": ["main"], "groupfolders-versions": ["master"]}'
+          matrix: '{"mysql-versions": ["8.4"]}'
 
   phpunit-mysql:
     runs-on: ubuntu-latest
@@ -101,22 +101,6 @@ jobs:
           persist-credentials: false
           path: apps/${{ env.APP_NAME }}
 
-      - name: Checkout app (richdocuments)
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          path: apps/richdocuments
-          repository: nextcloud/richdocuments
-          ref: ${{ matrix.richdocuments-versions }}
-
-      - name: Checkout app (groupfolders)
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-          path: apps/groupfolders
-          repository: nextcloud/groupfolders
-          ref: ${{ matrix.groupfolders-versions }}
-
       - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
@@ -153,13 +137,8 @@ jobs:
         with:
           working-directory: apps/${{ env.APP_NAME }}
 
-      - name: Set up dependencies (richdocuments)
-        working-directory: apps/richdocuments
-        run: composer i --no-dev
-
-      - name: Set up dependencies (groupfolders)
-        working-directory: apps/groupfolders
-        run: composer i --no-dev
+      - name: Checkout dependency apps
+        uses: ./apps/files_accesscontrol/.github/actions/checkout-apps
 
       - name: Set up Nextcloud
         env:
