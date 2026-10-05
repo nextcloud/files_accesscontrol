@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: Checkout dependency apps
+description: Checks out and installs richdocuments and groupfolders next to the app under test
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout app (richdocuments)
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+        path: apps/richdocuments
+        repository: nextcloud/richdocuments
+        ref: stable35
+
+    - name: Checkout app (groupfolders)
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+        path: apps/groupfolders
+        repository: nextcloud/groupfolders
+        ref: stable35
+
+    - name: Set up dependencies (richdocuments)
+      uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+      with:
+        working-directory: apps/richdocuments
+        composer-options: --no-dev
+
+    - name: Set up dependencies (groupfolders)
+      uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
+      with:
+        working-directory: apps/groupfolders
+        composer-options: --no-dev
