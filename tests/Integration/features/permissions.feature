@@ -1,0 +1,90 @@
+Feature: Author
+  Background:
+    Given user "test1" exists
+    Given as user "test1"
+    And using new dav path
+
+  Scenario: with UPDATE permissions blocks upload
+    Given user "admin" creates global flow with 200
+      | name      | Flow with UPDATE permissions     |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | {"permissions": 2}               |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    And User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    Then The webdav response should have a status code "403"
+    Then User "test1" sees no files in the trashbin
+
+  Scenario: no permissions should block file
+    And User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    Then The webdav response should have a status code "201"
+    When user "admin" creates global flow with 200
+      | name      | Flow with NONE permissions       |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | {"permissions": 0}               |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    When as user "test1"
+    When File "foobar.txt" in listing of folder "/" should have prop "oc:permissions" equal to ""
+    When Downloading file "/foobar.txt"
+    Then The webdav response should have a status code "404"
+
+  Scenario: deny operation override permissions from other operations
+    Given User "test1" deletes folder "/dir"
+    Given User "test1" created a folder "/dir"
+    Then The webdav response should have a status code "201"
+    When User "test1" uploads file "data/textfile.txt" to "/dir/foobar.txt"
+    Then The webdav response should have a status code "201"
+    Given user "admin" creates global flow with 200
+      | name      | Flow with READ and UPDATE permissions |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | {"permissions": 5}               |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    Given user "admin" creates global flow with 200
+      | name      | Flow with DELETE permissions     |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | deny                             |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    When as user "test1"
+    Then File "/dir/foobar.txt" should have prop "oc:permissions" equal to "R"
+    And user "test1" should see following elements
+      | /dir/foobar.txt  |
+    When Downloading file "/dir/foobar.txt"
+    Then The webdav response should have a status code "404"
+
+  Scenario: recalculating the checksum is blocked by a deny operation
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    Then The webdav response should have a status code "201"
+    When User "test1" recalculates the "md5" checksum of file "/foobar.txt"
+    Then The webdav response should have a status code "204"
+    And The webdav response should have a header "OC-Checksum"
+    When user "admin" creates global flow with 200
+      | name      | Flow denying foobar.txt          |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | deny                             |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    And User "test1" recalculates the "md5" checksum of file "/foobar.txt"
+    Then The webdav response should not be successful
+    And The webdav response should not have a header "OC-Checksum"
+
+  Scenario: recalculating the checksum is blocked without READ permission
+    Given User "test1" uploads file "data/textfile.txt" to "/foobar.txt"
+    Then The webdav response should have a status code "201"
+    When user "admin" creates global flow with 200
+      | name      | Flow with NONE permissions       |
+      | class     | OCA\FilesAccessControl\Operation |
+      | entity    | OCA\WorkflowEngine\Entity\File   |
+      | events    | []                               |
+      | operation | {"permissions": 0}               |
+      | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileName", "operator": "is", "value": "foobar.txt"} |
+    And User "test1" recalculates the "md5" checksum of file "/foobar.txt"
+    Then The webdav response should not be successful
+    And The webdav response should not have a header "OC-Checksum"
