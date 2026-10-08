@@ -343,12 +343,13 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 			return false;
 		}
 
-		// We would have actually a result, so lets see if the user should be able to access it
 		$path = $this->getCache()->getPathById((int)$fileId);
-		if ($path !== null) {
-			$this->checkFileAccess($path, false, Constants::PERMISSION_READ);
+		if ($path === null) {
+			return false;
 		}
 
+		// We would have actually a result, so lets see if the user should be able to access it
+		$this->checkFileAccess($path, false, Constants::PERMISSION_READ);
 		return $data;
 	}
 
