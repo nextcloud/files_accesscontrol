@@ -12,6 +12,7 @@ use OC\Files\Storage\Storage;
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Constants;
+use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Mount\IMountPoint;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -277,5 +278,83 @@ class StorageWrapperTest extends TestCase {
 		} catch (\Exception $e) {
 			$this->assertSame($expected, $e);
 		}
+	}
+
+	public function testGetDirectDownloadByIdNotSupported(): void {
+		$storage = $this->getInstance(['checkFileAccess', 'getCache']);
+
+		$this->storage->expects($this->once())
+			->method('getDirectDownloadById')
+			->with('42')
+			->willReturn(false);
+		$storage->expects($this->never())
+			->method('getCache');
+		$storage->expects($this->never())
+			->method('checkFileAccess');
+
+		$this->assertFalse($storage->getDirectDownloadById('42'));
+	}
+
+	public function testGetDirectDownloadByIdUnresolvablePath(): void {
+		$storage = $this->getInstance(['checkFileAccess', 'getCache']);
+		$cache = $this->createMock(ICache::class);
+		$cache->method('getPathById')
+			->with(42)
+			->willReturn(null);
+		$storage->method('getCache')
+			->willReturn($cache);
+
+		$storage->expects($this->never())
+			->method('checkFileAccess');
+		$this->storage->expects($this->once())
+			->method('getDirectDownloadById')
+			->with('42')
+			->willReturn(['expiration' => 3600, 'url' => 'https://example.com/signed']);
+
+		$this->assertFalse($storage->getDirectDownloadById('42'));
+	}
+
+	public function testGetDirectDownloadByIdRequiresReadAccess(): void {
+		$storage = $this->getInstance(['checkFileAccess', 'getCache']);
+		$cache = $this->createMock(ICache::class);
+		$cache->method('getPathById')
+			->with(42)
+			->willReturn('path');
+		$storage->method('getCache')
+			->willReturn($cache);
+		$data = ['expiration' => 3600, 'url' => 'https://example.com/signed'];
+
+		$storage->expects($this->once())
+			->method('checkFileAccess')
+			->with('path', false, Constants::PERMISSION_READ);
+		$this->storage->expects($this->once())
+			->method('getDirectDownloadById')
+			->with('42')
+			->willReturn($data);
+
+		$this->assertSame($data, $storage->getDirectDownloadById('42'));
+	}
+
+	public function testGetDirectDownloadByIdDeniedByRule(): void {
+		$storage = $this->getInstance(['checkFileAccess', 'getCache']);
+		$cache = $this->createMock(ICache::class);
+		$cache->method('getPathById')
+			->with(42)
+			->willReturn('path');
+		$storage->method('getCache')
+			->willReturn($cache);
+		$expected = new ForbiddenException('Access denied', false);
+
+		$storage->expects($this->once())
+			->method('checkFileAccess')
+			->with('path', false, Constants::PERMISSION_READ)
+			->willThrowException($expected);
+		$this->storage->expects($this->once())
+			->method('getDirectDownloadById')
+			->with('42')
+			->willReturn(['expiration' => 3600, 'url' => 'https://example.com/signed']);
+
+		$this->expectExceptionObject($expected);
+		$storage->getDirectDownloadById('42');
 	}
 }
