@@ -10,6 +10,7 @@ namespace OCA\FilesAccessControl\Tests\Unit;
 
 use OCA\FilesAccessControl\Operation;
 use OCA\FilesAccessControl\StorageWrapper;
+use OCP\Files\Cache\ICache;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
