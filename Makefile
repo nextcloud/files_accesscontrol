@@ -35,6 +35,7 @@ appstore: clean
 	--exclude=/screenshots \
 	--exclude=/tests \
 	--exclude=/vendor \
+	--exclude=/vendor-bin \
 	--exclude=/.gitattributes \
 	--exclude=/.gitignore \
 	--exclude=/.php-cs-fixer.cache \
@@ -44,6 +45,7 @@ appstore: clean
 	--exclude=/Makefile \
 	--exclude=/psalm.xml \
 	--exclude=/README.md \
+	--exclude=/rector.php \
 	$(project_dir)/ $(sign_dir)/$(app_name)
 	tar -czf $(build_dir)/$(app_name).tar.gz \
 		-C $(sign_dir) $(app_name)
