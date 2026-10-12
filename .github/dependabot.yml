@@ -85,19 +85,3 @@ updates:
       timezone: Europe/Berlin
     cooldown:
       default-days: 7
-
-  - package-ecosystem: "github-actions"
-    target-branch: stable32
-    directories:
-      - "/"
-      - "/.github/actions/*"
-    commit-message:
-      prefix: "ci"
-      include: "scope"
-    schedule:
-      interval: weekly
-      day: saturday
-      time: "03:00"
-      timezone: Europe/Berlin
-    cooldown:
-      default-days: 7
