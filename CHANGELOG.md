@@ -5,6 +5,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0.2 – 2026-10-13
+### Fixed
+- Block hash method
+- Deny direct download link when path cannot be resolved
+
+### Changed
+- Update translations
+- Update dependencies
+
 ## 4.0.1 – 2026-05-21
 ### Fixed
 - fix(teamfolder): Fix mimetype detection in teamfolder trashbin
