@@ -5,6 +5,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.1 – 2026-10-13
+### Fixed
+- Block hash method
+- Deny direct download link when path cannot be resolved
+
+### Changed
+- Update translations
+- Update dependencies
+
 ## 6.0.0 – 2026-08-07
 ### Changed
 - Require Nextcloud 35
