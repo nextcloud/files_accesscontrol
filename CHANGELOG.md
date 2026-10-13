@@ -5,6 +5,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.0.4 – 2026-10-13
+### Fixed
+- Block hash method
+
+### Changed
+- Update translations
+- Update dependencies
+
 ## 3.0.3– 2026-05-21
 ### Fixed
 - fix(teamfolder): Fix mimetype detection in teamfolder trashbin
