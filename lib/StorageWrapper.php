@@ -237,6 +237,32 @@ class StorageWrapper extends Wrapper implements IWriteStreamStorage {
 	}
 
 	/**
+	 * see http://php.net/manual/en/function.hash-file.php
+	 *
+	 * @param string $type
+	 * @param string $path
+	 * @param bool $raw
+	 * @return string|false
+	 * @throws ForbiddenException
+	 */
+	#[\Override]
+	public function hash($type, $path, $raw = false): string|false {
+		$this->checkFileAccess($path, false);
+		return $this->storage->hash($type, $path, $raw);
+	}
+
+	/**
+	 * @param string $path
+	 * @return string|false
+	 * @throws ForbiddenException
+	 */
+	#[\Override]
+	public function getLocalFile($path): string|false {
+		$this->checkFileAccess($path, false);
+		return $this->storage->getLocalFile($path);
+	}
+
+	/**
 	 * see http://php.net/manual/en/function.touch.php
 	 * If the backend does not support the operation, false should be returned
 	 *

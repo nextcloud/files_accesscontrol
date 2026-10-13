@@ -13,6 +13,7 @@ use OCA\FilesAccessControl\StorageWrapper;
 use OCP\Files\ForbiddenException;
 use OCP\Files\Mount\IMountPoint;
 use OCP\Files\Storage\IStorage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -165,5 +166,49 @@ class StorageWrapperTest extends TestCase {
 		}
 
 		$this->assertSame($expected, self::invokePrivate($storage, $method, [$path]));
+	}
+
+	public static function dataContentReadingMethods(): array {
+		return [
+			['hash', ['md5', 'path', false], 'd41d8cd98f00b204e9800998ecf8427e'],
+			['getLocalFile', ['path'], '/tmp/localfile'],
+		];
+	}
+
+	#[DataProvider('dataContentReadingMethods')]
+	public function testContentReadingMethodRequiresReadAccess(string $method, array $arguments, string $return): void {
+		$storage = $this->getInstance(['checkFileAccess']);
+
+		$storage->expects($this->once())
+			->method('checkFileAccess')
+			->with('path', false);
+
+		$this->storage->expects($this->once())
+			->method($method)
+			->with(...$arguments)
+			->willReturn($return);
+
+		$this->assertSame($return, self::invokePrivate($storage, $method, $arguments));
+	}
+
+	#[DataProvider('dataContentReadingMethods')]
+	public function testContentReadingMethodDeniedByRule(string $method, array $arguments, string $return): void {
+		$storage = $this->getInstance(['checkFileAccess']);
+		$expected = new ForbiddenException('Access denied', false);
+
+		$storage->expects($this->once())
+			->method('checkFileAccess')
+			->with('path', false)
+			->willThrowException($expected);
+
+		$this->storage->expects($this->never())
+			->method($method);
+
+		try {
+			self::invokePrivate($storage, $method, $arguments);
+			$this->fail('Should throw an exception before this');
+		} catch (\Exception $e) {
+			$this->assertSame($expected, $e);
+		}
 	}
 }
