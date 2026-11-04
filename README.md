@@ -2,17 +2,28 @@
   - SPDX-FileCopyrightText: 2016 Nextcloud GmbH and Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Files access control
+# File access control for Nextcloud Flow
 
 [![REUSE status](https://api.reuse.software/badge/github.com/nextcloud/files_accesscontrol)](https://api.reuse.software/info/github.com/nextcloud/files_accesscontrol)
 
-Nextcloud's Files access control app enables administrators to protect data from unauthorized access or modifications.
+The File access control app adds a **Block access to a file** operation to Nextcloud Flow, allowing administrators to restrict access based on configured rules. This enables administrators to protect data from unauthorized access or modifications.
 
 ## How it works
-The administrator can create and manage a set of rule groups. Each of the rule groups consists of one or more rules. If all rules of a group hold true, the group matches the request and access is being denied or the upload is blocked. The rules criteria range from IP address, mimetype and request time to group membership, tags, user agent and more.
 
-An example would be to deny access to MS Excel/XLSX files owned by the "Human Resources" group accessed from an IP not on the internal company network or to block uploads of files bigger than 512 mb by students in the "1st year" group.
+Administrators can create and manage rule groups in the Flow settings. Each group contains one or more rules. Rules within a group are combined with AND: the group matches only when all its rules match. If any matching rule group is configured to block access, file access is denied. Criteria include IP address, MIME type, request time, user group membership, collaborative tags, and user agent.
 
-Learn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow) and in the [Files access control documentation](https://docs.nextcloud.com/server/stable/go.php?to=admin-files-access-control)
+For example, an administrator could deny access from outside the internal network to Excel/XLSX files marked with a "Human Resources" collaborative tag. Another rule group could block uploads above a configured size limit by members of the "1st year" group. The file-size criterion is available only for uploads.
+
+Use restricted or invisible tags for access control so users cannot remove a tag to bypass a rule.
+
+## Limitations
+
+* These rules govern access through Nextcloud; they do not prevent direct access to an external storage system.
+* Context Chat is not affected by File Access Control rules and may return indexed information from files a user cannot access through Nextcloud.
+* A rule based on user group membership may not match an unauthenticated visitor accessing a public link.
+
+See the documentation for these and other configuration considerations.
+
+Learn more about File Access Control on [https://nextcloud.com/workflow](https://nextcloud.com/workflow) and in the [Files access control documentation](https://docs.nextcloud.com/server/stable/go.php?to=admin-files-access-control).
 
 ![Screenshot](https://raw.githubusercontent.com/nextcloud/files_accesscontrol/master/screenshots/flow.png)
