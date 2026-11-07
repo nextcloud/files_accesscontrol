@@ -10,7 +10,7 @@ The File access control app adds a **Block access to a file** operation to Nextc
 
 ## How it works
 
-Administrators can create and manage rule groups in the Flow settings. Each group contains one or more rules. Rules within a group are combined with AND: the group matches only when all its rules match. If any matching rule group is configured to block access, file access is denied. Criteria include IP address, MIME type, request time, user group membership, collaborative tags, and user agent.
+Administrators can create and manage rule groups in the Flow settings. Each group contains one or more rules. Rules within a group are combined with AND: the group matches only when all its rules match. If any rule group matches, access is denied or the upload is blocked. Criteria include IP address, MIME type, request time, user group membership, collaborative tags, and user agent.
 
 For example, an administrator could deny access from outside the internal network to Excel/XLSX files marked with a "Human Resources" collaborative tag. Another rule group could block uploads above a configured size limit by members of the "1st year" group. The file-size criterion is available only for uploads.
 
