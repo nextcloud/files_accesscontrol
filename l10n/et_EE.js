@@ -3,7 +3,7 @@ OC.L10N.register(
     {
     "No rule given" : "Reeglit pole määratud",
     "Block access to a file" : "Blokeeri ligipääs failile",
-    "File is accessed" : "Failile on ligi pääsetud",
+    "File is accessed" : "Faili on kasutatud",
     "File access control" : "Failide ligipääsukontroll",
     "Control access to files based on conditions" : "Kontrolli konkreetsete tingimuste alusel ligipääsu failidele"
 },
