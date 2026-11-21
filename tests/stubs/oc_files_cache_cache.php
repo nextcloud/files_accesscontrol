@@ -29,9 +29,9 @@ namespace OC\Files\Cache {
 		}
 		public function get($file) {
 		}
-		public function getFolderContents($folder) {
+		public function getFolderContents(string $folder, ?string $mimeTypeFilter = null) {
 		}
-		public function getFolderContentsById($fileId) {
+		public function getFolderContentsById(int $fileId, ?string $mimeTypeFilter = null) {
 		}
 		public function put($file, array $data) {
 		}
