@@ -7,8 +7,6 @@
 
 namespace OCA\GroupFolders\Trash {
 	class TrashBackend {
-		public function setupTrashFolder(string $class, string $value, $closure) {
-		}
 	}
 }
 
