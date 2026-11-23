@@ -13,11 +13,7 @@ namespace OC\Files\Cache {
 	use OCP\Files\Search\ISearchQuery;
 
 	class Cache implements ICache {
-		/**
-		 * @param \OCP\Files\Cache\ICache $cache
-		 */
-		public function __construct($cache) {
-			$this->cache = $cache;
+		public function __construct(\OCP\Files\Storage\IStorage $storage, ?CacheDependencies $dependencies = null) {
 		}
 		public function getNumericStorageId() {
 		}
@@ -61,7 +57,7 @@ namespace OC\Files\Cache {
 		}
 		public function searchQuery(ISearchQuery $query) {
 		}
-		public function correctFolderSize($path, $data = null, $isBackgroundScan = false) {
+		public function correctFolderSize(string $path, $data = null, bool $isBackgroundScan = false): void {
 		}
 		public function copyFromCache(ICache $sourceCache, ICacheEntry $sourceEntry, string $targetPath): int {
 		}
@@ -71,7 +67,7 @@ namespace OC\Files\Cache {
 		}
 		public function getCacheEntryFromSearchResult(ICacheEntry $rawEntry): ?ICacheEntry {
 		}
-		public static function cacheEntryFromData($data, IMimeTypeLoader $mimetypeLoader) {
+		public static function cacheEntryFromData(array $data, IMimeTypeLoader $mimetypeLoader): CacheEntry {
 		}
 	}
 }
