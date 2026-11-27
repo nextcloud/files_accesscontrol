@@ -115,3 +115,21 @@
     | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "text/plain"} |
     When User "test1" deletes file "/Folder886/foobar.txt"
     Then The webdav response should have a status code "204"
+
+  Scenario: Blocking by mimetype does not block versions of groupfolders
+    Given group "groupversions" exists
+    And user "test1" is member of group "groupversions"
+    And setup group folder "FolderVersions" for group "groupversions"
+    Given User "test1" uploads file "data/textfile.txt" to "/FolderVersions/foobar.txt" with mtime "1700000000"
+    Then The webdav response should have a status code "201"
+    And user "admin" creates global flow with 200
+    | name      | Admin flow                       |
+    | class     | OCA\FilesAccessControl\Operation |
+    | entity    | OCA\WorkflowEngine\Entity\File   |
+    | events    | []                               |
+    | operation | deny                             |
+    | checks-0  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "httpd/unix-directory"} |
+    | checks-1  | {"class":"OCA\\\\WorkflowEngine\\\\Check\\\\FileMimeType", "operator": "!is", "value": "text/plain"} |
+    When User "test1" uploads file "data/textfile-2.txt" to "/FolderVersions/foobar.txt"
+    Then The webdav response should have a status code "204"
+    And User "test1" sees 2 versions of file "/FolderVersions/foobar.txt"
