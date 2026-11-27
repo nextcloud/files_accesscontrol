@@ -12,6 +12,7 @@ use OCA\FilesAccessControl\Operation;
 use OCA\WorkflowEngine\Entity\File;
 use OCP\Constants;
 use OCP\Files\Cache\ICache;
+use OCP\Files\Cache\IFileAccess;
 use OCP\Files\ForbiddenException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Mount\IMountManager;
@@ -61,6 +62,7 @@ class OperationTest extends TestCase {
 				$this->createMock(IMountManager::class),
 				$this->createMock(IRootFolder::class),
 				$this->createMock(LoggerInterface::class),
+				$this->createMock(IFileAccess::class),
 			])
 			->onlyMethods(['isBlockablePath', 'isCreatingSkeletonFiles', 'translatePath'])
 			->getMock();

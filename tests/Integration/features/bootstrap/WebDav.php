@@ -657,6 +657,18 @@ trait WebDav {
 	}
 
 	/**
+	 * @When User :user uploads file :source to :destination with mtime :mtime
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 * @param string $mtime
+	 */
+	public function userUploadsAFileToWithMtime($user, $source, $destination, $mtime) {
+		$file = \GuzzleHttp\Psr7\Utils::streamFor(fopen($source, 'r'));
+		$this->response = $this->makeDavRequest($user, 'PUT', $destination, ['X-OC-MTime' => $mtime], $file);
+	}
+
+	/**
 	 * @When User :user adds a file of :bytes bytes to :destination
 	 * @param string $user
 	 * @param string $bytes
@@ -1046,6 +1058,21 @@ trait WebDav {
 
 		Assert::assertNotCount(0, $response);
 		$this->trashedFiles = array_keys($response);
+	}
+
+	/**
+	 * @Then /^User "([^"]*)" sees (\d+) versions of file "([^"]*)"$/
+	 * @param string $user
+	 * @param string $count
+	 * @param string $path
+	 */
+	public function userSeesVersionsOfFile($user, $count, $path) {
+		$fileId = $this->getFileIdForPath($user, $path);
+		$client = $this->getSabreClient($user);
+		$response = $client->propfind($this->makeSabrePath($user, 'versions/' . $fileId, 'versions'), ['{DAV:}getetag'], 1);
+		unset($response['/remote.php/dav/versions/' . $user . '/versions/' . $fileId . '/']);
+
+		Assert::assertCount((int)$count, $response);
 	}
 
 	/**

@@ -17,6 +17,7 @@ use OCA\WorkflowEngine\Entity\File;
 use OCP\Constants;
 use OCP\EventDispatcher\Event;
 use OCP\Files\Cache\ICacheEntry;
+use OCP\Files\Cache\IFileAccess;
 use OCP\Files\ForbiddenException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Mount\IMountManager;
@@ -43,6 +44,7 @@ class Operation implements IComplexOperation, ISpecificOperation {
 		protected readonly IMountManager $mountManager,
 		protected readonly IRootFolder $rootFolder,
 		protected readonly LoggerInterface $logger,
+		protected readonly IFileAccess $fileAccess,
 	) {
 	}
 
@@ -173,6 +175,13 @@ class Operation implements IComplexOperation, ISpecificOperation {
 				if ($folder === 'files_versions' && preg_match('/.+\.v\d{10}$/', basename($path))) {
 					// Remove trailing ".v{timestamp}"
 					return substr($path, 0, -12);
+				}
+				if ($folder === 'files_versions' && !$storage->getCache()->inCache($path)) {
+					// Map "{fileId}/{timestamp}" to the original file
+					$cacheEntry = $this->fileAccess->getByFileIdInStorage((int)basename(dirname($path)), $storage->getCache()->getNumericStorageId());
+					if ($cacheEntry !== null) {
+						return $cacheEntry->getPath();
+					}
 				}
 				if ($folder === 'files_trashbin' && preg_match('/.+\.d\d{10}$/', basename($path))) {
 					// Remove trailing ".d{timestamp}"
